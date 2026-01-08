@@ -9,6 +9,9 @@ type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
   storageKey?: string;
+  attribute?: string;
+  enableSystem?: boolean;
+  disableTransitionOnChange?: boolean;
 };
 
 type ThemeProviderState = {
@@ -27,31 +30,32 @@ export function ThemeProvider({
   children,
   defaultTheme = 'system',
   storageKey = 'todo-app-theme',
+  attribute = 'class',
+  enableSystem = true,
+  disableTransitionOnChange = false,
   ...props
-}: ThemeProviderProps) {
+}: ThemeProviderProps & { attribute?: string; enableSystem?: boolean; disableTransitionOnChange?: boolean }) {
   const [theme, setTheme] = useState<Theme>(
-    () => (typeof window !== 'undefined' 
-      ? (localStorage.getItem(storageKey) as Theme) || defaultTheme 
+    () => (typeof window !== 'undefined'
+      ? (localStorage.getItem(storageKey) as Theme) || defaultTheme
       : defaultTheme)
   );
 
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove('light', 'dark');
-
-    if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
-        ? 'dark'
-        : 'light';
-
-      root.classList.add(systemTheme);
-      return;
+    let themeToApply = theme;
+    if (theme === 'system' && enableSystem) {
+      themeToApply = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
 
-    root.classList.add(theme);
-  }, [theme]);
+    root.classList.remove('light', 'dark');
+    if (attribute === 'class') {
+      root.classList.add(themeToApply);
+    } else {
+      root.setAttribute(attribute, themeToApply);
+    }
+  }, [theme, attribute, enableSystem, disableTransitionOnChange]);
 
   const value = {
     theme,

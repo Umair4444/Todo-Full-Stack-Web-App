@@ -147,6 +147,35 @@ const initialState: Omit<AppState, 'actions'> = {
   },
 };
 
+// Custom serializer/deserializer for dates
+const dateDeserializer = (state: any): AppState => {
+  if (!state || typeof state !== 'object') return state;
+
+  const newState = { ...state };
+
+  if (newState.todos && Array.isArray(newState.todos)) {
+    newState.todos = newState.todos.map(todo => ({
+      ...todo,
+      createdAt: typeof todo.createdAt === 'string' ? new Date(todo.createdAt) : todo.createdAt,
+      updatedAt: typeof todo.updatedAt === 'string' ? new Date(todo.updatedAt) : todo.updatedAt,
+      dueDate: todo.dueDate ? (typeof todo.dueDate === 'string' ? new Date(todo.dueDate) : todo.dueDate) : todo.dueDate,
+    }));
+  }
+
+  if (newState.chatbot && newState.chatbot.messages && Array.isArray(newState.chatbot.messages)) {
+    newState.chatbot.messages = newState.chatbot.messages.map(message => ({
+      ...message,
+      timestamp: typeof message.timestamp === 'string' ? new Date(message.timestamp) : message.timestamp,
+    }));
+  }
+
+  if (newState.chatbot && newState.chatbot.lastActive) {
+    newState.chatbot.lastActive = typeof newState.chatbot.lastActive === 'string' ? new Date(newState.chatbot.lastActive) : newState.chatbot.lastActive;
+  }
+
+  return newState;
+};
+
 export const useAppStore = create<AppState>()(
   persist(
     subscribeWithSelector((set, get) => ({
@@ -464,11 +493,15 @@ export const useAppStore = create<AppState>()(
     })),
     {
       name: 'todo-app-storage', // unique name for localStorage
-      partialize: (state) => ({ 
-        todos: state.todos, 
+      partialize: (state) => ({
+        todos: state.todos,
         preferences: state.preferences,
         chatbot: state.chatbot
       }), // only persist these fields
+      deserialize: (str) => {
+        const state = JSON.parse(str);
+        return dateDeserializer(state);
+      }
     }
   )
 );

@@ -1,45 +1,50 @@
 // Footer component
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
+import { useTranslation } from '@/lib/i18n';
 
 export const Footer: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <footer className="py-8 px-4 border-t glass-effect backdrop-blur-sm">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-1">
-            <h3 className="text-lg font-semibold mb-4">TodoApp</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('todoAppFooter')}</h3>
             <p className="text-sm text-muted-foreground">
-              A modern and vibrant todo application to help you organize your life.
+              {t('manageYourTasks')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="col-span-1 md:col-span-1">
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">Quick Links</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">{t('home')}</h4>
             <ul className="space-y-2">
-              <li><Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Home</Link></li>
-              <li><Link href="/todo-app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Todo App</Link></li>
-              <li><Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">About</Link></li>
-              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Contact</Link></li>
+              <li><Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('home')}</Link></li>
+              <li><Link href="/todo-app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('todoApp')}</Link></li>
+              <li><Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('about')}</Link></li>
+              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('contact')}</Link></li>
             </ul>
           </div>
 
           {/* Resources */}
           <div className="col-span-1 md:col-span-1">
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">Resources</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">{t('help')}</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Blog</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Community</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('support')}</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('aboutUs')}</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('contact')}</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('privacyPolicy')}</a></li>
             </ul>
           </div>
 
           {/* Social */}
           <div className="col-span-1 md:col-span-1">
-            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">Connect</h4>
+            <h4 className="text-sm font-semibold uppercase tracking-wider mb-4">{t('connectWithUs')}</h4>
             <div className="flex space-x-4">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <span className="sr-only">Twitter</span>
@@ -65,7 +70,7 @@ export const Footer: React.FC = () => {
 
         <div className="mt-8 pt-8 border-t text-center">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} TodoApp. All rights reserved.
+            &copy; {new Date().getFullYear()} {t('todoAppFooter')}. {t('allRightsReserved')}
           </p>
         </div>
       </div>

@@ -19,6 +19,7 @@ import { TodoItem as TodoItemType } from '@/lib/types';
 import { useAppStore } from '@/lib/store';
 import { formatDate } from '@/lib/utils';
 import { PRIORITY_COLORS } from '@/lib/constants';
+import { useTranslation } from '@/lib/i18n';
 
 interface TodoItemProps {
   /** The todo item to display */
@@ -26,6 +27,7 @@ interface TodoItemProps {
 }
 
 const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
+  const { t } = useTranslation();
   const updateTodo = useAppStore(state => state.actions.updateTodo);
   const deleteTodo = useAppStore(state => state.actions.deleteTodo);
   const toggleTodoCompletion = useAppStore(state => state.actions.toggleTodoCompletion);
@@ -121,9 +123,9 @@ const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
             className="flex items-center justify-between text-xs text-muted-foreground"
             aria-label="Todo metadata"
           >
-            <span>Created: {formatDate(todo.createdAt)}</span>
-            {todo.updatedAt.getTime() !== todo.createdAt.getTime() && (
-              <span>Updated: {formatDate(todo.updatedAt)}</span>
+            <span>{t('created')}: {formatDate(todo.createdAt)}</span>
+            {new Date(todo.updatedAt).getTime() !== new Date(todo.createdAt).getTime() && (
+              <span>{t('updated')}: {formatDate(todo.updatedAt)}</span>
             )}
           </div>
         </div>

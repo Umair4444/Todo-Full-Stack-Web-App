@@ -1,20 +1,25 @@
 // Contact page
+'use client';
+
 import React from 'react';
 import { ContactForm } from '@/components/contact/ContactForm';
+import { useTranslation } from '@/lib/i18n';
 
 const ContactPage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold mb-4">{"Contact Us"}</h1>
+        <h1 className="text-3xl font-bold mb-4">{t('contactUs')}</h1>
         <p className="text-lg text-muted-foreground">
-          {"Have questions or feedback? Reach out to our team"}
+          {t('haveQuestions')}
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div>
-          <h2 className="text-2xl font-semibold mb-6">{"Get in Touch"}</h2>
+          <h2 className="text-2xl font-semibold mb-6">{t('getInTouch')}</h2>
 
           <div className="space-y-6">
             <div className="flex items-start">
@@ -24,7 +29,7 @@ const ContactPage: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium text-lg">{"Email"}</h3>
+                <h3 className="font-medium text-lg">{t('email')}</h3>
                 <p className="text-muted-foreground">{"support@todoapp.example.com"}</p>
               </div>
             </div>
@@ -36,7 +41,7 @@ const ContactPage: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium text-lg">{"Phone"}</h3>
+                <h3 className="font-medium text-lg">{t('phone')}</h3>
                 <p className="text-muted-foreground">{"+1 (555) 123-4567"}</p>
               </div>
             </div>
@@ -49,7 +54,7 @@ const ContactPage: React.FC = () => {
                 </svg>
               </div>
               <div>
-                <h3 className="font-medium text-lg">{"Office"}</h3>
+                <h3 className="font-medium text-lg">{t('office')}</h3>
                 <p className="text-muted-foreground">{"123 Productivity Street<br />San Francisco, CA 94107"}</p>
               </div>
             </div>
@@ -57,13 +62,13 @@ const ContactPage: React.FC = () => {
         </div>
 
         <div className="bg-card rounded-xl shadow-sm border p-6">
-          <h2 className="text-2xl font-semibold mb-6">{"Send us a message"}</h2>
+          <h2 className="text-2xl font-semibold mb-6">{t('sendUsAMessage')}</h2>
           <ContactForm />
         </div>
       </div>
 
       <div className="mt-10 text-center">
-        <h3 className="text-xl font-semibold mb-4">{"Connect with us on social media"}</h3>
+        <h3 className="text-xl font-semibold mb-4">{t('connectWithUs')}</h3>
         <div className="flex justify-center space-x-6">
           <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
             <span className="sr-only">{"Twitter"}</span>

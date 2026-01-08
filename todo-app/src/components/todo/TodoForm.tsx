@@ -45,6 +45,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useAppStore } from '@/lib/store';
 import { isValidTodoTitle, isValidTodoDescription } from '@/lib/utils';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 
 // Define the form schema using Zod
 const todoSchema = z.object({
@@ -82,6 +83,7 @@ export const TodoForm: React.FC<TodoFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const addTodo = useAppStore(state => state.actions.addTodo);
   const error = useAppStore(state => state.error);
+  const { t } = useTranslation();
 
   // Initialize the form with react-hook-form
   const form = useForm<TodoFormValues>({
@@ -140,10 +142,10 @@ export const TodoForm: React.FC<TodoFormProps> = ({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title *</FormLabel>
+              <FormLabel>{t('taskTitle')} *</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="What needs to be done?"
+                  placeholder={t('whatNeedsToBeDone')}
                   {...field}
                   className={form.formState.errors.title ? "border-destructive" : ""}
                 />
@@ -158,10 +160,10 @@ export const TodoForm: React.FC<TodoFormProps> = ({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{t('taskDescription')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Add details about this task..."
+                  placeholder={t('addDetailsAboutThisTask')}
                   {...field}
                   value={field.value || ""} // Ensure value is never undefined
                 />
@@ -177,17 +179,17 @@ export const TodoForm: React.FC<TodoFormProps> = ({
             name="priority"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Priority</FormLabel>
+                <FormLabel>{t('priority')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select priority" />
+                      <SelectValue placeholder={t('priority')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="low">{t('low')}</SelectItem>
+                    <SelectItem value="medium">{t('medium')}</SelectItem>
+                    <SelectItem value="high">{t('high')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -208,7 +210,7 @@ export const TodoForm: React.FC<TodoFormProps> = ({
                 </FormControl>
                 <div className="space-y-1 leading-none">
                   <FormLabel>
-                    {field.value ? 'Mark as Incomplete' : 'Mark as Completed'}
+                    {field.value ? t('markAsCompleted') : t('markAsCompleted')}
                   </FormLabel>
                 </div>
               </FormItem>
@@ -217,7 +219,7 @@ export const TodoForm: React.FC<TodoFormProps> = ({
         </div>
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Adding...' : 'Add Todo'}
+          {isSubmitting ? t('loading') : t('addTodo')}
         </Button>
       </form>
     </Form>

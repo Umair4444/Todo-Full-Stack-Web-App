@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Notification } from "@/components/ui/Notification";
+import { LanguageProvider } from "@/components/i18n/LanguageSwitcher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,12 +60,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <MainLayout>
-            {children}
-            <Notification />
-          </MainLayout>
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <MainLayout>
+              {children}
+              <Notification />
+            </MainLayout>
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

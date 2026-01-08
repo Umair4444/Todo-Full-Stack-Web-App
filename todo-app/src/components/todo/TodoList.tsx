@@ -16,8 +16,10 @@ import { TodoItem } from './TodoItem';
 import { TodoItem as TodoItemType } from '@/lib/types';
 import { useAppStore } from '@/lib/store';
 import { TodoSkeleton } from './TodoSkeleton';
+import { useTranslation } from '@/lib/i18n';
 
 export const TodoList: React.FC = () => {
+  const { t } = useTranslation();
   const todos = useAppStore(state => state.todos);
   const loading = useAppStore(state => state.loading);
   const setFilterStatus = useAppStore(state => state.actions.setFilterStatus);
@@ -55,7 +57,7 @@ export const TodoList: React.FC = () => {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             type="text"
-            placeholder="Search todos..."
+            placeholder={t('searchTodos')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 w-full"
@@ -70,12 +72,12 @@ export const TodoList: React.FC = () => {
               onValueChange={(value: 'all' | 'active' | 'completed') => setFilterStatus(value)}
             >
               <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Status" />
+                <SelectValue placeholder={t('all')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="all">{t('all')}</SelectItem>
+                <SelectItem value="active">{t('active')}</SelectItem>
+                <SelectItem value="completed">{t('completed')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -85,13 +87,13 @@ export const TodoList: React.FC = () => {
             onValueChange={(value: 'all' | 'low' | 'medium' | 'high') => setFilterPriority(value)}
           >
             <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Priority" />
+              <SelectValue placeholder={t('allPriorities')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Priorities</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
+              <SelectItem value="all">{t('allPriorities')}</SelectItem>
+              <SelectItem value="low">{t('lowPriority')}</SelectItem>
+              <SelectItem value="medium">{t('mediumPriority')}</SelectItem>
+              <SelectItem value="high">{t('highPriority')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -118,7 +120,7 @@ export const TodoList: React.FC = () => {
             ))
           ) : (
             <div className="text-center py-10 text-muted-foreground">
-              <p>No todos found. {searchTerm ? 'Try a different search.' : 'Add your first todo!'}</p>
+              <p>{t('noTodosFound')} {!searchTerm && t('addYourFirstTask')}</p>
             </div>
           )}
         </AnimatePresence>

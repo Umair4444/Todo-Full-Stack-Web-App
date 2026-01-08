@@ -7,20 +7,36 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Format date to a readable string
-export function formatDate(date: Date): string {
+export function formatDate(date: Date | string | number): string {
+  const dateObj = new Date(date);
+
+  // Check if the date is valid
+  if (isNaN(dateObj.getTime())) {
+    console.error('Invalid date provided to formatDate:', date);
+    return 'Invalid Date';
+  }
+
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
-  }).format(date);
+  }).format(dateObj);
 }
 
 // Format date for display in relative time (e.g., "2 hours ago")
-export function formatRelativeTime(date: Date): string {
+export function formatRelativeTime(date: Date | string | number): string {
+  const dateObj = new Date(date);
+
+  // Check if the date is valid
+  if (isNaN(dateObj.getTime())) {
+    console.error('Invalid date provided to formatRelativeTime:', date);
+    return 'Invalid Date';
+  }
+
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diffInSeconds = Math.floor((now.getTime() - dateObj.getTime()) / 1000);
 
   if (diffInSeconds < 60) {
     return `${diffInSeconds} seconds ago`;
@@ -42,7 +58,7 @@ export function formatRelativeTime(date: Date): string {
   }
 
   // For older dates, return formatted date
-  return formatDate(date);
+  return formatDate(dateObj);
 }
 
 // Validate todo title length
