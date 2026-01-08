@@ -1,0 +1,266 @@
+# API Contract: Todo Full-Stack Web Application
+
+**Feature**: 1-todo-frontend-app | **Date**: 2026-01-08
+
+## Overview
+
+This document defines the API contracts for the Todo Full-Stack Web Application. These contracts will be used when connecting the frontend to the Python FastAPI backend in future iterations.
+
+## Base URL
+
+```
+https://api.todo-app.example.com/v1
+```
+
+## Authentication
+
+All endpoints require authentication using JWT tokens, except for health check endpoints.
+
+Headers:
+```
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+Accept: application/json
+```
+
+## Common Response Structure
+
+Successful responses follow this structure:
+```json
+{
+  "success": true,
+  "data": {},
+  "message": "Optional message"
+}
+```
+
+Error responses follow this structure:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human-readable error message",
+    "details": {}
+  }
+}
+```
+
+## Endpoints
+
+### Health Check
+
+#### GET /health
+Check the health status of the API.
+
+**Response (200 OK):**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-01-08T10:00:00Z"
+}
+```
+
+### Todo Items
+
+#### GET /todos
+Retrieve a list of todo items for the authenticated user.
+
+Query Parameters:
+- `page` (integer, optional): Page number for pagination (default: 1)
+- `limit` (integer, optional): Number of items per page (default: 10, max: 50)
+- `status` (string, optional): Filter by status ('all', 'active', 'completed')
+- `priority` (string, optional): Filter by priority ('all', 'low', 'medium', 'high')
+- `search` (string, optional): Search term for title/description
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "uuid-string",
+        "title": "Task title (max 100 chars)",
+        "description": "Optional task description (max 500 chars)",
+        "completed": false,
+        "createdAt": "2026-01-08T10:00:00Z",
+        "updatedAt": "2026-01-08T10:00:00Z",
+        "priority": "medium",
+        "dueDate": "2026-01-15T10:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
+  }
+}
+```
+
+#### POST /todos
+Create a new todo item.
+
+**Request Body:**
+```json
+{
+  "title": "Task title (1-100 chars)",
+  "description": "Optional task description (max 500 chars)",
+  "priority": "medium",
+  "dueDate": "2026-01-15T10:00:00Z"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid-string",
+    "title": "Task title",
+    "description": "Optional task description",
+    "completed": false,
+    "createdAt": "2026-01-08T10:00:00Z",
+    "updatedAt": "2026-01-08T10:00:00Z",
+    "priority": "medium",
+    "dueDate": "2026-01-15T10:00:00Z"
+  },
+  "message": "Todo created successfully"
+}
+```
+
+#### GET /todos/{id}
+Retrieve a specific todo item by ID.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid-string",
+    "title": "Task title",
+    "description": "Optional task description",
+    "completed": false,
+    "createdAt": "2026-01-08T10:00:00Z",
+    "updatedAt": "2026-01-08T10:00:00Z",
+    "priority": "medium",
+    "dueDate": "2026-01-15T10:00:00Z"
+  }
+}
+```
+
+#### PUT /todos/{id}
+Update an existing todo item.
+
+**Request Body:**
+```json
+{
+  "title": "Updated task title",
+  "description": "Updated task description",
+  "completed": true,
+  "priority": "high",
+  "dueDate": "2026-01-20T10:00:00Z"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid-string",
+    "title": "Updated task title",
+    "description": "Updated task description",
+    "completed": true,
+    "createdAt": "2026-01-08T10:00:00Z",
+    "updatedAt": "2026-01-08T11:00:00Z",
+    "priority": "high",
+    "dueDate": "2026-01-20T10:00:00Z"
+  },
+  "message": "Todo updated successfully"
+}
+```
+
+#### PATCH /todos/{id}/toggle-completion
+Toggle the completion status of a todo item.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid-string",
+    "completed": true,
+    "updatedAt": "2026-01-08T11:00:00Z"
+  },
+  "message": "Todo completion status updated"
+}
+```
+
+#### DELETE /todos/{id}
+Delete a specific todo item.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Todo deleted successfully"
+}
+```
+
+### User Preferences
+
+#### GET /preferences
+Retrieve user preferences.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "theme": "light",
+    "language": "en",
+    "notificationsEnabled": true,
+    "autoSync": true
+  }
+}
+```
+
+#### PUT /preferences
+Update user preferences.
+
+**Request Body:**
+```json
+{
+  "theme": "dark",
+  "language": "ur",
+  "notificationsEnabled": false,
+  "autoSync": true
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "theme": "dark",
+    "language": "ur",
+    "notificationsEnabled": false,
+    "autoSync": true
+  },
+  "message": "Preferences updated successfully"
+}
+```
+
+## Error Codes
+
+- `INVALID_INPUT`: Request data failed validation
+- `RESOURCE_NOT_FOUND`: Requested resource does not exist
+- `UNAUTHORIZED`: Authentication required or failed
+- `FORBIDDEN`: Insufficient permissions
+- `RATE_LIMITED`: Too many requests
+- `INTERNAL_ERROR`: Server-side error occurred
+- `VALIDATION_ERROR`: Specific validation failure details
