@@ -11,7 +11,7 @@ const TodoAppPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-10 text-center">
+      <div className="mb-4 text-center">
         <div className="flex items-center justify-center gap-2 mb-3">
           <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">
             {t('todoApp')}
@@ -25,7 +25,7 @@ const TodoAppPage: React.FC = () => {
         </p>
       </div>
 
-      <div className="bg-card rounded-2xl shadow-lg border p-5 sm:p-7 mb-8 transition-all hover:shadow-xl">
+      <div className="bg-card rounded-2xl shadow-lg border p-5 sm:px-7 sm:py-4 mb-8 transition-all hover:shadow-xl">
         <div className="flex items-center gap-3 mb-5 pb-4 border-b">
           <div className="p-2 rounded-lg bg-primary/10">
             <div className="h-6 w-6 text-primary">📝</div>
