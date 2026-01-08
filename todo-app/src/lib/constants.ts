@@ -65,6 +65,13 @@ export const PRIORITY_COLORS = {
   high: 'text-red-600 bg-red-100',
 } as const;
 
+// Priority labels
+export const PRIORITY_LABELS = {
+  low: 'Low Priority',
+  medium: 'Medium Priority',
+  high: 'High Priority',
+} as const;
+
 // Status colors
 export const STATUS_COLORS = {
   active: 'bg-blue-100 text-blue-800',

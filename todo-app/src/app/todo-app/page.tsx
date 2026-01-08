@@ -12,19 +12,38 @@ const TodoAppPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-10 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">{t('todoApp')}</h1>
-        <p className="text-muted-foreground">{t('manageYourTasks')}</p>
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">
+            {t('todoApp')}
+          </h1>
+          <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+            {t('newFeature')}
+          </span>
+        </div>
+        <p className="text-lg text-muted-foreground max-w-md mx-auto">
+          {t('manageYourTasks')}
+        </p>
       </div>
 
-      <div className="bg-card rounded-xl shadow-sm border p-4 sm:p-6 mb-8">
-        <h2 className="text-xl font-semibold mb-4">{t('addNewTask')}</h2>
+      <div className="bg-card rounded-2xl shadow-lg border p-5 sm:p-7 mb-8 transition-all hover:shadow-xl">
+        <div className="flex items-center gap-3 mb-5 pb-4 border-b">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <div className="h-6 w-6 text-primary">📝</div>
+          </div>
+          <h2 className="text-2xl font-bold">{t('addNewTask')}</h2>
+        </div>
         <TodoForm />
       </div>
 
-      <div className="bg-card rounded-xl shadow-sm border p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h2 className="text-xl font-semibold">{t('yourTasks')}</h2>
-          <span className="text-sm text-muted-foreground">
+      <div className="bg-card rounded-2xl shadow-lg border p-5 sm:p-7 transition-all hover:shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 pb-4 border-b">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <div className="h-6 w-6 text-primary">📋</div>
+            </div>
+            <h2 className="text-2xl font-bold">{t('yourTasks')}</h2>
+          </div>
+          <span className="text-sm text-muted-foreground px-3 py-1 rounded-full bg-muted">
             { /* In a real app, this would show the count of todos */ }
           </span>
         </div>

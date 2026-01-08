@@ -21,7 +21,7 @@ export const FloatingNavbar: React.FC = () => {
     <>
       <AnimatePresence>
         <motion.header
-          className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-full glass-effect backdrop-blur-md border border-accent/20 shadow-lg transition-all duration-300 max-w-lg md:max-w-3xl lg:max-w-4xl w-full mx-auto ${
+          className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-4 rounded-2xl glass-effect backdrop-blur-md border border-accent/20 shadow-xl transition-all duration-300 max-w-lg md:max-w-3xl lg:max-w-4xl w-full mx-auto ${
             // On small screens, always show (no scroll effect)
             // On large screens, hide when scrolling down, show when scrolling up
             (scrollDirection === "down"
@@ -36,7 +36,10 @@ export const FloatingNavbar: React.FC = () => {
           <div className="flex justify-between items-center">
             {/* Logo/Brand */}
             <Link href="/" className="flex items-center space-x-2">
-              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
+              <div className="p-2 rounded-lg bg-gradient-to-r from-primary to-blue-500">
+                <div className="h-6 w-6 text-white">📋</div>
+              </div>
+              <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
                 TodoApp
               </span>
             </Link>
@@ -47,13 +50,13 @@ export const FloatingNavbar: React.FC = () => {
             </nav>
 
             {/* Right side controls */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <LanguageSwitcher />
               <ThemeToggle />
 
               {/* Mobile menu button - shown on small screens */}
               <button
-                className="md:hidden p-2 rounded-md hover:bg-accent"
+                className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               >

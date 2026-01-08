@@ -50,9 +50,9 @@ export const TodoList: React.FC = () => {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Filters and search */}
-      <div className="flex flex-col md:flex-row gap-3 items-center p-4 bg-muted/30 rounded-lg">
+      <div className="flex flex-col md:flex-row gap-4 items-center p-4 bg-muted/30 rounded-xl border">
         <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
@@ -60,18 +60,18 @@ export const TodoList: React.FC = () => {
             placeholder={t('searchTodos')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 w-full"
+            className="pl-10 w-full h-11"
           />
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted-foreground" />
             <Select
               value={filters.status}
               onValueChange={(value: 'all' | 'active' | 'completed') => setFilterStatus(value)}
             >
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-auto min-w-[120px] h-11">
                 <SelectValue placeholder={t('all')} />
               </SelectTrigger>
               <SelectContent>
@@ -86,21 +86,21 @@ export const TodoList: React.FC = () => {
             value={filters.priority}
             onValueChange={(value: 'all' | 'low' | 'medium' | 'high') => setFilterPriority(value)}
           >
-            <SelectTrigger className="w-[120px]">
+            <SelectTrigger className="w-auto min-w-[120px] h-11">
               <SelectValue placeholder={t('allPriorities')} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('allPriorities')}</SelectItem>
-              <SelectItem value="low">{t('lowPriority')}</SelectItem>
-              <SelectItem value="medium">{t('mediumPriority')}</SelectItem>
-              <SelectItem value="high">{t('highPriority')}</SelectItem>
+              <SelectItem value="low">{t('priority_low')}</SelectItem>
+              <SelectItem value="medium">{t('priority_medium')}</SelectItem>
+              <SelectItem value="high">{t('priority_high')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       {/* Todo items */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <AnimatePresence>
           {loading ? (
             // Show skeleton loading UI when loading
@@ -119,8 +119,16 @@ export const TodoList: React.FC = () => {
               </motion.div>
             ))
           ) : (
-            <div className="text-center py-10 text-muted-foreground">
-              <p>{t('noTodosFound')} {!searchTerm && t('addYourFirstTask')}</p>
+            <div className="text-center py-12">
+              <div className="mx-auto w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-4">
+                <div className="text-4xl">📋</div>
+              </div>
+              <h3 className="text-xl font-semibold mb-2">{t('noTodosFound')}</h3>
+              <p className="text-muted-foreground max-w-md mx-auto">
+                {!searchTerm
+                  ? t('addYourFirstTask')
+                  : `${t('noTodosMatchFilters')} "${searchTerm}"`}
+              </p>
             </div>
           )}
         </AnimatePresence>

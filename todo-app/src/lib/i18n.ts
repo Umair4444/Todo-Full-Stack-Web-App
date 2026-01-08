@@ -26,9 +26,10 @@ const TRANSLATIONS = {
     addTodo: "Add Todo",
     
     // Todo List
-    noTodosFound: "No todos found. Add your first todo!",
+    noTodosFound: "No todos found",
     tryADifferentSearch: "Try a different search.",
     searchTodos: "Search todos...",
+    noTodosMatchFilters: "No todos match your filters for",
     
     // Buttons
     getStarted: "Get Started",
@@ -67,6 +68,7 @@ const TRANSLATIONS = {
     
     // Common
     loading: "Loading...",
+    adding: "Adding...",
     error: "Error",
     success: "Success",
     cancel: "Cancel",
@@ -80,6 +82,7 @@ const TRANSLATIONS = {
     active: "Active",
     completed: "Completed",
     allPriorities: "All Priorities",
+    selectPriority: "Select Priority",
     
     // Todo Status
     completedStatus: "Completed",
@@ -131,6 +134,7 @@ const TRANSLATIONS = {
 
     // Home Page
     welcomeToTodoApp: "Welcome to TodoApp",
+    newFeature: "EXCLUSIVE FEATURE",
     modernAndVibrantTodoApp: "A modern and vibrant todo application to help you organize your life, boost productivity, and achieve your goals.",
     easyTaskManagement: "Easy Task Management",
     createAndUpdateTasks: "Create, update, and manage your tasks with a simple and intuitive interface.",
@@ -167,9 +171,10 @@ const TRANSLATIONS = {
     addTodo: "کام شامل کریں",
     
     // Todo List
-    noTodosFound: "کوئی کام نہیں ملا۔ اپنا پہلا کام شامل کریں!",
+    noTodosFound: "کوئی کام نہیں ملا",
     tryADifferentSearch: "کوئی اور تلاش کریں.",
     searchTodos: "کاموں کی تلاش کریں...",
+    noTodosMatchFilters: "آپ کے فلٹرز سے کوئی کام مماثل نہیں",
     
     // Buttons
     getStarted: "شروع کریں",
@@ -208,6 +213,7 @@ const TRANSLATIONS = {
     
     // Common
     loading: "لوڈ ہو رہا ہے...",
+    adding: "شامل کیا جا رہا ہے...",
     error: "خرابی",
     success: "کامیابی",
     cancel: "منسوخ کریں",
@@ -221,6 +227,7 @@ const TRANSLATIONS = {
     active: "فعال",
     completed: "مکمل",
     allPriorities: "تمام اہمیتیں",
+    selectPriority: "اہمیت منتخب کریں",
     
     // Todo Status
     completedStatus: "مکمل",
@@ -272,6 +279,7 @@ const TRANSLATIONS = {
 
     // Home Page
     welcomeToTodoApp: "TodoApp میں خوش آمدید",
+    newFeature: "نیا",
     modernAndVibrantTodoApp: "آپ کی زندگی کو منظم کرنے، پیداواریت بڑھانے اور اپنے مقاصد حاصل کرنے میں مدد کے لیے ایک جدید اور زبردست کام کی فہرست کا اطلاقیہ۔",
     easyTaskManagement: "آسان کام کا انتظام",
     createAndUpdateTasks: "آسان اور سمجھدار انٹرفیس کے ساتھ اپنے کاموں کو بنائیں، اپ ڈیٹ کریں اور منظم کریں۔",
