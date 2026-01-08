@@ -1,0 +1,99 @@
+{
+  "common": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navbar": {
+    "home": "Home",
+    "todo_app": "Todo App",
+    "about": "About",
+    "contact": "Contact",
+    "theme_toggle": "Toggle theme",
+    "select_language": "Select language"
+  },
+  "todo": {
+    "title": "Todo",
+    "add_new_task": "Add New Task",
+    "task_title": "Task Title",
+    "task_description": "Task Description",
+    "priority": "Priority",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "mark_completed": "Mark as Completed",
+    "mark_incomplete": "Mark as Incomplete",
+    "no_todos_found": "No todos found. Try a different search.",
+    "add_first_todo": "Add your first todo!",
+    "search_placeholder": "Search todos...",
+    "status_filter": "Status",
+    "all_status": "All",
+    "active_status": "Active",
+    "completed_status": "Completed",
+    "priority_filter": "Priority",
+    "all_priorities": "All Priorities",
+    "created": "Created:",
+    "updated": "Updated:"
+  },
+  "about": {
+    "title": "About TodoApp",
+    "our_story": "Our Story",
+    "mission": "Our Mission",
+    "vision": "Our Vision",
+    "features": "Features",
+    "learn_more": "Learn more about our mission and vision"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Have questions or feedback? Reach out to our team",
+    "get_in_touch": "Get in Touch",
+    "email_label": "Email",
+    "phone_label": "Phone",
+    "office_label": "Office",
+    "send_message": "Send Message",
+    "name": "Name",
+    "subject": "Subject",
+    "message": "Message",
+    "name_placeholder": "John Doe",
+    "email_placeholder": "john@example.com",
+    "subject_placeholder": "How can we help you?",
+    "message_placeholder": "Your message here...",
+    "message_sent_success": "Message sent successfully! We will get back to you soon."
+  },
+  "footer": {
+    "quick_links": "Quick Links",
+    "resources": "Resources",
+    "connect": "Connect",
+    "copyright": "All rights reserved."
+  },
+  "chatbot": {
+    "title": "Todo Assistant",
+    "placeholder": "Type your message...",
+    "open_chat": "Open chatbot",
+    "close_chat": "Close chat"
+  },
+  "errors": {
+    "invalid_title": "Title is required and must be less than 100 characters",
+    "invalid_description": "Description must be less than 500 characters",
+    "invalid_priority": "Priority is required",
+    "invalid_name": "Name must be at least 2 characters",
+    "invalid_email": "Please enter a valid email address",
+    "invalid_subject": "Subject must be at least 5 characters",
+    "invalid_message": "Message must be at least 10 characters"
+  }
+}

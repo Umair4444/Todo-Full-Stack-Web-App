@@ -1,0 +1,99 @@
+{
+  "common": {
+    "add": "شامل کریں",
+    "edit": "ترمیم کریں",
+    "delete": "حذف کریں",
+    "save": "محفوظ کریں",
+    "cancel": "منسوخ کریں",
+    "close": "بند کریں",
+    "back": "واپس",
+    "next": "اگلا",
+    "previous": "پچھلا",
+    "search": "تلاش کریں",
+    "filter": "فلٹر",
+    "clear": "صاف کریں",
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "خرابی",
+    "success": "کامیابی",
+    "confirm": "تصدیق کریں",
+    "yes": "ہاں",
+    "no": "نہیں"
+  },
+  "navbar": {
+    "home": "ہوم",
+    "todo_app": "کام کی فہرست",
+    "about": "ہم about",
+    "contact": "رابطہ",
+    "theme_toggle": "تھیم تبدیل کریں",
+    "select_language": "زبان منتخب کریں"
+  },
+  "todo": {
+    "title": "کام کی فہرست",
+    "add_new_task": "نیا کام شامل کریں",
+    "task_title": "کام کا عنوان",
+    "task_description": "کام کی تفصیل",
+    "priority": "اہمیت",
+    "low": "کم",
+    "medium": "درمیانہ",
+    "high": "زیادہ",
+    "mark_completed": "مکمل کے بطور نشان زد کریں",
+    "mark_incomplete": "نامکمل کے بطور نشان زد کریں",
+    "no_todos_found": "کوئی کام نہیں ملا۔ کوئی اور تلاش کریں۔",
+    "add_first_todo": "اپنا پہلا کام شامل کریں!",
+    "search_placeholder": "کاموں کی تلاش کریں...",
+    "status_filter": "حالت",
+    "all_status": "تمام",
+    "active_status": "فعال",
+    "completed_status": "مکمل",
+    "priority_filter": "اہمیت",
+    "all_priorities": "تمام اہمیتیں",
+    "created": "تخلیق کردہ:",
+    "updated": "تازہ کردہ:"
+  },
+  "about": {
+    "title": "TodoApp کے بارے میں",
+    "our_story": "ہماری کہانی",
+    "mission": "ہمارا مشن",
+    "vision": "ہمارا ویژن",
+    "features": "خصوصیات",
+    "learn_more": "ہمارے مشن اور ویژن کے بارے میں مزید جانیں"
+  },
+  "contact": {
+    "title": "ہم سے رابطہ کریں",
+    "subtitle": "سوالات یا تاثرات ہیں؟ ہماری ٹیم سے رابطہ کریں",
+    "get_in_touch": "رابطے میں رہیں",
+    "email_label": "ای میل",
+    "phone_label": "فون",
+    "office_label": "دفتر",
+    "send_message": "پیغام بھیجیں",
+    "name": "نام",
+    "subject": "موضوع",
+    "message": "پیغام",
+    "name_placeholder": "جان ڈو",
+    "email_placeholder": "john@example.com",
+    "subject_placeholder": "ہم آپ کی کیسے مدد کر سکتے ہیں؟",
+    "message_placeholder": "آپ کا پیغام یہاں...",
+    "message_sent_success": "پیغام کامیابی سے بھیج دیا گیا! ہم جلد ہی آپ سے رابطہ کریں گے۔"
+  },
+  "footer": {
+    "quick_links": "فوری روابط",
+    "resources": "وسائل",
+    "connect": "منسلک ہوں",
+    "copyright": "تمام حقوق محفوظ ہیں۔"
+  },
+  "chatbot": {
+    "title": "کام کی معاونت",
+    "placeholder": "اپنا پیغام ٹائپ کریں...",
+    "open_chat": "چیٹ بوٹ کھولیں",
+    "close_chat": "چیٹ بند کریں"
+  },
+  "errors": {
+    "invalid_title": "عنوان درکار ہے اور 100 حروف سے کم ہونا چاہیے",
+    "invalid_description": "تفصیل 500 حروف سے کم ہونی چاہیے",
+    "invalid_priority": "اہمیت درکار ہے",
+    "invalid_name": "نام کم از کم 2 حروف کا ہونا چاہیے",
+    "invalid_email": "براہ کرم ایک درست ای میل ایڈریس درج کریں",
+    "invalid_subject": "موضوع کم از کم 5 حروف کا ہونا چاہیے",
+    "invalid_message": "پیغام کم از کم 10 حروف کا ہونا چاہیے"
+  }
+}
