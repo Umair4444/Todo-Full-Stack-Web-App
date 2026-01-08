@@ -60,7 +60,7 @@ const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
       role="listitem"
       aria-labelledby={`todo-title-${todo.id}`}
       tabIndex={0}
-      onKeyDown={(e) => {
+      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'Enter' || e.key === ' ') {
           handleToggleCompletion();
         }
@@ -78,7 +78,7 @@ const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
           }`}
           aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
           title={todo.completed ? "Mark as incomplete" : "Mark as complete"}
-          onKeyDown={(e) => {
+          onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               handleToggleCompletion();
@@ -145,7 +145,7 @@ const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
             className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             aria-label="Edit todo"
             title="Edit todo"
-            onKeyDown={(e) => {
+            onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 handleEdit();
@@ -164,7 +164,7 @@ const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
             className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             aria-label="Delete todo"
             title="Delete todo"
-            onKeyDown={(e) => {
+            onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 handleDelete();

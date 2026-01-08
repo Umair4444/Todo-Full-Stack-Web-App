@@ -1,7 +1,7 @@
 // Mobile-friendly chat window component
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, MouseEvent } from 'react';
 import { Send, X, Bot, User, Sparkles, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,8 +60,16 @@ export const MobileChatWindow: React.FC<{ onClose: () => void }> = ({ onClose })
     "Delete a task"
   ];
 
-  const handleSend = (messageText?: string) => {
-    const textToSend = messageText || inputValue;
+  const handleSend = (messageText?: string | MouseEvent<HTMLButtonElement>) => {
+    // Handle the case where handleSend is called from an event handler
+    let textToSend = inputValue;
+
+    if (typeof messageText === 'string') {
+      textToSend = messageText;
+    } else if (messageText !== undefined) {
+      // If messageText is an event object, we'll use the inputValue
+      // This handles the case where the function is called as an event handler
+    }
     
     if (textToSend.trim() === '') return;
 
@@ -127,7 +135,7 @@ export const MobileChatWindow: React.FC<{ onClose: () => void }> = ({ onClose })
     handleSend(reply);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
