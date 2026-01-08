@@ -56,9 +56,7 @@ const todoSchema = z.object({
     .max(500, { message: 'Description must be less than 500 characters' })
     .optional()
     .or(z.literal('')),
-  priority: z.enum(['low', 'medium', 'high'], {
-    required_error: 'Priority is required',
-  }),
+  priority: z.enum(['low', 'medium', 'high']).default('medium'),
   completed: z.boolean().optional(),
 });
 
