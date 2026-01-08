@@ -18,11 +18,10 @@ export const FloatingNavbar: React.FC = () => {
       <motion.header
         className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-full glass-effect backdrop-blur-md border border-accent/20 shadow-lg transition-all duration-300 max-w-lg md:max-w-3xl lg:max-w-4xl w-full mx-auto ${
           // On small screens, always show (no scroll effect)
-          "opacity-100 translate-y-0 " +
           // On large screens, hide when scrolling down, show when scrolling up
           (scrollDirection === "down"
-            ? "top-10 lg:opacity-0 lg:-translate-y-8"
-            : "lg:opacity-100 lg:translate-y-0")
+            ? "lg:opacity-0 -translate-y-40"
+            : "lg:opacity-100 translate-y-0")
         }`}
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -92,7 +91,7 @@ export const FloatingNavbar: React.FC = () => {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              className="md:hidden mt-4 pb-4 rounded-none"
+              className="md:hidden mt-4 pb-4 rounded-xl"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
