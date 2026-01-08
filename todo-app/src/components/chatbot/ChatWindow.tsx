@@ -1,7 +1,7 @@
 // Chat window component
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, MouseEvent } from 'react';
 import { Send, X, Bot, User, Sparkles, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,8 +60,17 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     "Delete a task"
   ];
 
-  const handleSend = (messageText?: string) => {
-    const textToSend = messageText || inputValue;
+  const handleSend = (messageText?: string | MouseEvent<HTMLButtonElement>) => {
+    // Check if messageText is an event object or a string
+    let textToSend: string;
+    if (typeof messageText === 'string') {
+      textToSend = messageText;
+    } else if (messageText === undefined) {
+      textToSend = inputValue;
+    } else {
+      // If it's an event, just use the current inputValue
+      textToSend = inputValue;
+    }
 
     if (textToSend.trim() === '') return;
 
