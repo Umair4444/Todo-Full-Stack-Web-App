@@ -1,8 +1,8 @@
-// Chat window component
+// Mobile-friendly chat window component
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, X, Bot, User, Sparkles, RotateCcw } from 'lucide-react';
+import { Send, X, Bot, User, Sparkles, RotateCcw, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { QuickReply } from './QuickReply';
@@ -14,7 +14,7 @@ interface Message {
   timestamp: Date;
 }
 
-export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+export const MobileChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>(() => {
     // Load messages from localStorage if available
@@ -31,7 +31,7 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         }
       }
     }
-
+    
     // Default initial message
     return [
       {
@@ -62,7 +62,7 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleSend = (messageText?: string) => {
     const textToSend = messageText || inputValue;
-
+    
     if (textToSend.trim() === '') return;
 
     // Add user message
@@ -81,7 +81,7 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     // Simulate bot response after a delay
     setTimeout(() => {
       let botResponse = '';
-
+      
       // Generate context-aware responses
       const lowerText = textToSend.toLowerCase();
       if (lowerText.includes('hello') || lowerText.includes('hi')) {
@@ -152,49 +152,44 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   }, [messages]);
 
   return (
-    <div
-      className="w-80 h-[500px] flex flex-col bg-background border rounded-xl shadow-2xl overflow-hidden glass-effect backdrop-blur-md border-primary/20 transition-all duration-300 hover:shadow-3xl"
+    <div 
+      className="fixed inset-0 z-50 flex flex-col bg-background h-screen w-screen"
       role="dialog"
       aria-modal="true"
-      aria-labelledby="chat-window-title"
+      aria-labelledby="mobile-chat-window-title"
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-b">
         <div className="flex items-center space-x-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={onClose} 
+            aria-label="Go back"
+            className="h-8 w-8 p-0 hover:bg-accent"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
           <div className="p-1.5 bg-primary/10 rounded-full" aria-hidden="true">
             <Bot className="h-5 w-5 text-primary" />
           </div>
-          <h3 id="chat-window-title" className="font-semibold text-foreground">Todo Assistant</h3>
-          <div className="flex space-x-1 ml-2" aria-label="Online status">
-            <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" aria-hidden="true"></div>
-            <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse delay-75" aria-hidden="true"></div>
-            <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse delay-150" aria-hidden="true"></div>
-          </div>
+          <h3 id="mobile-chat-window-title" className="font-semibold text-foreground">Todo Assistant</h3>
         </div>
         <div className="flex space-x-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearChat}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={clearChat} 
             aria-label="Clear chat history"
             className="h-8 w-8 p-0 hover:bg-accent"
           >
             <RotateCcw className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            aria-label="Close chat"
-            className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive"
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
       {/* Messages */}
-      <div
+      <div 
         className="flex-1 overflow-y-auto p-4 space-y-4 bg-muted/5"
         aria-live="polite"
         aria-relevant="additions"
@@ -206,10 +201,10 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             role="listitem"
           >
             <div
-              className={`max-w-full rounded-2xl p-4 relative ${
+              className={`max-w-[85%] rounded-2xl p-4 relative ${
                 message.sender === 'user'
-                  ? 'bg-primary md:text-sm text-primary-foreground rounded-br-none'
-                  : 'bg-card md:text-sm text-card-foreground rounded-bl-none border'
+                  ? 'bg-primary text-primary-foreground rounded-br-none'
+                  : 'bg-card text-card-foreground rounded-bl-none border'
               }`}
               role="listitem"
               aria-label={`${message.sender === 'user' ? 'You said' : 'Assistant said'}: ${message.text}`}
@@ -239,10 +234,10 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
           </div>
         ))}
-
+        
         {isTyping && (
           <div className="flex justify-start" role="status" aria-live="polite">
-            <div className="max-w-[80%] rounded-2xl p-4 bg-card text-card-foreground rounded-bl-none border">
+            <div className="max-w-[85%] rounded-2xl p-4 bg-card text-card-foreground rounded-bl-none border">
               <div className="flex items-center space-x-2">
                 <div className="p-1 bg-primary/10 rounded-full" aria-hidden="true">
                   <Bot className="h-4 w-4 text-primary" />
@@ -256,24 +251,24 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             </div>
           </div>
         )}
-
+        
         {showQuickReplies && !isTyping && messages.length > 1 && (
-          <div className="flex flex-wrap gap-2 justify-start max-w-[80%]" role="group" aria-label="Suggested replies">
+          <div className="flex flex-wrap gap-2 justify-start max-w-[85%]" role="group" aria-label="Suggested replies">
             {quickReplies.map((reply, index) => (
-              <QuickReply
-                key={index}
-                text={reply}
-                onClick={() => handleQuickReply(reply)}
+              <QuickReply 
+                key={index} 
+                text={reply} 
+                onClick={() => handleQuickReply(reply)} 
               />
             ))}
           </div>
         )}
-
+        
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
-      <div className="border-t bg-background p-3">
+      <div className="border-t bg-background p-3 sticky bottom-0">
         <div className="flex items-center space-x-2">
           <Input
             type="text"
@@ -287,9 +282,9 @@ export const ChatWindow: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             role="textbox"
             aria-multiline="false"
           />
-          <Button
-            size="sm"
-            onClick={handleSend}
+          <Button 
+            size="sm" 
+            onClick={handleSend} 
             disabled={!inputValue.trim() || isTyping}
             className="h-10 w-10 p-0 rounded-xl"
             aria-label="Send message"
