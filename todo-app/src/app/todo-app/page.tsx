@@ -13,10 +13,10 @@ const TodoAppPage: React.FC = () => {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-4 text-center">
         <div className="flex items-center justify-center gap-2 mb-3">
-          <h1 className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">
+          <h1 className="text-3xl md:text-4xl font-bold pb-1 lg:pb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">
             {t('todoApp')}
           </h1>
-          <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
+          <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800 dark:bg-green-900 dark:text-green-100">
             {t('newFeature')}
           </span>
         </div>

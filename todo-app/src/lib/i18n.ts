@@ -279,7 +279,7 @@ const TRANSLATIONS = {
 
     // Home Page
     welcomeToTodoApp: "TodoApp میں خوش آمدید",
-    newFeature: "نیا",
+    newFeature: "خصوصی فیچر",
     modernAndVibrantTodoApp: "آپ کی زندگی کو منظم کرنے، پیداواریت بڑھانے اور اپنے مقاصد حاصل کرنے میں مدد کے لیے ایک جدید اور زبردست کام کی فہرست کا اطلاقیہ۔",
     easyTaskManagement: "آسان کام کا انتظام",
     createAndUpdateTasks: "آسان اور سمجھدار انٹرفیس کے ساتھ اپنے کاموں کو بنائیں، اپ ڈیٹ کریں اور منظم کریں۔",
