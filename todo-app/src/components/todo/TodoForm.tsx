@@ -56,8 +56,8 @@ const todoSchema = z.object({
     .max(500, { message: 'Description must be less than 500 characters' })
     .optional()
     .or(z.literal('')),
-  priority: z.enum(['low', 'medium', 'high']).default('medium'),
-  completed: z.boolean().optional(),
+  priority: z.enum(['low', 'medium', 'high']),
+  completed: z.boolean(),
 });
 
 type TodoFormValues = z.infer<typeof todoSchema>;
@@ -73,7 +73,7 @@ export const TodoForm: React.FC<TodoFormProps> = ({
   initialData = {
     title: '',
     description: '',
-    priority: 'medium',
+    priority: 'medium' as const,
     completed: false
   },
   onSubmitSuccess
@@ -86,7 +86,12 @@ export const TodoForm: React.FC<TodoFormProps> = ({
   // Initialize the form with react-hook-form
   const form = useForm<TodoFormValues>({
     resolver: zodResolver(todoSchema),
-    defaultValues: initialData,
+    defaultValues: {
+      title: initialData.title,
+      description: initialData.description || '',
+      priority: initialData.priority || 'medium',
+      completed: initialData.completed ?? false,
+    },
   });
 
   // Handle form submission

@@ -19,6 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "TodoApp - Modern Task Management",
   description: "A modern and vibrant todo application to help you organize your life and increase productivity.",
+  metadataBase: new URL("https://todoapp.example.com"),
   keywords: "todo, task management, productivity, organizer, tasks, checklist",
   authors: [{ name: "TodoApp Team" }],
   creator: "TodoApp Team",

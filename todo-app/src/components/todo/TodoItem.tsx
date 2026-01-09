@@ -107,7 +107,7 @@ const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
               className={`${PRIORITY_COLORS[todo.priority]} text-xs px-2 py-1 h-6 flex-shrink-0`}
               aria-label={`Priority: ${todo.priority}`}
             >
-              {t(`priority_${todo.priority}`)}
+              {t(`${todo.priority}Priority`)}
             </Badge>
           </div>
 

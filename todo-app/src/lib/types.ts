@@ -47,7 +47,6 @@ export interface FilterOptions {
 // Define constants for validation
 export const TODO_TITLE_MAX_LENGTH = 100;
 export const TODO_DESCRIPTION_MAX_LENGTH = 500;
-export const TODO_ITEMS_PER_PAGE = 10;
 
 // Define priority levels
 export const PRIORITY_LEVELS = ['low', 'medium', 'high'] as const;

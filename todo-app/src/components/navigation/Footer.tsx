@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
               <li><Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('home')}</Link></li>
               <li><Link href="/todo-app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('todoApp')}</Link></li>
               <li><Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('about')}</Link></li>
-              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('contact')}</Link></li>
+              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footerContact')}</Link></li>
             </ul>
           </div>
 
@@ -37,7 +37,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('support')}</a></li>
               <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('aboutUs')}</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('contact')}</a></li>
+              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footerContact')}</a></li>
               <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('privacyPolicy')}</a></li>
             </ul>
           </div>

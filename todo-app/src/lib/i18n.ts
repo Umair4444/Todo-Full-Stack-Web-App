@@ -60,7 +60,7 @@ const TRANSLATIONS = {
     allRightsReserved: "All rights reserved.",
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
-    contact: "Contact",
+    footerContact: "Contact",
     
     // Theme
     toggleTheme: "Toggle theme",
@@ -205,7 +205,7 @@ const TRANSLATIONS = {
     allRightsReserved: "تمام حقوق محفوظ ہیں۔",
     privacyPolicy: "رازداری کی پالیسی",
     termsOfService: "سروس کی شرائط",
-    contact: "رابطہ",
+    footerContact: "رابطہ",
     
     // Theme
     toggleTheme: "تھیم تبدیل کریں",

@@ -154,7 +154,7 @@ const dateDeserializer = (state: any): AppState => {
   const newState = { ...state };
 
   if (newState.todos && Array.isArray(newState.todos)) {
-    newState.todos = newState.todos.map(todo => ({
+    newState.todos = newState.todos.map((todo: TodoItem) => ({
       ...todo,
       createdAt: typeof todo.createdAt === 'string' ? new Date(todo.createdAt) : todo.createdAt,
       updatedAt: typeof todo.updatedAt === 'string' ? new Date(todo.updatedAt) : todo.updatedAt,
@@ -163,7 +163,7 @@ const dateDeserializer = (state: any): AppState => {
   }
 
   if (newState.chatbot && newState.chatbot.messages && Array.isArray(newState.chatbot.messages)) {
-    newState.chatbot.messages = newState.chatbot.messages.map(message => ({
+    newState.chatbot.messages = newState.chatbot.messages.map((message: ChatMessage) => ({
       ...message,
       timestamp: typeof message.timestamp === 'string' ? new Date(message.timestamp) : message.timestamp,
     }));
@@ -498,9 +498,12 @@ export const useAppStore = create<AppState>()(
         preferences: state.preferences,
         chatbot: state.chatbot
       }), // only persist these fields
-      deserialize: (str) => {
-        const state = JSON.parse(str);
-        return dateDeserializer(state);
+      merge: (persistedState, currentState) => {
+        const mergedState = {
+          ...currentState,
+          ...(persistedState as Partial<AppState>),
+        };
+        return dateDeserializer(mergedState);
       }
     }
   )

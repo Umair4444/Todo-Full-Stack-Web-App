@@ -91,9 +91,9 @@ export const TodoList: React.FC = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('allPriorities')}</SelectItem>
-              <SelectItem value="low">{t('priority_low')}</SelectItem>
-              <SelectItem value="medium">{t('priority_medium')}</SelectItem>
-              <SelectItem value="high">{t('priority_high')}</SelectItem>
+              <SelectItem value="low">{t('lowPriority')}</SelectItem>
+              <SelectItem value="medium">{t('mediumPriority')}</SelectItem>
+              <SelectItem value="high">{t('highPriority')}</SelectItem>
             </SelectContent>
           </Select>
         </div>

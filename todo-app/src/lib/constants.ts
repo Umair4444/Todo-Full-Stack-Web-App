@@ -77,3 +77,6 @@ export const STATUS_COLORS = {
   active: 'bg-blue-100 text-blue-800',
   completed: 'bg-gray-100 text-gray-800',
 } as const;
+
+// Pagination
+export const TODO_ITEMS_PER_PAGE = 10;

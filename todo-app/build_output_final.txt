@@ -3,7 +3,7 @@
 
    Creating an optimized production build ...
 [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
- ✓ Compiled successfully in 10.0s
+ ✓ Compiled successfully in 18.1s
    Running TypeScript ...
    Collecting page data ...
 [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
@@ -11,11 +11,10 @@
 [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
    Generating static pages (0/7) ...
 [baseline-browser-mapping] The data in this module is over two months old.  To ensure accurate Baseline data, please update: `npm i baseline-browser-mapping@latest -D`
- ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
    Generating static pages (1/7) 
    Generating static pages (3/7) 
    Generating static pages (5/7) 
- ✓ Generating static pages (7/7) in 1202.9ms
+ ✓ Generating static pages (7/7) in 2.9s
    Finalizing page optimization ...
 
 Route (app)

@@ -1,5 +1,5 @@
 // Service for managing local storage operations
-import { TodoItem, UserPreferences, ChatbotSession } from './types';
+import { TodoItem, UserPreferences, ChatbotSession } from '../lib/types';
 
 // Generic function to get item from localStorage
 export function getItem<T>(key: string): T | null {
