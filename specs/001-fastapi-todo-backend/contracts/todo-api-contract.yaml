@@ -1,0 +1,302 @@
+openapi: 3.0.3
+info:
+  title: Todo API
+  description: API for managing todo items in the todo application
+  version: 1.0.0
+  contact:
+    name: Todo App Team
+    email: team@todoapp.example.com
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Local development server
+  - url: https://todo-backend.example.com/api/v1
+    description: Production server
+
+tags:
+  - name: todos
+    description: Operations related to todo items
+
+paths:
+  /todos:
+    get:
+      tags:
+        - todos
+      summary: Get all todo items
+      description: Retrieve a list of all todo items with optional filtering
+      operationId: get_todos
+      parameters:
+        - name: offset
+          in: query
+          description: Offset for pagination
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+        - name: limit
+          in: query
+          description: Limit for pagination
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: completed
+          in: query
+          description: Filter by completion status
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successful response with list of todo items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  todos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TodoItemResponse'
+                  total:
+                    type: integer
+                    description: Total number of todo items matching the filter
+                  offset:
+                    type: integer
+                    description: Offset used in the request
+                  limit:
+                    type: integer
+                    description: Limit used in the request
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - todos
+      summary: Create a new todo item
+      description: Add a new todo item to the list
+      operationId: create_todo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoItemCreate'
+      responses:
+        '201':
+          description: Todo item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoItemResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /todos/{id}:
+    get:
+      tags:
+        - todos
+      summary: Get a specific todo item
+      description: Retrieve a single todo item by its ID
+      operationId: get_todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the todo item to retrieve
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response with the requested todo item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoItemResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - todos
+      summary: Update a specific todo item
+      description: Update an existing todo item by its ID
+      operationId: update_todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the todo item to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoItemUpdate'
+      responses:
+        '200':
+          description: Todo item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoItemResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - todos
+      summary: Delete a specific todo item
+      description: Remove a todo item by its ID
+      operationId: delete_todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the todo item to delete
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Todo item deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    TodoItemBase:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the todo item
+          example: "Buy groceries"
+        description:
+          type: string
+          description: Detailed description of the todo item
+          example: "Milk, eggs, bread, fruits"
+        is_completed:
+          type: boolean
+          description: Status of the todo item (completed/incomplete)
+          example: false
+      required:
+        - title
+
+    TodoItemCreate:
+      allOf:
+        - $ref: '#/components/schemas/TodoItemBase'
+      description: Schema for creating a new todo item
+
+    TodoItemUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Title of the todo item
+          example: "Buy groceries"
+        description:
+          type: string
+          description: Detailed description of the todo item
+          example: "Milk, eggs, bread, fruits"
+        is_completed:
+          type: boolean
+          description: Status of the todo item (completed/incomplete)
+          example: true
+      description: Schema for updating an existing todo item
+
+    TodoItemResponse:
+      allOf:
+        - $ref: '#/components/schemas/TodoItemBase'
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: Unique identifier for the todo item
+              example: 1
+            created_at:
+              type: string
+              format: date-time
+              description: Timestamp when the todo item was created
+              example: "2023-10-20T10:00:00Z"
+            updated_at:
+              type: string
+              format: date-time
+              description: Timestamp when the todo item was last updated
+              example: "2023-10-20T10:00:00Z"
+      description: Schema for todo item response
+
+    ErrorResponse:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message
+          example: "Invalid input data"
+      required:
+        - detail
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid input data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    ValidationError:
+      description: Validation error - request data does not meet requirements
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  securitySchemes:
+    RateLimit:
+      type: apiKey
+      in: header
+      name: X-RateLimit-Remaining
+      description: Rate limiting is applied at 100 requests per hour per IP address
+
+security:
+  - RateLimit: []

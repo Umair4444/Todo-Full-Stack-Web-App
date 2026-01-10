@@ -71,10 +71,17 @@ As a user of the todo application, I want the frontend and backend to stay synch
 
 ### Edge Cases
 
-- What happens when the database connection fails during a request?
-- How does the system handle concurrent updates to the same todo item?
-- What occurs when the Neon Serverless PostgreSQL scales up or down during active usage?
-- How does the system handle malformed requests from the frontend?
+- **Database Connection Failure**:
+  - Given the database is unavailable, When a user makes a request, Then the system returns a 503 Service Unavailable error with a meaningful message
+
+- **Concurrent Updates to Same Todo Item**:
+  - Given two users try to update the same todo item simultaneously, When they submit updates, Then the system handles the conflict gracefully with appropriate locking or optimistic concurrency control
+
+- **Neon Serverless Scaling Events**:
+  - Given Neon PostgreSQL scales up or down during active usage, When users make requests, Then the system maintains consistent response times and handles connection pooling appropriately
+
+- **Malformed Requests from Frontend**:
+  - Given a malformed request is sent to the backend, When the request is processed, Then the system returns a 400 Bad Request error with validation details
 
 ## Requirements *(mandatory)*
 
@@ -87,6 +94,9 @@ As a user of the todo application, I want the frontend and backend to stay synch
 - **FR-005**: System MUST provide rate limiting of 100 requests per hour per IP address
 - **FR-006**: System MUST provide error responses with appropriate status codes
 - **FR-007**: System MUST support concurrent access by multiple users without data corruption
+- **FR-008**: System MUST use TLS 1.3 for all data transmission
+- **FR-009**: System MUST return appropriate HTTP status codes (200, 201, 400, 404, 500, etc.) for all endpoints
+- **FR-010**: System MUST return structured error messages with human-readable details
 
 ### Technology Requirements
 
@@ -117,7 +127,7 @@ As a user of the todo application, I want the frontend and backend to stay synch
 
 ### Measurable Outcomes
 
-- **SC-001**: Users can create, read, update, and delete todo items with response times under 500ms for 95% of requests
+- **SC-001**: Users can create, read, update, and delete todo items with response times under 200ms for 95% of requests
 - **SC-002**: System maintains 99.5% uptime during standard business hours
 - **SC-003**: 95% of user requests return successful responses
 - **SC-004**: All todo data persists correctly between application sessions with 99.9% accuracy
