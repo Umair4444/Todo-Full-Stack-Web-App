@@ -1,185 +1,182 @@
-/**
- * TodoItem Component
- *
- * A component representing a single todo item with accessibility features.
- * Allows users to mark as complete/incomplete, edit, and delete todos.
- *
- * @component
- * @param {Object} props - Component props
- * @param {TodoItem} props.todo - The todo item to display
- */
-'use client';
-
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Edit3, Trash2, CheckCircle, Circle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+// src/components/todo/TodoItem.tsx
+import React, { useState } from 'react';
 import { TodoItem as TodoItemType } from '@/lib/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Edit3, Trash2, Save, X } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAppStore } from '@/lib/store';
-import { formatDate } from '@/lib/utils';
-import { PRIORITY_COLORS } from '@/lib/constants';
-import { useTranslation } from '@/lib/i18n';
+import { toast } from 'sonner';
 
 interface TodoItemProps {
-  /** The todo item to display */
   todo: TodoItemType;
 }
 
-const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
-  const { t } = useTranslation();
-  const updateTodo = useAppStore(state => state.actions.updateTodo);
-  const deleteTodo = useAppStore(state => state.actions.deleteTodo);
-  const toggleTodoCompletion = useAppStore(state => state.actions.toggleTodoCompletion);
+export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(todo.title);
+  const [editedDescription, setEditedDescription] = useState(todo.description || '');
+  const [editedPriority, setEditedPriority] = useState(todo.priority);
+  
+  const { actions } = useAppStore();
 
-  const handleToggleCompletion = () => {
-    toggleTodoCompletion(todo.id);
+  const handleToggle = async () => {
+    try {
+      // Optimistically update the UI
+      actions.toggleTodoCompletion(todo.id);
+      
+      // Call the API to update the todo
+      // In a real implementation, you would call the API here
+      // await toggleTodoCompletion(todo.id);
+      
+      toast.success('Task updated successfully');
+    } catch (error) {
+      // Revert the optimistic update if the API call fails
+      actions.toggleTodoCompletion(todo.id);
+      toast.error('Failed to update task');
+    }
   };
 
-  const handleDelete = () => {
-    deleteTodo(todo.id);
+  const handleDelete = async () => {
+    try {
+      // Call the API to delete the todo
+      // In a real implementation, you would call the API here
+      // await deleteTodo(todo.id);
+      
+      // Update the local state
+      actions.deleteTodo(todo.id);
+      toast.success('Task deleted successfully');
+    } catch (error) {
+      toast.error('Failed to delete task');
+    }
   };
 
-  const handleEdit = () => {
-    // In a real implementation, this would open an edit modal or form
-    console.log('Edit todo:', todo.id);
+  const handleSave = async () => {
+    try {
+      // Update the todo with the edited values
+      const updatedTodo = {
+        ...todo,
+        title: editedTitle,
+        description: editedDescription,
+        priority: editedPriority as 'low' | 'medium' | 'high',
+      };
+      
+      // Call the API to update the todo
+      // In a real implementation, you would call the API here
+      // await updateTodo(todo.id, updatedTodo);
+      
+      // Update the local state
+      actions.updateTodo(todo.id, updatedTodo);
+      setIsEditing(false);
+      toast.success('Task updated successfully');
+    } catch (error) {
+      toast.error('Failed to update task');
+    }
+  };
+
+  const handleCancel = () => {
+    // Reset the edited values to the original values
+    setEditedTitle(todo.title);
+    setEditedDescription(todo.description || '');
+    setEditedPriority(todo.priority);
+    setIsEditing(false);
   };
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className={`p-5 rounded-xl border transition-all duration-200 ${
-        todo.completed
-          ? 'bg-secondary/20 border-secondary/50 shadow-sm'
-          : 'bg-card hover:shadow-md border-border'
-      }`}
-      role="listitem"
-      aria-labelledby={`todo-title-${todo.id}`}
-      tabIndex={0}
-      onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          handleToggleCompletion();
-        }
-      }}
-    >
-      <div className="flex items-start gap-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={handleToggleCompletion}
-          className={`h-8 w-8 rounded-full flex-shrink-0 mt-0.5 ${
-            todo.completed
-              ? 'bg-green-500/10 border-green-500 text-green-500 hover:bg-green-500/20'
-              : 'border-2 hover:border-primary'
-          }`}
-          aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
-          title={todo.completed ? "Mark as incomplete" : "Mark as complete"}
-          onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleToggleCompletion();
-            }
-          }}
-        >
-          {todo.completed ? (
-            <CheckCircle
-              className="h-4 w-4"
-              aria-label="Completed todo"
-            />
-          ) : (
-            <div className="h-4 w-4 rounded-full border border-current" />
-          )}
-        </Button>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <h3
-              id={`todo-title-${todo.id}`}
-              className={`font-semibold truncate ${todo.completed ? 'line-through text-muted-foreground' : 'text-foreground'}`}
-            >
-              {todo.title}
-            </h3>
-            <Badge
-              className={`${PRIORITY_COLORS[todo.priority]} text-xs px-2 py-1 h-6 flex-shrink-0`}
-              aria-label={`Priority: ${todo.priority}`}
-            >
-              {t(`${todo.priority}Priority`)}
-            </Badge>
+    <Card className={`transition-all ${todo.completed ? 'opacity-70' : ''}`}>
+      <CardContent className="p-4">
+        <div className="flex items-start gap-4">
+          <Checkbox
+            checked={todo.completed}
+            onCheckedChange={handleToggle}
+            className="mt-1"
+            aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
+          />
+          
+          <div className="flex-1 min-w-0">
+            {isEditing ? (
+              <div className="space-y-3">
+                <Input
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  className="text-lg font-semibold"
+                />
+                <Textarea
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                  placeholder="Add a description..."
+                  className="min-h-[80px]"
+                />
+                <Select value={editedPriority} onValueChange={(value: 'low' | 'medium' | 'high') => setEditedPriority(value)}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low Priority</SelectItem>
+                    <SelectItem value="medium">Medium Priority</SelectItem>
+                    <SelectItem value="high">High Priority</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div>
+                <h3 className={`text-lg font-semibold ${todo.completed ? 'line-through' : ''}`}>
+                  {todo.title}
+                </h3>
+                {todo.description && (
+                  <p className={`mt-1 text-muted-foreground ${todo.completed ? 'line-through' : ''}`}>
+                    {todo.description}
+                  </p>
+                )}
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant={todo.priority === 'high' ? 'destructive' : todo.priority === 'medium' ? 'default' : 'secondary'}>
+                    {todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">
+                    {todo.createdAt.toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
-
-          {todo.description && (
-            <p
-              className={`text-sm mb-2.5 ${todo.completed ? 'line-through text-muted-foreground' : 'text-muted-foreground'}`}
-              id={`todo-desc-${todo.id}`}
-            >
-              {todo.description}
-            </p>
-          )}
-
-          <div
-            className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground"
-            aria-label="Todo metadata"
-          >
-            <time dateTime={todo.createdAt.toISOString()} className="flex items-center gap-1">
-              <span>{t('created')}:</span>
-              <span className="font-medium">{formatDate(todo.createdAt)}</span>
-            </time>
-            {new Date(todo.updatedAt).getTime() !== new Date(todo.createdAt).getTime() && (
-              <time dateTime={todo.updatedAt.toISOString()} className="flex items-center gap-1">
-                <span>{t('updated')}:</span>
-                <span className="font-medium">{formatDate(todo.updatedAt)}</span>
-              </time>
+          
+          <div className="flex gap-2">
+            {isEditing ? (
+              <>
+                <Button size="sm" onClick={handleSave} className="h-8 w-8 p-0">
+                  <Save className="h-4 w-4" />
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleCancel} className="h-8 w-8 p-0">
+                  <X className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => setIsEditing(true)}
+                  aria-label="Edit task"
+                >
+                  <Edit3 className="h-4 w-4" />
+                </Button>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={handleDelete}
+                  aria-label="Delete task"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </>
             )}
           </div>
         </div>
-
-        <div className="flex gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleEdit}
-            className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            aria-label="Edit todo"
-            title="Edit todo"
-            onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleEdit();
-              }
-            }}
-          >
-            <Edit3
-              className="h-4 w-4"
-              aria-label="Edit icon"
-            />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleDelete}
-            className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            aria-label="Delete todo"
-            title="Delete todo"
-            onKeyDown={(e: React.KeyboardEvent<HTMLButtonElement>) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleDelete();
-              }
-            }}
-          >
-            <Trash2
-              className="h-4 w-4"
-              aria-label="Delete icon"
-            />
-          </Button>
-        </div>
-      </div>
-    </motion.div>
+      </CardContent>
+    </Card>
   );
 };
-
-export const TodoItem = React.memo(TodoItemComponent);

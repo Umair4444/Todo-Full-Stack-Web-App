@@ -39,6 +39,12 @@ export interface ChatbotSession {
   lastActive: Date;
 }
 
+export interface NavigationState {
+  isVisible: boolean;
+  lastScrollPosition: number;
+  scrollDirection: 'up' | 'down';
+}
+
 export interface FilterOptions {
   status: 'all' | 'active' | 'completed';
   priority: 'all' | 'low' | 'medium' | 'high';

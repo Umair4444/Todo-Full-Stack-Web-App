@@ -33,6 +33,7 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
 
 - Node.js (version 18.x or higher)
 - npm (version 8.x or higher)
+- Backend API server running (see backend documentation)
 
 ### Installation
 
@@ -47,12 +48,23 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
    npm install
    ```
 
-3. Run the development server:
+3. Create a `.env.local` file in the root directory with the following content:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8000
+   NEXT_PUBLIC_APP_NAME=Todo App
+   ```
+
+4. Run the development server:
    ```bash
    npm run dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
+
+### Environment Variables
+
+- `NEXT_PUBLIC_API_URL`: The URL of the backend API server
+- `NEXT_PUBLIC_APP_NAME`: The name of the application (displayed in the UI)
 
 ### Available Scripts
 

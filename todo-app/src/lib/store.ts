@@ -1,45 +1,14 @@
 import { create } from 'zustand';
 import { persist, subscribeWithSelector } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
+import { TodoItem, UserPreferences, ChatMessage, ChatbotSession, NavigationState } from './types'; // Import types from types.ts
 
-// Define types based on data-model.md
-export interface TodoItem {
+export interface User {
   id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
+  email: string;
+  name?: string;
   createdAt: Date;
   updatedAt: Date;
-  priority: 'low' | 'medium' | 'high';
-  dueDate?: Date;
-}
-
-export interface UserPreferences {
-  theme: 'light' | 'dark';
-  language: 'en' | 'ur';
-  notificationsEnabled: boolean;
-  autoSync: boolean;
-}
-
-export interface NavigationState {
-  isVisible: boolean;
-  lastScrollPosition: number;
-  scrollDirection: 'up' | 'down';
-}
-
-export interface ChatMessage {
-  id: string;
-  content: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
-  type: 'text' | 'quick-reply';
-}
-
-export interface ChatbotSession {
-  sessionId: string;
-  isActive: boolean;
-  messages: ChatMessage[];
-  lastActive: Date;
 }
 
 export interface AppState {
@@ -51,6 +20,11 @@ export interface AppState {
 
   // User preferences state
   preferences: UserPreferences;
+
+  // Authentication state
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
 
   // Navigation state
   navState: NavigationState;
@@ -79,6 +53,12 @@ export interface AppState {
     updateLanguage: (language: 'en' | 'ur') => void;
     updateUserPreferences: (prefs: Partial<UserPreferences>) => void;
 
+    // Authentication operations
+    login: (email: string, password: string) => Promise<void>;
+    register: (email: string, password: string, name?: string) => Promise<void>;
+    logout: () => void;
+    updateUser: (userData: Partial<User>) => void;
+
     // Navigation operations
     updateNavVisibility: (isVisible: boolean) => void;
     updateScrollDirection: (direction: 'up' | 'down') => void;
@@ -104,6 +84,12 @@ export interface AppState {
     // Chat history operations
     loadChatHistory: () => Promise<void>;
     saveChatHistory: () => Promise<void>;
+
+    // Data sync operations
+    syncTodosWithServer: () => Promise<void>;
+    enableOfflineMode: () => void;
+    disableOfflineMode: () => void;
+    isOfflineMode: () => boolean;
   };
 }
 
@@ -122,6 +108,11 @@ const initialState: Omit<AppState, 'actions'> = {
     notificationsEnabled: true,
     autoSync: true,
   },
+
+  // Authentication state
+  user: null,
+  token: null,
+  isAuthenticated: false,
 
   // Navigation state
   navState: {
@@ -160,6 +151,14 @@ const dateDeserializer = (state: any): AppState => {
       updatedAt: typeof todo.updatedAt === 'string' ? new Date(todo.updatedAt) : todo.updatedAt,
       dueDate: todo.dueDate ? (typeof todo.dueDate === 'string' ? new Date(todo.dueDate) : todo.dueDate) : todo.dueDate,
     }));
+  }
+
+  if (newState.user) {
+    newState.user = {
+      ...newState.user,
+      createdAt: typeof newState.user.createdAt === 'string' ? new Date(newState.user.createdAt) : newState.user.createdAt,
+      updatedAt: typeof newState.user.updatedAt === 'string' ? new Date(newState.user.updatedAt) : newState.user.updatedAt,
+    };
   }
 
   if (newState.chatbot && newState.chatbot.messages && Array.isArray(newState.chatbot.messages)) {
@@ -327,11 +326,159 @@ export const useAppStore = create<AppState>()(
           preferences: { ...state.preferences, ...prefs },
         })),
 
+        // Authentication operations
+        login: async (email, password) => {
+          set({ loading: true });
+          try {
+            // Call the backend login API
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/login`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: new URLSearchParams({
+                username: email,
+                password: password,
+              }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.detail || 'Login failed');
+            }
+
+            const data = await response.json();
+            const { access_token } = data;
+
+            // Get user profile after successful login
+            const profileResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
+              headers: {
+                'Authorization': `Bearer ${access_token}`,
+              },
+            });
+
+            if (profileResponse.ok) {
+              const userProfile = await profileResponse.json();
+              set({
+                user: {
+                  ...userProfile,
+                  createdAt: new Date(userProfile.created_at),
+                  updatedAt: new Date(userProfile.updated_at),
+                },
+                token: access_token,
+                isAuthenticated: true,
+                loading: false,
+              });
+
+              // Store in localStorage for persistence
+              localStorage.setItem('authToken', access_token);
+              localStorage.setItem('user', JSON.stringify(userProfile));
+            }
+          } catch (error) {
+            set({ loading: false, error: (error as Error).message });
+            throw error; // Re-throw so calling code can handle it
+          }
+        },
+
+        register: async (email, password, name) => {
+          set({ loading: true });
+          try {
+            // Call the backend register API
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/register`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email,
+                password,
+                name: name || email.split('@')[0], // Use part of email as name if not provided
+              }),
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.detail || 'Registration failed');
+            }
+
+            const userData = await response.json();
+
+            // Automatically log in after successful registration
+            await get().actions.login(email, password);
+          } catch (error) {
+            set({ loading: false, error: (error as Error).message });
+            throw error; // Re-throw so calling code can handle it
+          }
+        },
+
+        logout: () => {
+          set({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+          });
+
+          // Remove from localStorage
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('user');
+        },
+
+        updateUser: (userData) => set((state) => ({
+          ...state,
+          user: { ...state.user, ...userData } as User,
+        })),
+
         // Navigation operations
         updateNavVisibility: (isVisible) => set((state) => ({
           ...state,
           navState: { ...state.navState, isVisible },
         })),
+
+        // Data sync operations
+        syncTodosWithServer: async () => {
+          set({ loading: true });
+          try {
+            // In a real implementation, you would call the sync service
+            // const { todos } = await SyncService.fullSync();
+            // For now, we'll just simulate the sync
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+
+            // Update the state with synced todos
+            // set(state => ({
+            //   ...state,
+            //   todos: todos,
+            //   loading: false
+            // }));
+
+            set(state => ({
+              ...state,
+              loading: false
+            }));
+          } catch (error) {
+            set(state => ({
+              ...state,
+              loading: false,
+              error: (error as Error).message
+            }));
+            throw error;
+          }
+        },
+
+        enableOfflineMode: () => {
+          // In a real implementation, you would set offline mode
+          // For now, we'll just update a flag in state if we had one
+          console.log('Offline mode enabled');
+        },
+
+        disableOfflineMode: () => {
+          // In a real implementation, you would disable offline mode
+          console.log('Offline mode disabled');
+        },
+
+        isOfflineMode: () => {
+          // In a real implementation, you would check the actual offline status
+          return !navigator.onLine;
+        },
         
         updateScrollDirection: (direction) => set((state) => ({
           ...state,
@@ -496,7 +643,10 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({
         todos: state.todos,
         preferences: state.preferences,
-        chatbot: state.chatbot
+        chatbot: state.chatbot,
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated
       }), // only persist these fields
       merge: (persistedState, currentState) => {
         const mergedState = {
