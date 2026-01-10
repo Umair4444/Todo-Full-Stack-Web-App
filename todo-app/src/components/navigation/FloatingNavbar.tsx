@@ -8,6 +8,7 @@ import { useScrollDirection } from "@/hooks/useScrollDirection";
 import { ThemeToggle } from "../theme/ThemeToggle";
 import { LanguageSwitcher } from "../i18n/LanguageSwitcher";
 import { NavigationLinks } from "./NavigationLinks";
+import AuthNavigation from "../auth/AuthNavigation";
 
 export const FloatingNavbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -53,6 +54,7 @@ export const FloatingNavbar: React.FC = () => {
             <div className="flex items-center space-x-3">
               <LanguageSwitcher />
               <ThemeToggle />
+              <AuthNavigation />
 
               {/* Mobile menu button - shown on small screens */}
               <button

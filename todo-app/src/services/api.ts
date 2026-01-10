@@ -191,7 +191,7 @@ export async function updateTodo(id: string, updates: Partial<TodoItem>): Promis
 }
 
 export async function toggleTodoCompletion(id: string): Promise<ApiResponse<{ id: string; completed: boolean; updatedAt: string }>> {
-  return baseRequest(`/todos/${id}/toggle-completion`, {
+  return baseRequest(`/todos/${id}/toggle`, {
     method: 'PATCH',
   });
 }

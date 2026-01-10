@@ -4,10 +4,12 @@
 import React from 'react';
 import { TodoForm } from '@/components/todo/TodoForm';
 import { TodoList } from '@/components/todo/TodoList';
+import { useAppStore } from '@/lib/store';
 import { useTranslation } from '@/lib/i18n';
 
 const TodoAppPage: React.FC = () => {
   const { t } = useTranslation();
+  const { todos, actions } = useAppStore();
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -32,7 +34,7 @@ const TodoAppPage: React.FC = () => {
           </div>
           <h2 className="text-2xl font-bold">{t('addNewTask')}</h2>
         </div>
-        <TodoForm />
+        <TodoForm onTodoAdded={() => actions.loadTodos()} />
       </div>
 
       <div className="bg-card rounded-2xl shadow-lg border p-5 sm:p-7 transition-all hover:shadow-xl">
@@ -47,7 +49,7 @@ const TodoAppPage: React.FC = () => {
             { /* In a real app, this would show the count of todos */ }
           </span>
         </div>
-        <TodoList />
+        <TodoList todos={todos} onRefresh={() => actions.loadTodos()} />
       </div>
     </div>
   );

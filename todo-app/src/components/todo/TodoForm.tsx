@@ -1,249 +1,119 @@
-/**
- * TodoForm Component
- *
- * A form component for creating and editing todo items.
- * It handles validation, submission, and error handling.
- *
- * Features:
- * - Title input with validation (required, max 100 chars)
- * - Description textarea with validation (max 500 chars)
- * - Priority selection (low, medium, high)
- * - Completion status checkbox
- * - Form validation using react-hook-form and Zod
- * - Error handling and toast notifications
- *
- * @component
- * @example
- * <TodoForm onSubmitSuccess={() => console.log('Todo added!')} />
- */
-'use client';
-
+// src/components/todo/TodoForm.tsx
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppStore } from '@/lib/store';
-import { isValidTodoTitle, isValidTodoDescription } from '@/lib/utils';
 import { toast } from 'sonner';
-import { useTranslation } from '@/lib/i18n';
-
-// Define the form schema using Zod
-const todoSchema = z.object({
-  title: z.string()
-    .min(1, { message: 'Title is required' })
-    .max(100, { message: 'Title must be less than 100 characters' }),
-  description: z.string()
-    .max(500, { message: 'Description must be less than 500 characters' })
-    .optional()
-    .or(z.literal('')),
-  priority: z.enum(['low', 'medium', 'high']),
-  completed: z.boolean(),
-});
-
-type TodoFormValues = z.infer<typeof todoSchema>;
 
 interface TodoFormProps {
-  /** Initial data to populate the form with */
-  initialData?: TodoFormValues;
-  /** Callback function called when form submission is successful */
-  onSubmitSuccess?: () => void;
+  onTodoAdded?: () => void;
 }
 
-export const TodoForm: React.FC<TodoFormProps> = ({
-  initialData = {
-    title: '',
-    description: '',
-    priority: 'medium' as const,
-    completed: false
-  },
-  onSubmitSuccess
-}) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const addTodo = useAppStore(state => state.actions.addTodo);
-  const error = useAppStore(state => state.error);
-  const { t } = useTranslation();
+const TodoForm: React.FC<TodoFormProps> = ({ onTodoAdded }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
+  const [loading, setLoading] = useState(false);
+  
+  const { actions } = useAppStore();
 
-  // Initialize the form with react-hook-form
-  const form = useForm<TodoFormValues>({
-    resolver: zodResolver(todoSchema),
-    defaultValues: {
-      title: initialData.title,
-      description: initialData.description || '',
-      priority: initialData.priority || 'medium',
-      completed: initialData.completed ?? false,
-    },
-  });
-
-  // Handle form submission
-  const onSubmit = async (data: TodoFormValues) => {
-    setIsSubmitting(true);
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
+    
+    setLoading(true);
     try {
-      // Submit the todo to the store
-      addTodo({
-        title: data.title,
-        description: data.description || undefined,
-        completed: data.completed || false,
-        priority: data.priority,
-      });
-
-      // Reset the form
-      form.reset({
-        title: '',
-        description: '',
-        priority: 'medium',
+      // Create the new todo object
+      const newTodo = {
+        title: title.trim(),
+        description: description.trim() || undefined,
         completed: false,
-      });
-
-      // Call the success callback if provided
-      if (onSubmitSuccess) {
-        onSubmitSuccess();
+        priority,
+        dueDate: undefined, // Could be added if needed
+      };
+      
+      // Add to local state (optimistic update)
+      actions.addTodo(newTodo);
+      
+      // In a real implementation, you would call the API here:
+      // const createdTodo = await createTodo(newTodo);
+      // And then update the local state with the server response
+      
+      // Reset form
+      setTitle('');
+      setDescription('');
+      setPriority('medium');
+      
+      toast.success('Task added successfully');
+      
+      if (onTodoAdded) {
+        onTodoAdded();
       }
-
-      // Show success message
-      toast.success('Todo added successfully!');
     } catch (error) {
-      console.error('Error submitting form:', error);
-      toast.error('Failed to add todo. Please try again.');
+      toast.error('Failed to add task');
+      console.error('Error adding todo:', error);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
-  // Show error toast if there's an error in the store
-  React.useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base">{t('taskTitle')} *</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t('whatNeedsToBeDone')}
-                  {...field}
-                  className={`h-12 text-base ${form.formState.errors.title ? "border-destructive focus:border-destructive focus:ring-destructive" : "focus:border-primary focus:ring-primary"}`}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base">{t('taskDescription')}</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder={t('addDetailsAboutThisTask')}
-                  {...field}
-                  value={field.value || ""} // Ensure value is never undefined
-                  className="min-h-[100px]"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={form.control}
-            name="priority"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base">{t('priority')}</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder={t('selectPriority')} />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="low" className="py-2">{t('lowPriority')}</SelectItem>
-                    <SelectItem value="medium" className="py-2">{t('mediumPriority')}</SelectItem>
-                    <SelectItem value="high" className="py-2">{t('highPriority')}</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="completed"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-lg border p-4 bg-muted/30">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                    className="h-5 w-5 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                  />
-                </FormControl>
-                <div className="space-y-0 leading-none">
-                  <FormLabel className="text-base">
-                    {t('markAsCompleted')}
-                  </FormLabel>
-                </div>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <Button
-          type="submit"
-          className="w-full h-12 text-base"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? (
-            <>
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              {t('adding')}
-            </>
-          ) : (
-            <>
-              <span className="mr-2">✓</span>
-              {t('addTodo')}
-            </>
-          )}
-        </Button>
+    <Card>
+      <CardHeader>
+        <CardTitle>Add New Task</CardTitle>
+        <CardDescription>Create a new task to stay organized</CardDescription>
+      </CardHeader>
+      <form onSubmit={handleSubmit}>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="What needs to be done?"
+              required
+              maxLength={100}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Add details (optional)..."
+              className="min-h-[80px]"
+              maxLength={500}
+            />
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Select value={priority} onValueChange={(value: 'low' | 'medium' | 'high') => setPriority(value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low Priority</SelectItem>
+                  <SelectItem value="medium">Medium Priority</SelectItem>
+                  <SelectItem value="high">High Priority</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Adding Task...' : 'Add Task'}
+            </Button>
+          </div>
+        </CardContent>
       </form>
-    </Form>
+    </Card>
   );
 };
+
+export { TodoForm };
