@@ -152,20 +152,33 @@ export async function updateTodo(id: string, updates: Partial<TodoItem>): Promis
 
 // Toggle todo completion status
 export async function toggleTodoCompletion(id: string): Promise<{ id: string; completed: boolean; updatedAt: string }> {
-  // Get the current todo to check its completion status
-  const currentTodo = await getTodoById(id);
+  const endpoint = `/api/v1/todos/${id}/toggle-completion`;
 
-  // Update the completion status
-  const updatedTodo = await updateTodo(id, {
-    ...currentTodo,
-    completed: !currentTodo.completed
-  });
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-  return {
-    id: updatedTodo.id,
-    completed: updatedTodo.completed,
-    updatedAt: updatedTodo.updatedAt.toISOString()
-  };
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to toggle todo completion: ${response.status} - ${errorText}`);
+    }
+
+    const result = await response.json();
+
+    // Convert backend response to frontend format
+    return {
+      id: result.id.toString(),
+      completed: result.is_completed,
+      updatedAt: result.updated_at
+    };
+  } catch (error) {
+    console.error('Error toggling todo completion:', error);
+    throw error;
+  }
 }
 
 // Delete a todo
@@ -192,12 +205,15 @@ export async function bulkDeleteTodos(ids: string[]): Promise<{ deleted_count: n
   const endpoint = '/api/v1/todos/bulk-delete';
 
   try {
+    // Convert string IDs to integers for backend
+    const todoIds = ids.map(id => parseInt(id));
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ todo_ids: ids.map(id => parseInt(id)) }), // Convert string IDs to integers for backend
+      body: JSON.stringify({ todo_ids: todoIds }), // Send the array wrapped in an object as expected by backend
     });
 
     if (!response.ok) {

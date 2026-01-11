@@ -5,7 +5,28 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
 ## Features
 
 - **Task Management**: Create, read, update, and delete todo items
-- **Bulk Operations**: Select and delete multiple todo items at once
+- **Enhanced Toggle UX**: Intuitive and responsive completion toggles with visual feedback
+  - Smooth animations and transitions
+  - Hover effects with subtle scaling
+  - Clear visual distinction between completed/incomplete states
+  - Immediate feedback on state changes with optimistic updates
+  - Dedicated backend endpoint for faster response
+- **Bulk Operations**: Select and delete multiple todo items at once with confirmation dialog
+- **Improved Bulk UX**: Visual indicators for selection state, clear action buttons, and confirmation flow
+  - Dedicated "Bulk Delete" button to activate selection mode
+  - Button changes to "Cancel Bulk Delete" when active
+  - Toggle between normal mode (completion toggles) and bulk mode (selection checkboxes)
+  - First visible item is automatically selected to enable immediate bulk operations
+  - Visual highlighting of selected items with enhanced animations
+  - Floating action bar that appears when items are selected
+  - Inline confirmation with enhanced text to prevent accidental deletions
+  - Loading states with spinner during bulk operations
+  - Progress indicators showing deletion status
+  - Other buttons hidden during confirmation for focused decision making
+  - Enhanced hover and selection animations for better feedback
+  - Easy dismissal with main button serving as cancel when in bulk mode
+  - Cancel button available directly in the floating action bar
+  - Automatic deactivation after successful deletion or when all items are deselected
 - **Filtering & Sorting**: Filter tasks by status (active/completed) and priority (low/medium/high)
 - **Responsive Design**: Works seamlessly across all device sizes
 - **Dark/Light Mode**: Toggle between light and dark themes
@@ -141,6 +162,7 @@ The frontend connects to these backend endpoints:
 - `POST /api/v1/todos` - Create a new todo
 - `GET /api/v1/todos/{id}` - Get a specific todo
 - `PUT /api/v1/todos/{id}` - Update a specific todo
+- `PATCH /api/v1/todos/{id}/toggle-completion` - Toggle completion status of a specific todo
 - `DELETE /api/v1/todos/{id}` - Delete a specific todo
 - `POST /api/v1/todos/bulk-delete` - Delete multiple todos at once
 - `GET /health` - Check backend health status

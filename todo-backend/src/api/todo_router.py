@@ -1,9 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import List, Optional
 from sqlmodel import Session
+from pydantic import BaseModel
 from ..database.database import get_session
 from ..models.todo_model import TodoItemCreate, TodoItemUpdate, TodoItemResponse
 from ..services.todo_service import TodoService
+
+
+class BulkDeleteRequest(BaseModel):
+    todo_ids: List[int]
 
 router = APIRouter(prefix="/api/v1/todos", tags=["todos"])
 
@@ -76,14 +81,42 @@ def delete_todo(
     return {"message": "Todo item deleted successfully"}
 
 
+@router.patch("/{todo_id}/toggle-completion")
+def toggle_completion(
+    todo_id: int,
+    session: Session = Depends(get_session)
+):
+    """
+    Toggle the completion status of a todo item.
+    """
+    # Get the current todo
+    current_todo = TodoService.get_todo(session, todo_id)
+    if not current_todo:
+        raise HTTPException(status_code=404, detail="Todo item not found")
+
+    # Update the completion status
+    updated_todo = TodoService.update_todo(
+        session,
+        todo_id,
+        TodoItemUpdate(is_completed=not current_todo.is_completed)
+    )
+
+    if not updated_todo:
+        raise HTTPException(status_code=404, detail="Todo item not found")
+
+    return updated_todo
+
+
 @router.post("/bulk-delete")
 def bulk_delete_todos(
-    todo_ids: List[int],
+    request: BulkDeleteRequest,
     session: Session = Depends(get_session)
 ):
     """
     Delete multiple todo items by their IDs.
     """
+    todo_ids = request.todo_ids
+
     if not todo_ids:
         raise HTTPException(status_code=400, detail="No todo IDs provided for deletion")
 

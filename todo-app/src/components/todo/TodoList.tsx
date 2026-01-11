@@ -11,6 +11,8 @@ import { TodoItemComponent } from './TodoItem';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
 import { TodoBulkActions } from './TodoBulkActions';
+import { useSelection } from '@/hooks/useSelection';
+import { Trash2Icon } from 'lucide-react';
 
 interface TodoListProps {
   todos: TodoItem[];
@@ -23,7 +25,8 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
   const [filterPriority, setFilterPriority] = useState<'all' | 'low' | 'medium' | 'high'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isBulkDeleteActive, setIsBulkDeleteActive] = useState(false);
+  const { selectedItems, toggleSelection, selectAll, clearSelection, isSelected } = useSelection<string>();
   const itemsPerPage = 5;
 
   // Apply filters to todos
@@ -52,100 +55,141 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [filterStatus, filterPriority, searchTerm]);
+    // Clear selection when filters change
+    clearSelection();
+  }, [filterStatus, filterPriority, searchTerm, clearSelection]);
+
+  // Deactivate bulk delete mode when all selections are cleared
+  useEffect(() => {
+    if (isBulkDeleteActive && selectedItems.length === 0) {
+      // Delay deactivation slightly to allow for UI updates
+      const timer = setTimeout(() => {
+        setIsBulkDeleteActive(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedItems.length, isBulkDeleteActive]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>My Tasks</CardTitle>
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <Input
-            placeholder="Search todos..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-xs"
-          />
-          <Select value={filterStatus} onValueChange={(value: 'all' | 'active' | 'completed') => setFilterStatus(value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Tasks</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filterPriority} onValueChange={(value: 'all' | 'low' | 'medium' | 'high') => setFilterPriority(value)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priorities</SelectItem>
-              <SelectItem value="low">Low Priority</SelectItem>
-              <SelectItem value="medium">Medium Priority</SelectItem>
-              <SelectItem value="high">High Priority</SelectItem>
-            </SelectContent>
-          </Select>
-          {onRefresh && (
-            <Button variant="outline" onClick={onRefresh} disabled={loading}>
-              {loading ? 'Refreshing...' : 'Refresh'}
-            </Button>
+    <div className="pb-32"> {/* Add padding to account for floating bulk actions bar */}
+      <Card>
+        <CardHeader>
+          <CardTitle>My Tasks</CardTitle>
+          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+            <Input
+              placeholder="Search todos..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-xs"
+            />
+            <Select value={filterStatus} onValueChange={(value: 'all' | 'active' | 'completed') => setFilterStatus(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Tasks</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filterPriority} onValueChange={(value: 'all' | 'low' | 'medium' | 'high') => setFilterPriority(value)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Priorities</SelectItem>
+                <SelectItem value="low">Low Priority</SelectItem>
+                <SelectItem value="medium">Medium Priority</SelectItem>
+                <SelectItem value="high">High Priority</SelectItem>
+              </SelectContent>
+            </Select>
+            {onRefresh && (
+              <Button variant="outline" onClick={onRefresh} disabled={loading}>
+                {loading ? 'Refreshing...' : 'Refresh'}
+              </Button>
+            )}
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (isBulkDeleteActive) {
+                // If currently in bulk delete mode, exit it
+                setIsBulkDeleteActive(false);
+                clearSelection(); // Clear any selections when exiting
+              } else {
+                // If not in bulk delete mode, enter it
+                setIsBulkDeleteActive(true);
+                // Auto-select the first item if available
+                if (filteredTodoIds.length > 0) {
+                  toggleSelection(filteredTodoIds[0]);
+                }
+              }
+            }}
+            className="flex items-center gap-2"
+          >
+            <Trash2Icon className="h-4 w-4" />
+            {isBulkDeleteActive ? 'Cancel Bulk Delete' : 'Bulk Delete'}
+          </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {/* Bulk Actions Component - only show when bulk delete is active and items are selected */}
+          {isBulkDeleteActive && selectedItems.length > 0 && (
+            <TodoBulkActions
+              todoIds={filteredTodoIds}
+              selectedIds={selectedItems}
+              setSelectedIds={(ids) => {
+                // Use the hook's setter if available, otherwise update state directly
+                // For this implementation, we'll update the hook's state
+                // Since we can't directly set the hook's state, we'll clear and re-add
+                clearSelection();
+                ids.forEach(id => toggleSelection(id));
+              }}
+              isBulkDeleteActive={isBulkDeleteActive}
+              setIsBulkDeleteActive={setIsBulkDeleteActive}
+            />
           )}
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Bulk Actions Component */}
-        <TodoBulkActions
-          todoIds={filteredTodoIds}
-          selectedIds={selectedIds}
-          setSelectedIds={setSelectedIds}
-        />
 
-        {paginatedTodos.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            {loading ? 'Loading tasks...' : 'No tasks found. Create your first task!'}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {paginatedTodos.map(todo => (
-              <TodoItemComponent
-                key={todo.id}
-                todo={todo}
-                isSelected={selectedIds.includes(todo.id)}
-                onSelect={() => {
-                  if (selectedIds.includes(todo.id)) {
-                    setSelectedIds(selectedIds.filter(id => id !== todo.id));
-                  } else {
-                    setSelectedIds([...selectedIds, todo.id]);
-                  }
-                }}
-              />
-            ))}
-          </div>
-        )}
+          {paginatedTodos.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              {loading ? 'Loading tasks...' : 'No tasks found. Create your first task!'}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {paginatedTodos.map(todo => (
+                <TodoItemComponent
+                  key={todo.id}
+                  todo={todo}
+                  isSelected={isSelected(todo.id)}
+                  onSelect={() => toggleSelection(todo.id)}
+                  isBulkDeleteActive={isBulkDeleteActive}
+                />
+              ))}
+            </div>
+          )}
 
-        {/* Pagination controls */}
-        {totalPages > 1 && (
-          <div className="flex justify-between items-center mt-6">
-            <Button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-muted-foreground">
-              Page {currentPage} of {totalPages}
-            </span>
-            <Button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+          {/* Pagination controls */}
+          {totalPages > 1 && (
+            <div className="flex justify-between items-center mt-6">
+              <Button
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Page {currentPage} of {totalPages}
+              </span>
+              <Button
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

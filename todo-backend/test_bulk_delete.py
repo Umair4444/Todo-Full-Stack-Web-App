@@ -1,51 +1,40 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath('.'))
+import requests
+import json
 
-# Import the test functions
-import tests.test_todo_api as test_module
-from fastapi.testclient import TestClient
-from sqlmodel import Session, SQLModel, create_engine
-from sqlmodel.pool import StaticPool
-from main import app
-from src.database.database import get_session
+# Test the bulk delete functionality
+base_url = "http://localhost:8000"
 
+# First, let's create some test todos
+print("Creating test todos...")
+for i in range(5):
+    todo_data = {
+        "title": f"Test Todo {i}",
+        "description": f"Description for test todo {i}",
+        "is_completed": False
+    }
+    response = requests.post(f"{base_url}/api/v1/todos/", json=todo_data)
+    print(f"Created todo {i}: {response.status_code}")
 
-def run_bulk_delete_test():
-    """Run the bulk delete test to verify functionality"""
-    # Create an in-memory SQLite database for testing
-    engine = create_engine(
-        "sqlite://",
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool
-    )
-    SQLModel.metadata.create_all(bind=engine)
-    
-    with Session(engine) as session:
-        def get_session_override():
-            return session
+# Get all todos to see what we have
+print("\nGetting all todos...")
+response = requests.get(f"{base_url}/api/v1/todos/")
+todos = response.json()
+print(f"Found {len(todos)} todos")
+for todo in todos:
+    print(f"  - ID: {todo['id']}, Title: {todo['title']}")
 
-        app.dependency_overrides[get_session] = get_session_override
-        client = TestClient(app)
-        
-        try:
-            # Run the bulk delete test
-            test_module.test_bulk_delete_todos(client, session)
-            print("✓ test_bulk_delete_todos passed")
-            
-            # Run the partial success test
-            test_module.test_bulk_delete_partial_success(client, session)
-            print("✓ test_bulk_delete_partial_success passed")
-            
-            print("\nAll bulk delete tests ran successfully!")
-            
-        except Exception as e:
-            print(f"✗ Test failed with error: {e}")
-            import traceback
-            traceback.print_exc()
-        finally:
-            app.dependency_overrides.clear()
+# Now try bulk delete
+todo_ids = [todo['id'] for todo in todos]
+print(f"\nAttempting to bulk delete todos with IDs: {todo_ids}")
+bulk_delete_data = {"todo_ids": todo_ids}
+response = requests.post(f"{base_url}/api/v1/todos/bulk-delete", json=bulk_delete_data)
+print(f"Bulk delete response: {response.status_code}")
+print(f"Response content: {response.text}")
 
-
-if __name__ == "__main__":
-    run_bulk_delete_test()
+# Check if todos are deleted
+print("\nChecking if todos were deleted...")
+response = requests.get(f"{base_url}/api/v1/todos/")
+remaining_todos = response.json()
+print(f"Remaining todos: {len(remaining_todos)}")
+for todo in remaining_todos:
+    print(f"  - ID: {todo['id']}, Title: {todo['title']}")

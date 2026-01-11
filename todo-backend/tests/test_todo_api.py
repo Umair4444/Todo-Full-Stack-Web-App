@@ -163,6 +163,47 @@ def test_bulk_delete_partial_success(client: TestClient, session: Session):
     assert "Successfully deleted 3 out of 4 todos" in data["message"]
 
 
+def test_toggle_completion(client: TestClient, session: Session):
+    # Create a test todo
+    todo = TodoItem(title="Toggle Test", description="To test toggle functionality", is_completed=False)
+    session.add(todo)
+    session.commit()
+
+    # Initially, the todo should be incomplete
+    response = client.get(f"/api/v1/todos/{todo.id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["is_completed"] is False
+
+    # Toggle the completion status
+    response = client.patch(f"/api/v1/todos/{todo.id}/toggle-completion")
+    assert response.status_code == 200
+
+    # The todo should now be completed
+    response = client.get(f"/api/v1/todos/{todo.id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["is_completed"] is True
+
+    # Toggle again to make it incomplete
+    response = client.patch(f"/api/v1/todos/{todo.id}/toggle-completion")
+    assert response.status_code == 200
+
+    # The todo should now be incomplete again
+    response = client.get(f"/api/v1/todos/{todo.id}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["is_completed"] is False
+
+
+def test_toggle_completion_not_found(client: TestClient, session: Session):
+    # Try to toggle completion for a non-existent todo
+    response = client.patch("/api/v1/todos/99999/toggle-completion")
+    assert response.status_code == 404
+    data = response.json()
+    assert "Todo item not found" in data["detail"]
+
+
 def test_pagination(client: TestClient, session: Session):
     # Create multiple test todos
     for i in range(15):
