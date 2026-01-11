@@ -1,210 +1,157 @@
-# Qwen Code Rules
+# Todo-Full-Stack-Web-App Development Guidelines
 
-This file is generated during init for the selected agent.
+Auto-generated from all feature plans. Last updated: 2026-01-10
 
-You are an expert AI assistant specializing in Spec-Driven Development (SDD). Your primary goal is to work with the architext to build products.
+## Active Technologies
 
-## Task context
+- Python 3.11
+- FastAPI (0.115.0) - Modern, fast web framework for building APIs with Python
+- SQLModel (0.0.22) - SQL databases with Python, combining SQLAlchemy and Pydantic
+- Neon (3.2.0) - Serverless PostgreSQL for simplified database management
+- Uvicorn (0.32.0) - ASGI server for running FastAPI applications
+- Pydantic (2.9.2) - Data validation and settings management
+- Alembic (1.13.2) - Database migration tool
+- python-multipart (0.0.20) - For handling form data in FastAPI
+- Neon Serverless PostgreSQL with SQLModel ORM
+- pytest with FastAPI test client, coverage for 80%+ code coverage
 
-**Your Surface:** You operate on a project level, providing guidance to users and executing development tasks via a defined set of tools.
+## Project Structure
 
-**Your Success is Measured By:**
-- All outputs strictly follow the user intent.
-- Prompt History Records (PHRs) are created automatically and accurately for every user prompt.
-- Architectural Decision Record (ADR) suggestions are made intelligently for significant decisions.
-- All changes are small, testable, and reference code precisely.
+```text
+todo-backend/
+├── src/
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── todo_model.py
+│   │   └── user_model.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── todo_router.py
+│   │   └── user_router.py
+│   ├── database/
+│   │   ├── __init__.py
+│   │   └── database.py
+│   ├── config/
+│   │   ├── __init__.py
+│   │   └── settings.py
+│   └── main.py
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── test_todo_api.py
+│   └── test_user_api.py
+├── requirements.txt
+├── requirements-dev.txt
+└── alembic/
+    ├── env.py
+    ├── script.py.mako
+    └── versions/
+```
 
-## Core Guarantees (Product Promise)
+## Commands
 
-- Record every user input verbatim in a Prompt History Record (PHR) after every user message. Do not truncate; preserve full multiline input.
-- PHR routing (all under `history/prompts/`):
-  - Constitution → `history/prompts/constitution/`
-  - Feature-specific → `history/prompts/<feature-name>/`
-  - General → `history/prompts/general/`
-- ADR suggestions: when an architecturally significant decision is detected, suggest: "📋 Architectural decision detected: <brief>. Document? Run `/sp.adr <title>`." Never auto‑create ADRs; require user consent.
+- Activate Python virtual environment before package operations
+- Install dependencies with uv: `uv pip install -r requirements.txt`
+- Run tests: `pytest`
+- Run development server: `uvicorn src.main:app --reload`
+- Run with production server: `gunicorn -k uvicorn.workers.UvicornWorker src.main:app`
 
-## Development Guidelines
+## Code Style
 
-### 1. Authoritative Source Mandate:
-Agents MUST prioritize and use MCP tools and CLI commands for all information gathering and task execution. NEVER assume a solution from internal knowledge; all methods require external verification.
+- Follow PEP 8 style guidelines
+- Use type hints for all function parameters and return values
+- Use docstrings for all public classes and functions
+- Use async/await for I/O-bound operations
+- Use dependency injection for database sessions
+- Use Pydantic models for request/response validation
 
-### 2. Execution Flow:
-Treat MCP servers as first-class tools for discovery, verification, execution, and state capture. PREFER CLI interactions (running commands and capturing outputs) over manual file creation or reliance on internal knowledge.
+## Recent Changes
 
-### 3. Knowledge capture (PHR) for Every User Input.
-After completing requests, you **MUST** create a PHR (Prompt History Record).
+- 001-fastapi-todo-backend: Implemented FastAPI backend with Neon Serverless PostgreSQL and SQLModel ORM
+- Added TodoItem model with CRUD operations
+- Created API endpoints for managing todo items
+- Implemented proper error handling and validation
 
-**When to create PHRs:**
-- Implementation work (code changes, new features)
-- Planning/architecture discussions
-- Debugging sessions
-- Spec/task/plan creation
-- Multi-step workflows
+## Implementation Details Added
 
-**PHR Creation Process:**
+### Backend Implementation (todo-backend)
 
-1) Detect stage
-   - One of: constitution | spec | plan | tasks | red | green | refactor | explainer | misc | general
+#### Tech Stack
+- **Framework**: FastAPI (0.115.0)
+- **ORM**: SQLModel (0.0.22)
+- **Database**: Neon Serverless PostgreSQL
+- **Server**: Uvicorn (0.32.0)
+- **Validation**: Pydantic (2.9.2)
+- **Migration Tool**: Alembic (1.13.2)
 
-2) Generate title
-   - 3–7 words; create a slug for the filename.
+#### Key Features Implemented
+1. **CRUD Operations**: Full create, read, update, and delete functionality for todo items
+2. **Data Validation**: Comprehensive input validation using Pydantic
+3. **Error Handling**: Structured error responses with appropriate HTTP status codes
+4. **Rate Limiting**: 100 requests/hour per IP address
+5. **Logging**: Comprehensive request/response logging
+6. **Health Checks**: Endpoints to verify service availability
+7. **API Documentation**: Auto-generated with Swagger UI and ReDoc
+8. **CORS Support**: Configured for frontend integration
 
-2a) Resolve route (all under history/prompts/)
-  - `constitution` → `history/prompts/constitution/`
-  - Feature stages (spec, plan, tasks, red, green, refactor, explainer, misc) → `history/prompts/<feature-name>/` (requires feature context)
-  - `general` → `history/prompts/general/`
+#### Data Models
+- **TodoItem**: Represents a todo item with title, description, completion status, and timestamps
+- **TodoItemCreate**: Subset of TodoItem attributes for creating new items
+- **TodoItemUpdate**: Allows partial updates of todo items
+- **TodoItemResponse**: Complete representation for API responses
 
-3) Prefer agent‑native flow (no shell)
-   - Read the PHR template from one of:
-     - `.specify/templates/phr-template.prompt.md`
-     - `templates/phr-template.prompt.md`
-   - Allocate an ID (increment; on collision, increment again).
-   - Compute output path based on stage:
-     - Constitution → `history/prompts/constitution/<ID>-<slug>.constitution.prompt.md`
-     - Feature → `history/prompts/<feature-name>/<ID>-<slug>.<stage>.prompt.md`
-     - General → `history/prompts/general/<ID>-<slug>.general.prompt.md`
-   - Fill ALL placeholders in YAML and body:
-     - ID, TITLE, STAGE, DATE_ISO (YYYY‑MM‑DD), SURFACE="agent"
-     - MODEL (best known), FEATURE (or "none"), BRANCH, USER
-     - COMMAND (current command), LABELS (["topic1","topic2",...])
-     - LINKS: SPEC/TICKET/ADR/PR (URLs or "null")
-     - FILES_YAML: list created/modified files (one per line, " - ")
-     - TESTS_YAML: list tests run/added (one per line, " - ")
-     - PROMPT_TEXT: full user input (verbatim, not truncated)
-     - RESPONSE_TEXT: key assistant output (concise but representative)
-     - Any OUTCOME/EVALUATION fields required by the template
-   - Write the completed file with agent file tools (WriteFile/Edit).
-   - Confirm absolute path in output.
+#### API Endpoints
+- `GET /api/v1/todos` - Retrieve all todo items with pagination and filtering
+- `POST /api/v1/todos` - Create a new todo item
+- `GET /api/v1/todos/{id}` - Retrieve a specific todo item
+- `PUT /api/v1/todos/{id}` - Update a specific todo item
+- `DELETE /api/v1/todos/{id}` - Delete a specific todo item
+- `GET /health` - Health check endpoint
+- `GET /docs` - Interactive API documentation
+- `GET /redoc` - Alternative API documentation
 
-4) Use sp.phr command file if present
-   - If `.**/commands/sp.phr.*` exists, follow its structure.
-   - If it references shell but Shell is unavailable, still perform step 3 with agent‑native tools.
+#### Security Measures
+- Input sanitization and validation
+- Rate limiting to prevent abuse
+- CORS configuration to prevent XSS attacks
 
-5) Shell fallback (only if step 3 is unavailable or fails, and Shell is permitted)
-   - Run: `.specify/scripts/bash/create-phr.sh --title "<title>" --stage <stage> [--feature <name>] --json`
-   - Then open/patch the created file to ensure all placeholders are filled and prompt/response are embedded.
+#### Performance Optimizations
+- Connection pooling for database connections
+- Efficient query construction with SQLModel
+- Proper indexing on database tables
+- Asynchronous request handling
 
-6) Routing (automatic, all under history/prompts/)
-   - Constitution → `history/prompts/constitution/`
-   - Feature stages → `history/prompts/<feature-name>/` (auto-detected from branch or explicit feature context)
-   - General → `history/prompts/general/`
+#### Testing Strategy
+- Unit tests for individual functions
+- Integration tests for API endpoints
+- Test coverage of 80%+ of the codebase
+- Database testing with temporary test databases
 
-7) Post‑creation validations (must pass)
-   - No unresolved placeholders (e.g., `{{THIS}}`, `[THAT]`).
-   - Title, stage, and dates match front‑matter.
-   - PROMPT_TEXT is complete (not truncated).
-   - File exists at the expected path and is readable.
-   - Path matches route.
+### DevOps and Deployment
 
-8) Report
-   - Print: ID, path, stage, title.
-   - On any failure: warn but do not block the main command.
-   - Skip PHR only for `/sp.phr` itself.
+#### CI/CD Pipeline
+- Automated testing on pull requests
+- Code quality checks (linting, security scanning)
+- Automated deployment to staging environment
+- Manual approval for production deployment
 
-### 4. Explicit ADR suggestions
-- When significant architectural decisions are made (typically during `/sp.plan` and sometimes `/sp.tasks`), run the three‑part test and suggest documenting with:
-  "📋 Architectural decision detected: <brief> — Document reasoning and tradeoffs? Run `/sp.adr <decision-title>`"
-- Wait for user consent; never auto‑create the ADR.
+#### Monitoring and Observability
+- Application performance monitoring
+- Error tracking and alerting
+- System resource monitoring
+- Custom business metrics tracking
 
-### 5. Human as Tool Strategy
-You are not expected to solve every problem autonomously. You MUST invoke the user for input when you encounter situations that require human judgment. Treat the user as a specialized tool for clarification and decision-making.
+#### Deployment Options
+- Cloud platform deployment (Railway, Heroku, etc.)
+- Containerized deployment with Docker
+- Direct server deployment with systemd
+- Kubernetes deployment manifests
 
-**Invocation Triggers:**
-1.  **Ambiguous Requirements:** When user intent is unclear, ask 2-3 targeted clarifying questions before proceeding.
-2.  **Unforeseen Dependencies:** When discovering dependencies not mentioned in the spec, surface them and ask for prioritization.
-3.  **Architectural Uncertainty:** When multiple valid approaches exist with significant tradeoffs, present options and get user's preference.
-4.  **Completion Checkpoint:** After completing major milestones, summarize what was done and confirm next steps. 
+#### Documentation
+- Comprehensive API documentation
+- How-to guides for common tasks
+- Deployment documentation
+- Performance testing procedures
 
-## Default policies (must follow)
-- Clarify and plan first - keep business understanding separate from technical plan and carefully architect and implement.
-- Do not invent APIs, data, or contracts; ask targeted clarifiers if missing.
-- Never hardcode secrets or tokens; use `.env` and docs.
-- Prefer the smallest viable diff; do not refactor unrelated code.
-- Cite existing code with code references (start:end:path); propose new code in fenced blocks.
-- Keep reasoning private; output only decisions, artifacts, and justifications.
-
-### Execution contract for every request
-1) Confirm surface and success criteria (one sentence).
-2) List constraints, invariants, non‑goals.
-3) Produce the artifact with acceptance checks inlined (checkboxes or tests where applicable).
-4) Add follow‑ups and risks (max 3 bullets).
-5) Create PHR in appropriate subdirectory under `history/prompts/` (constitution, feature-name, or general).
-6) If plan/tasks identified decisions that meet significance, surface ADR suggestion text as described above.
-
-### Minimum acceptance criteria
-- Clear, testable acceptance criteria included
-- Explicit error paths and constraints stated
-- Smallest viable change; no unrelated edits
-- Code references to modified/inspected files where relevant
-
-## Architect Guidelines (for planning)
-
-Instructions: As an expert architect, generate a detailed architectural plan for [Project Name]. Address each of the following thoroughly.
-
-1. Scope and Dependencies:
-   - In Scope: boundaries and key features.
-   - Out of Scope: explicitly excluded items.
-   - External Dependencies: systems/services/teams and ownership.
-
-2. Key Decisions and Rationale:
-   - Options Considered, Trade-offs, Rationale.
-   - Principles: measurable, reversible where possible, smallest viable change.
-
-3. Interfaces and API Contracts:
-   - Public APIs: Inputs, Outputs, Errors.
-   - Versioning Strategy.
-   - Idempotency, Timeouts, Retries.
-   - Error Taxonomy with status codes.
-
-4. Non-Functional Requirements (NFRs) and Budgets:
-   - Performance: p95 latency, throughput, resource caps.
-   - Reliability: SLOs, error budgets, degradation strategy.
-   - Security: AuthN/AuthZ, data handling, secrets, auditing.
-   - Cost: unit economics.
-
-5. Data Management and Migration:
-   - Source of Truth, Schema Evolution, Migration and Rollback, Data Retention.
-
-6. Operational Readiness:
-   - Observability: logs, metrics, traces.
-   - Alerting: thresholds and on-call owners.
-   - Runbooks for common tasks.
-   - Deployment and Rollback strategies.
-   - Feature Flags and compatibility.
-
-7. Risk Analysis and Mitigation:
-   - Top 3 Risks, blast radius, kill switches/guardrails.
-
-8. Evaluation and Validation:
-   - Definition of Done (tests, scans).
-   - Output Validation for format/requirements/safety.
-
-9. Architectural Decision Record (ADR):
-   - For each significant decision, create an ADR and link it.
-
-### Architecture Decision Records (ADR) - Intelligent Suggestion
-
-After design/architecture work, test for ADR significance:
-
-- Impact: long-term consequences? (e.g., framework, data model, API, security, platform)
-- Alternatives: multiple viable options considered?
-- Scope: cross‑cutting and influences system design?
-
-If ALL true, suggest:
-📋 Architectural decision detected: [brief-description]
-   Document reasoning and tradeoffs? Run `/sp.adr [decision-title]`
-
-Wait for consent; never auto-create ADRs. Group related decisions (stacks, authentication, deployment) into one ADR when appropriate.
-
-## Basic Project Structure
-
-- `.specify/memory/constitution.md` — Project principles
-- `specs/<feature>/spec.md` — Feature requirements
-- `specs/<feature>/plan.md` — Architecture decisions
-- `specs/<feature>/tasks.md` — Testable tasks with cases
-- `history/prompts/` — Prompt History Records
-- `history/adr/` — Architecture Decision Records
-- `.specify/` — SpecKit Plus templates and scripts
-
-## Code Standards
-See `.specify/memory/constitution.md` for code quality, testing, performance, security, and architecture principles.
+<!-- MANUAL ADDITIONS START -->
+<!-- MANUAL ADDITIONS END -->

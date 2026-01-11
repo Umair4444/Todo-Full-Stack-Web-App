@@ -111,7 +111,7 @@ As a user, I want to receive clear feedback when errors occur or when I visit no
 
 ### Functional Requirements
 
-- **FR-001**: System MUST provide a responsive web interface built with Next.js for the todo application
+- **FR-001**: System MUST provide a responsive web interface built with Next.js for the todo application using responsive breakpoints (mobile-first approach with breakpoints at 640px, 768px, 1024px)
 - **FR-002**: System MUST include four main pages: home, todo-app, about, and contact
 - **FR-003**: System MUST include a 404 error page for non-existent routes
 - **FR-004**: System MUST implement a floating navbar with capsule glass-bar design that hides when scrolling down and appears when scrolling up
@@ -162,6 +162,14 @@ As a user, I want to receive clear feedback when errors occur or when I visit no
 - Q: Should the chatbot be a simulated placeholder or connected to an actual AI service? → A: Simulated chatbot with predefined responses
 - Q: For the frontend implementation, should todo items be stored in browser storage or assume API connection? → A: Use browser storage (localStorage) for initial implementation
 - Q: Should all UI elements and content be translated to both languages, or only specific parts? → A: All UI elements and static content should be translatable
+
+### Session 2026-01-10
+
+- Q: What authentication approach should be implemented for the todo application? → A: No authentication - anonymous usage only
+- Q: What API communication approach should be used between the frontend and backend? → A: REST API with HTTP methods (GET, POST, PUT, DELETE)
+- Q: What rate limiting strategy should be implemented for the backend API? → A: 100 requests per hour per IP address
+- Q: What responsive design approach should be used for the frontend? → A: Responsive breakpoints
+- Q: What client-side storage approach should be used for temporary data before backend integration? → A: Neon PostgreSQL for database
 
 ## Success Criteria *(mandatory)*
 
