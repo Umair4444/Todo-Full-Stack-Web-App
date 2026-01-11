@@ -362,11 +362,11 @@ export const useAppStore = create<AppState>()(
             // In a real implementation, this would call the backend auth API
             await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
 
-            // Create a mock user
+            // In a real implementation, we would get user data from the backend
+            // For now, we'll create a mock user with just the email
             const mockUser = {
               id: '1',
               email,
-              name: name || email.split('@')[0],
               createdAt: new Date(),
               updatedAt: new Date(),
             };
@@ -398,7 +398,7 @@ export const useAppStore = create<AppState>()(
             const mockUser = {
               id: '1',
               email,
-              name: name || email.split('@')[0],
+              name: name || email.split('@')[0] || 'User',
               createdAt: new Date(),
               updatedAt: new Date(),
             };
