@@ -159,13 +159,13 @@ As a user of the todo application, I want the frontend and backend to stay synch
 Final touches and cross-cutting concerns that apply to the entire application.
 
 - [X] T060 Create comprehensive README.md for the todo-backend project
-- [ ] T061 Set up CI/CD pipeline with automated testing
+- [X] T061 Set up CI/CD pipeline with automated testing
 - [X] T062 Implement security best practices (input sanitization, headers, etc.)
 - [X] T063 Add comprehensive error handling and logging
-- [ ] T064 Perform code review and refactoring
-- [ ] T065 Conduct performance testing and optimization
-- [ ] T066 Create deployment scripts and documentation
-- [ ] T067 Set up monitoring and observability for production
-- [ ] T068 Create how-to guides for functionality in `how-to/` directory
-- [ ] T069 Update QWEN.md with implementation details
+- [X] T064 Perform code review and refactoring
+- [X] T065 Conduct performance testing and optimization
+- [X] T066 Create deployment scripts and documentation
+- [X] T067 Set up monitoring and observability for production
+- [X] T068 Create how-to guides for functionality in `how-to/` directory
+- [X] T069 Update QWEN.md with implementation details
 - [X] T070 Run full test suite to ensure all functionality works together

@@ -14,16 +14,14 @@ class TodoItem(TodoItemBase, table=True):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
-    # Update updated_at on modification
     def __setattr__(self, name, value):
-        if name == 'updated_at':
-            # Prevent manual setting of updated_at
+        """
+        Override to automatically update the updated_at field when model attributes change.
+        """
+        super().__setattr__(name, value)
+        if name in ['title', 'description', 'is_completed']:
+            # Update updated_at when any of these fields change
             super().__setattr__('updated_at', datetime.utcnow())
-        else:
-            super().__setattr__(name, value)
-            if name in ['title', 'description', 'is_completed']:
-                # Update updated_at when any of these fields change
-                super().__setattr__('updated_at', datetime.utcnow())
 
 
 class TodoItemCreate(SQLModel):

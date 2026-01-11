@@ -105,10 +105,62 @@ def test_delete_todo(client: TestClient, session: Session):
     # Delete the todo
     response = client.delete(f"/api/v1/todos/{todo.id}")
     assert response.status_code == 200
-    
+
     # Verify the todo is gone
     response = client.get(f"/api/v1/todos/{todo.id}")
     assert response.status_code == 404
+
+
+def test_bulk_delete_todos(client: TestClient, session: Session):
+    # Create multiple test todos
+    todos = []
+    for i in range(5):
+        todo = TodoItem(title=f"Bulk Delete Test {i}", description=f"To be deleted in bulk {i}", is_completed=False)
+        session.add(todo)
+        todos.append(todo)
+    session.commit()
+
+    # Get the IDs of the created todos
+    todo_ids = [todo.id for todo in todos]
+
+    # Bulk delete the todos
+    response = client.post("/api/v1/todos/bulk-delete", json={"todo_ids": todo_ids})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["deleted_count"] == 5
+    assert data["requested_count"] == 5
+    assert "Successfully deleted 5 out of 5 todos" in data["message"]
+
+    # Verify the todos are gone
+    for todo_id in todo_ids:
+        response = client.get(f"/api/v1/todos/{todo_id}")
+        assert response.status_code == 404
+
+
+def test_bulk_delete_partial_success(client: TestClient, session: Session):
+    # Create some test todos
+    todos = []
+    for i in range(3):
+        todo = TodoItem(title=f"Bulk Delete Partial Test {i}", description=f"To be deleted in bulk {i}", is_completed=False)
+        session.add(todo)
+        todos.append(todo)
+    session.commit()
+
+    # Get the IDs of the created todos
+    todo_ids = [todo.id for todo in todos]
+
+    # Add an invalid ID to the list
+    invalid_ids = todo_ids + [99999]  # Assuming this ID doesn't exist
+
+    # Bulk delete the todos (with one invalid ID)
+    response = client.post("/api/v1/todos/bulk-delete", json={"todo_ids": invalid_ids})
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["deleted_count"] == 3  # Only valid todos should be deleted
+    assert data["requested_count"] == 4  # Total requested (3 valid + 1 invalid)
+    assert "Successfully deleted 3 out of 4 todos" in data["message"]
 
 
 def test_pagination(client: TestClient, session: Session):

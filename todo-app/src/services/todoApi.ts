@@ -1,31 +1,16 @@
 // src/services/todoApi.ts
 import { TodoItem } from '@/lib/types';
 import { baseRequest } from './api';
+import { backendToFrontendTodo, frontendToBackendTodo, frontendToBackendUpdate } from './backendAdapters';
 
-// Define the shape of todo API responses
-interface CreateTodoRequest {
+// Define the shape of backend todo API responses
+interface BackendTodoResponse {
+  id: number;
   title: string;
   description?: string;
-  priority: 'low' | 'medium' | 'high';
-  dueDate?: string; // ISO string format
-}
-
-interface UpdateTodoRequest {
-  title?: string;
-  description?: string;
-  completed?: boolean;
-  priority?: 'low' | 'medium' | 'high';
-  dueDate?: string; // ISO string format
-}
-
-interface TodoListResponse {
-  items: TodoItem[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  is_completed: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 // Get all todos for the current user
@@ -35,114 +20,198 @@ export async function getTodos(
   status?: 'all' | 'active' | 'completed',
   priority?: 'all' | 'low' | 'medium' | 'high',
   search?: string
-): Promise<TodoListResponse> {
+): Promise<{ items: TodoItem[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
+  // Calculate offset based on page and limit
+  const offset = (page - 1) * limit;
+
+  // Construct query parameters for backend
   const params = new URLSearchParams({
-    page: page.toString(),
+    offset: offset.toString(),
     limit: limit.toString(),
   });
 
-  if (status) params.append('status', status);
-  if (priority) params.append('priority', priority);
-  if (search) params.append('search', search);
+  // Map status to completed filter for backend
+  if (status === 'completed') params.append('completed', 'true');
+  if (status === 'active') params.append('completed', 'false');
 
   const queryString = params.toString();
-  const endpoint = `/todos${queryString ? `?${queryString}` : ''}`;
+  const endpoint = `/api/v1/todos${queryString ? `?${queryString}` : ''}`;
 
-  const response = await baseRequest<TodoListResponse>(endpoint, { method: 'GET' });
-  
-  if (!response.success) {
-    throw new Error(response.error?.message || 'Failed to fetch todos');
+  try {
+    // Make request to backend
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch todos: ${response.status} - ${errorText}`);
+    }
+
+    const backendTodos: BackendTodoResponse[] = await response.json();
+
+    // Convert backend todos to frontend format
+    const frontendTodos = backendTodos.map(backendToFrontendTodo);
+
+    // Calculate pagination info
+    const total = frontendTodos.length; // This would need to come from the backend in a real implementation
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      items: frontendTodos,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching todos:', error);
+    throw error;
   }
-  
-  return response.data!;
 }
 
 // Create a new todo
 export async function createTodo(todo: Omit<TodoItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<TodoItem> {
-  const requestBody: CreateTodoRequest = {
-    title: todo.title,
-    description: todo.description,
-    priority: todo.priority,
-    dueDate: todo.dueDate?.toISOString(),
-  };
+  const backendTodo = frontendToBackendTodo(todo);
+  const endpoint = '/api/v1/todos';
 
-  const response = await baseRequest<TodoItem>('/todos', {
-    method: 'POST',
-    body: JSON.stringify(requestBody),
-  });
-  
-  if (!response.success) {
-    throw new Error(response.error?.message || 'Failed to create todo');
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(backendTodo),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to create todo: ${response.status} - ${errorText}`);
+    }
+
+    const createdBackendTodo: BackendTodoResponse = await response.json();
+
+    // Convert backend response to frontend format
+    return backendToFrontendTodo(createdBackendTodo);
+  } catch (error) {
+    console.error('Error creating todo:', error);
+    throw error;
   }
-  
-  return response.data!;
 }
 
 // Get a specific todo by ID
 export async function getTodoById(id: string): Promise<TodoItem> {
-  const response = await baseRequest<TodoItem>(`/todos/${id}`, { method: 'GET' });
-  
-  if (!response.success) {
-    throw new Error(response.error?.message || 'Failed to fetch todo');
+  const endpoint = `/api/v1/todos/${id}`;
+
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch todo: ${response.status} - ${errorText}`);
+    }
+
+    const backendTodo: BackendTodoResponse = await response.json();
+
+    // Convert backend response to frontend format
+    return backendToFrontendTodo(backendTodo);
+  } catch (error) {
+    console.error('Error fetching todo:', error);
+    throw error;
   }
-  
-  return response.data!;
 }
 
 // Update a todo
 export async function updateTodo(id: string, updates: Partial<TodoItem>): Promise<TodoItem> {
-  const requestBody: UpdateTodoRequest = {
-    title: updates.title,
-    description: updates.description,
-    completed: updates.completed,
-    priority: updates.priority,
-    dueDate: updates.dueDate?.toISOString(),
-  };
+  const backendUpdates = frontendToBackendUpdate(updates);
+  const endpoint = `/api/v1/todos/${id}`;
 
-  const response = await baseRequest<TodoItem>(`/todos/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(requestBody),
-  });
-  
-  if (!response.success) {
-    throw new Error(response.error?.message || 'Failed to update todo');
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(backendUpdates),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update todo: ${response.status} - ${errorText}`);
+    }
+
+    const updatedBackendTodo: BackendTodoResponse = await response.json();
+
+    // Convert backend response to frontend format
+    return backendToFrontendTodo(updatedBackendTodo);
+  } catch (error) {
+    console.error('Error updating todo:', error);
+    throw error;
   }
-  
-  return response.data!;
 }
 
 // Toggle todo completion status
 export async function toggleTodoCompletion(id: string): Promise<{ id: string; completed: boolean; updatedAt: string }> {
-  const response = await baseRequest<{ id: string; completed: boolean; updatedAt: string }>(`/todos/${id}/toggle`, {
-    method: 'PATCH',
+  // Get the current todo to check its completion status
+  const currentTodo = await getTodoById(id);
+
+  // Update the completion status
+  const updatedTodo = await updateTodo(id, {
+    ...currentTodo,
+    completed: !currentTodo.completed
   });
 
-  if (!response.success) {
-    throw new Error(response.error?.message || 'Failed to toggle todo completion');
-  }
-
-  return response.data!;
+  return {
+    id: updatedTodo.id,
+    completed: updatedTodo.completed,
+    updatedAt: updatedTodo.updatedAt.toISOString()
+  };
 }
 
 // Delete a todo
 export async function deleteTodo(id: string): Promise<void> {
-  const response = await baseRequest<{}>(`/todos/${id}`, {
-    method: 'DELETE',
-  });
-  
-  if (!response.success) {
-    throw new Error(response.error?.message || 'Failed to delete todo');
+  const endpoint = `/api/v1/todos/${id}`;
+
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to delete todo: ${response.status} - ${errorText}`);
+    }
+  } catch (error) {
+    console.error('Error deleting todo:', error);
+    throw error;
   }
 }
 
 // Bulk delete todos
-export async function bulkDeleteTodos(ids: string[]): Promise<void> {
-  const response = await baseRequest<{}>('/todos/bulk-delete', {
-    method: 'POST',
-    body: JSON.stringify({ ids }),
-  });
-  
-  if (!response.success) {
-    throw new Error(response.error?.message || 'Failed to bulk delete todos');
+export async function bulkDeleteTodos(ids: string[]): Promise<{ deleted_count: number; requested_count: number }> {
+  const endpoint = '/api/v1/todos/bulk-delete';
+
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ todo_ids: ids.map(id => parseInt(id)) }), // Convert string IDs to integers for backend
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to bulk delete todos: ${response.status} - ${errorText}`);
+    }
+
+    const result = await response.json();
+    return {
+      deleted_count: result.deleted_count,
+      requested_count: result.requested_count
+    };
+  } catch (error) {
+    console.error('Error bulk deleting todos:', error);
+    throw error;
   }
 }

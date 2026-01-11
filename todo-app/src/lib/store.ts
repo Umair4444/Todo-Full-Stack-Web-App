@@ -87,6 +87,7 @@ export interface AppState {
 
     // Data sync operations
     syncTodosWithServer: () => Promise<void>;
+    bulkDeleteTodos: (ids: string[]) => Promise<{ deleted_count: number; requested_count: number } | undefined>;
     enableOfflineMode: () => void;
     disableOfflineMode: () => void;
     isOfflineMode: () => boolean;
@@ -181,7 +182,8 @@ export const useAppStore = create<AppState>()(
       ...initialState,
       actions: {
         // Todo operations
-        addTodo: (todo) => {
+        addTodo: async (todo) => {
+          set({ loading: true });
           try {
             // Sanitize and validate input
             const sanitizedTitle = todo.title ? todo.title.trim() : '';
@@ -201,32 +203,35 @@ export const useAppStore = create<AppState>()(
               throw new Error('Todo description must be less than 500 characters');
             }
 
-            // Create new todo with unique ID and timestamps
-            const newTodo: TodoItem = {
+            // Create new todo with backend API
+            const newTodo: Omit<TodoItem, 'id' | 'createdAt' | 'updatedAt'> = {
               ...todo,
               title: cleanTitle,
               description: cleanDescription,
-              id: uuidv4(),
-              createdAt: new Date(),
-              updatedAt: new Date(),
             };
+
+            // Call backend API
+            const createdTodo = await import('../services/todoApi').then(api => api.createTodo(newTodo));
 
             // Update state with new todo
             set((state) => ({
               ...state,
-              todos: [...state.todos, newTodo],
+              todos: [...state.todos, createdTodo],
               error: null,
+              loading: false,
             }));
           } catch (error) {
             // Handle error by updating error state
             set((state) => ({
               ...state,
               error: (error as Error).message,
+              loading: false,
             }));
           }
         },
 
-        updateTodo: (id, updates) => {
+        updateTodo: async (id, updates) => {
+          set({ loading: true });
           try {
             // Validate updates if they exist
             if (updates.title && updates.title.length > 100) {
@@ -237,55 +242,72 @@ export const useAppStore = create<AppState>()(
               throw new Error('Todo description must be less than 500 characters');
             }
 
+            // Update the todo with the backend API
+            const updatedTodo = await import('../services/todoApi').then(api => api.updateTodo(id, updates));
+
             // Update the todo with the provided changes
             set((state) => ({
               ...state,
               todos: state.todos.map(todo =>
-                todo.id === id ? { ...todo, ...updates, updatedAt: new Date() } : todo
+                todo.id === id ? updatedTodo : todo
               ),
               error: null,
+              loading: false,
             }));
           } catch (error) {
             // Handle error by updating error state
             set((state) => ({
               ...state,
               error: (error as Error).message,
+              loading: false,
             }));
           }
         },
 
-        deleteTodo: (id) => {
+        deleteTodo: async (id) => {
+          set({ loading: true });
           try {
+            // Delete the todo with the backend API
+            await import('../services/todoApi').then(api => api.deleteTodo(id));
+
             // Remove the todo with the specified ID
             set((state) => ({
               ...state,
               todos: state.todos.filter(todo => todo.id !== id),
               error: null,
+              loading: false,
             }));
           } catch (error) {
             // Handle error by updating error state
             set((state) => ({
               ...state,
               error: (error as Error).message,
+              loading: false,
             }));
           }
         },
 
-        toggleTodoCompletion: (id) => {
+        toggleTodoCompletion: async (id) => {
+          set({ loading: true });
           try {
             // Toggle the completion status of the specified todo
+            const result = await import('../services/todoApi').then(api => api.toggleTodoCompletion(id));
+
+            // Update the todo with the provided changes
             set((state) => ({
               ...state,
               todos: state.todos.map(todo =>
-                todo.id === id ? { ...todo, completed: !todo.completed, updatedAt: new Date() } : todo
+                todo.id === id ? { ...todo, completed: result.completed, updatedAt: new Date(result.updatedAt) } : todo
               ),
               error: null,
+              loading: false,
             }));
           } catch (error) {
             // Handle error by updating error state
             set((state) => ({
               ...state,
               error: (error as Error).message,
+              loading: false,
             }));
           }
         },
@@ -326,54 +348,33 @@ export const useAppStore = create<AppState>()(
           preferences: { ...state.preferences, ...prefs },
         })),
 
-        // Authentication operations
+        // Authentication operations (currently using mock authentication since backend auth is not implemented)
         login: async (email, password) => {
           set({ loading: true });
           try {
-            // Call the backend login API
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/login`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams({
-                username: email,
-                password: password,
-              }),
+            // For now, we'll simulate authentication since the backend doesn't have auth endpoints yet
+            // In a real implementation, this would call the backend auth API
+            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+
+            // Create a mock user
+            const mockUser = {
+              id: '1',
+              email,
+              name: name || email.split('@')[0],
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+
+            set({
+              user: mockUser,
+              token: 'mock-jwt-token-for-now',
+              isAuthenticated: true,
+              loading: false,
             });
 
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.detail || 'Login failed');
-            }
-
-            const data = await response.json();
-            const { access_token } = data;
-
-            // Get user profile after successful login
-            const profileResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
-              headers: {
-                'Authorization': `Bearer ${access_token}`,
-              },
-            });
-
-            if (profileResponse.ok) {
-              const userProfile = await profileResponse.json();
-              set({
-                user: {
-                  ...userProfile,
-                  createdAt: new Date(userProfile.created_at),
-                  updatedAt: new Date(userProfile.updated_at),
-                },
-                token: access_token,
-                isAuthenticated: true,
-                loading: false,
-              });
-
-              // Store in localStorage for persistence
-              localStorage.setItem('authToken', access_token);
-              localStorage.setItem('user', JSON.stringify(userProfile));
-            }
+            // Store in localStorage for persistence
+            localStorage.setItem('authToken', 'mock-jwt-token-for-now');
+            localStorage.setItem('user', JSON.stringify(mockUser));
           } catch (error) {
             set({ loading: false, error: (error as Error).message });
             throw error; // Re-throw so calling code can handle it
@@ -383,28 +384,29 @@ export const useAppStore = create<AppState>()(
         register: async (email, password, name) => {
           set({ loading: true });
           try {
-            // Call the backend register API
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/register`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                email,
-                password,
-                name: name || email.split('@')[0], // Use part of email as name if not provided
-              }),
+            // For now, we'll simulate registration since the backend doesn't have auth endpoints yet
+            // In a real implementation, this would call the backend auth API
+            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+
+            // Create a mock user
+            const mockUser = {
+              id: '1',
+              email,
+              name: name || email.split('@')[0],
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            };
+
+            set({
+              user: mockUser,
+              token: 'mock-jwt-token-for-now',
+              isAuthenticated: true,
+              loading: false,
             });
 
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.detail || 'Registration failed');
-            }
-
-            const userData = await response.json();
-
-            // Automatically log in after successful registration
-            await get().actions.login(email, password);
+            // Store in localStorage for persistence
+            localStorage.setItem('authToken', 'mock-jwt-token-for-now');
+            localStorage.setItem('user', JSON.stringify(mockUser));
           } catch (error) {
             set({ loading: false, error: (error as Error).message });
             throw error; // Re-throw so calling code can handle it
@@ -438,20 +440,14 @@ export const useAppStore = create<AppState>()(
         syncTodosWithServer: async () => {
           set({ loading: true });
           try {
-            // In a real implementation, you would call the sync service
-            // const { todos } = await SyncService.fullSync();
-            // For now, we'll just simulate the sync
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+            // Load todos from backend API to sync
+            const { getTodos } = await import('../services/todoApi');
+            const result = await getTodos(1, 100); // Get first 100 todos
 
             // Update the state with synced todos
-            // set(state => ({
-            //   ...state,
-            //   todos: todos,
-            //   loading: false
-            // }));
-
             set(state => ({
               ...state,
+              todos: result.items,
               loading: false
             }));
           } catch (error) {
@@ -459,6 +455,34 @@ export const useAppStore = create<AppState>()(
               ...state,
               loading: false,
               error: (error as Error).message
+            }));
+            throw error;
+          }
+        },
+
+        // Bulk delete todos
+        bulkDeleteTodos: async (ids: string[]) => {
+          set({ loading: true });
+          try {
+            // Delete todos with the backend API
+            const { bulkDeleteTodos } = await import('../services/todoApi');
+            const result = await bulkDeleteTodos(ids);
+
+            // Remove the deleted todos from the local state
+            set((state) => ({
+              ...state,
+              todos: state.todos.filter(todo => !ids.includes(todo.id)),
+              error: null,
+              loading: false,
+            }));
+
+            // Return the result for potential UI feedback
+            return result;
+          } catch (error) {
+            set((state) => ({
+              ...state,
+              error: (error as Error).message,
+              loading: false,
             }));
             throw error;
           }
@@ -568,11 +592,17 @@ export const useAppStore = create<AppState>()(
         loadTodos: async () => {
           set({ loading: true });
           try {
-            // This would load from localStorage or API in a real implementation
-            // Simulate async operation
-            await new Promise(resolve => setTimeout(resolve, 500));
-            // For now, we'll just keep the existing todos
-            set({ loading: false });
+            // Load todos from backend API
+            const { getTodos } = await import('../services/todoApi');
+            const result = await getTodos(1, 100); // Get first 100 todos
+
+            // Update state with fetched todos
+            set((state) => ({
+              ...state,
+              todos: result.items,
+              loading: false,
+              error: null,
+            }));
           } catch (error) {
             set({ loading: false, error: (error as Error).message });
           }

@@ -14,25 +14,27 @@ import { toast } from 'sonner';
 
 interface TodoItemProps {
   todo: TodoItemType;
+  isSelected?: boolean;
+  onSelect?: () => void;
 }
 
-export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
+export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = false, onSelect }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [editedDescription, setEditedDescription] = useState(todo.description || '');
   const [editedPriority, setEditedPriority] = useState(todo.priority);
-  
+
   const { actions } = useAppStore();
 
   const handleToggle = async () => {
     try {
       // Optimistically update the UI
       actions.toggleTodoCompletion(todo.id);
-      
+
       // Call the API to update the todo
       // In a real implementation, you would call the API here
       // await toggleTodoCompletion(todo.id);
-      
+
       toast.success('Task updated successfully');
     } catch (error) {
       // Revert the optimistic update if the API call fails
@@ -46,7 +48,7 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
       // Call the API to delete the todo
       // In a real implementation, you would call the API here
       // await deleteTodo(todo.id);
-      
+
       // Update the local state
       actions.deleteTodo(todo.id);
       toast.success('Task deleted successfully');
@@ -64,11 +66,11 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
         description: editedDescription,
         priority: editedPriority as 'low' | 'medium' | 'high',
       };
-      
+
       // Call the API to update the todo
       // In a real implementation, you would call the API here
       // await updateTodo(todo.id, updatedTodo);
-      
+
       // Update the local state
       actions.updateTodo(todo.id, updatedTodo);
       setIsEditing(false);
@@ -87,16 +89,28 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
   };
 
   return (
-    <Card className={`transition-all ${todo.completed ? 'opacity-70' : ''}`}>
+    <Card className={`transition-all ${todo.completed ? 'opacity-70' : ''} ${isSelected ? 'ring-2 ring-primary' : ''}`}>
       <CardContent className="p-4">
         <div className="flex items-start gap-4">
-          <Checkbox
-            checked={todo.completed}
-            onCheckedChange={handleToggle}
-            className="mt-1"
-            aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
-          />
-          
+          <div className="flex items-center gap-2">
+            {/* Selection checkbox for bulk operations */}
+            {onSelect && (
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={onSelect}
+                aria-label={`Select todo ${todo.id}`}
+              />
+            )}
+
+            {/* Completion checkbox */}
+            <Checkbox
+              checked={todo.completed}
+              onCheckedChange={handleToggle}
+              className="mt-1"
+              aria-label={todo.completed ? "Mark as incomplete" : "Mark as complete"}
+            />
+          </div>
+
           <div className="flex-1 min-w-0">
             {isEditing ? (
               <div className="space-y-3">
@@ -143,7 +157,7 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
               </div>
             )}
           </div>
-          
+
           <div className="flex gap-2">
             {isEditing ? (
               <>
@@ -156,17 +170,17 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo }) => {
               </>
             ) : (
               <>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={() => setIsEditing(true)}
                   aria-label="Edit task"
                 >
                   <Edit3 className="h-4 w-4" />
                 </Button>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={handleDelete}
                   aria-label="Delete task"
                 >

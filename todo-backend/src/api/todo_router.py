@@ -74,3 +74,28 @@ def delete_todo(
     if not success:
         raise HTTPException(status_code=404, detail="Todo item not found")
     return {"message": "Todo item deleted successfully"}
+
+
+@router.post("/bulk-delete")
+def bulk_delete_todos(
+    todo_ids: List[int],
+    session: Session = Depends(get_session)
+):
+    """
+    Delete multiple todo items by their IDs.
+    """
+    if not todo_ids:
+        raise HTTPException(status_code=400, detail="No todo IDs provided for deletion")
+
+    # Attempt to delete each todo
+    deleted_count = 0
+    for todo_id in todo_ids:
+        success = TodoService.delete_todo(session, todo_id)
+        if success:
+            deleted_count += 1
+
+    return {
+        "message": f"Successfully deleted {deleted_count} out of {len(todo_ids)} todos",
+        "deleted_count": deleted_count,
+        "requested_count": len(todo_ids)
+    }

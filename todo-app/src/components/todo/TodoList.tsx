@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { TodoItemComponent } from './TodoItem';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
+import { TodoBulkActions } from './TodoBulkActions';
 
 interface TodoListProps {
   todos: TodoItem[];
@@ -22,22 +23,26 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
   const [filterPriority, setFilterPriority] = useState<'all' | 'low' | 'medium' | 'high'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const itemsPerPage = 5;
 
   // Apply filters to todos
   const filteredTodos = todos.filter(todo => {
-    const matchesStatus = filterStatus === 'all' || 
-      (filterStatus === 'active' && !todo.completed) || 
+    const matchesStatus = filterStatus === 'all' ||
+      (filterStatus === 'active' && !todo.completed) ||
       (filterStatus === 'completed' && todo.completed);
-    
+
     const matchesPriority = filterPriority === 'all' || todo.priority === filterPriority;
-    
-    const matchesSearch = searchTerm === '' || 
-      todo.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+
+    const matchesSearch = searchTerm === '' ||
+      todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (todo.description && todo.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    
+
     return matchesStatus && matchesPriority && matchesSearch;
   });
+
+  // Extract IDs of filtered todos for bulk actions
+  const filteredTodoIds = filteredTodos.map(todo => todo.id);
 
   // Pagination
   const totalPages = Math.ceil(filteredTodos.length / itemsPerPage);
@@ -89,6 +94,13 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
         </div>
       </CardHeader>
       <CardContent>
+        {/* Bulk Actions Component */}
+        <TodoBulkActions
+          todoIds={filteredTodoIds}
+          selectedIds={selectedIds}
+          setSelectedIds={setSelectedIds}
+        />
+
         {paginatedTodos.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             {loading ? 'Loading tasks...' : 'No tasks found. Create your first task!'}
@@ -96,15 +108,26 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
         ) : (
           <div className="space-y-4">
             {paginatedTodos.map(todo => (
-              <TodoItemComponent key={todo.id} todo={todo} />
+              <TodoItemComponent
+                key={todo.id}
+                todo={todo}
+                isSelected={selectedIds.includes(todo.id)}
+                onSelect={() => {
+                  if (selectedIds.includes(todo.id)) {
+                    setSelectedIds(selectedIds.filter(id => id !== todo.id));
+                  } else {
+                    setSelectedIds([...selectedIds, todo.id]);
+                  }
+                }}
+              />
             ))}
           </div>
         )}
-        
+
         {/* Pagination controls */}
         {totalPages > 1 && (
           <div className="flex justify-between items-center mt-6">
-            <Button 
+            <Button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
@@ -113,7 +136,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
             <span className="text-sm text-muted-foreground">
               Page {currentPage} of {totalPages}
             </span>
-            <Button 
+            <Button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >

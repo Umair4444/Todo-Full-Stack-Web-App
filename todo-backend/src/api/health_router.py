@@ -1,7 +1,7 @@
 import time
 from fastapi import APIRouter
 from sqlmodel import select
-from ..database.database import get_session, engine, get_db_session
+from ..database.database import get_session
 from ..models.todo_model import TodoItem
 
 router = APIRouter(prefix="/health", tags=["health"])

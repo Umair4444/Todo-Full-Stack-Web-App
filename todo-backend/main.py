@@ -10,6 +10,7 @@ from src.exception_handlers import (
 from fastapi.exceptions import RequestValidationError
 from fastapi import HTTPException as FastAPIHTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from src.monitoring import setup_monitoring
 
 app = FastAPI(title="Todo Backend", version="1.0.0")
 
@@ -29,6 +30,9 @@ app.middleware("http")(rate_limit_middleware)
 app.add_exception_handler(FastAPIHTTPException, http_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(Exception, general_exception_handler)
+
+# Set up monitoring and observability
+setup_monitoring(app)
 
 # Include routers
 app.include_router(todo_router)

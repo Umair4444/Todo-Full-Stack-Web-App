@@ -8,12 +8,19 @@ class TodoService:
     def create_todo(session: Session, todo_item: TodoItemCreate) -> TodoItemResponse:
         """
         Creates a new todo item in the database.
+
+        Args:
+            session: Database session
+            todo_item: Todo item to create
+
+        Returns:
+            Created todo item as TodoItemResponse
         """
         db_todo = TodoItem.model_validate(todo_item)
         session.add(db_todo)
         session.commit()
         session.refresh(db_todo)
-        
+
         # Convert to response model
         response = TodoItemResponse(
             id=db_todo.id,
@@ -29,11 +36,18 @@ class TodoService:
     def get_todo(session: Session, todo_id: int) -> Optional[TodoItemResponse]:
         """
         Retrieves a todo item by its ID.
+
+        Args:
+            session: Database session
+            todo_id: ID of the todo item to retrieve
+
+        Returns:
+            Todo item as TodoItemResponse or None if not found
         """
         db_todo = session.get(TodoItem, todo_id)
         if db_todo is None:
             return None
-        
+
         response = TodoItemResponse(
             id=db_todo.id,
             title=db_todo.title,
@@ -46,25 +60,34 @@ class TodoService:
 
     @staticmethod
     def get_todos(
-        session: Session, 
-        offset: int = 0, 
+        session: Session,
+        offset: int = 0,
         limit: int = 100,
         completed: Optional[bool] = None
     ) -> List[TodoItemResponse]:
         """
         Retrieves a list of todo items with optional filtering and pagination.
+
+        Args:
+            session: Database session
+            offset: Number of records to skip
+            limit: Maximum number of records to return
+            completed: Optional filter for completed status
+
+        Returns:
+            List of todo items as TodoItemResponse objects
         """
         query = select(TodoItem)
-        
+
         # Apply filters
         if completed is not None:
             query = query.where(TodoItem.is_completed == completed)
-        
+
         # Apply pagination
         query = query.offset(offset).limit(limit)
-        
+
         db_todos = session.exec(query).all()
-        
+
         # Convert to response models
         response_list = []
         for db_todo in db_todos:
@@ -77,27 +100,35 @@ class TodoService:
                 updated_at=db_todo.updated_at
             )
             response_list.append(response)
-        
+
         return response_list
 
     @staticmethod
     def update_todo(session: Session, todo_id: int, todo_update: TodoItemUpdate) -> Optional[TodoItemResponse]:
         """
         Updates an existing todo item.
+
+        Args:
+            session: Database session
+            todo_id: ID of the todo item to update
+            todo_update: Updated todo item data
+
+        Returns:
+            Updated todo item as TodoItemResponse or None if not found
         """
         db_todo = session.get(TodoItem, todo_id)
         if db_todo is None:
             return None
-        
+
         # Update fields that are provided
         update_data = todo_update.model_dump(exclude_unset=True)
         for field, value in update_data.items():
             setattr(db_todo, field, value)
-        
+
         session.add(db_todo)
         session.commit()
         session.refresh(db_todo)
-        
+
         # Convert to response model
         response = TodoItemResponse(
             id=db_todo.id,
@@ -113,11 +144,18 @@ class TodoService:
     def delete_todo(session: Session, todo_id: int) -> bool:
         """
         Deletes a todo item by its ID.
+
+        Args:
+            session: Database session
+            todo_id: ID of the todo item to delete
+
+        Returns:
+            True if deletion was successful, False otherwise
         """
         db_todo = session.get(TodoItem, todo_id)
         if db_todo is None:
             return False
-        
+
         session.delete(db_todo)
         session.commit()
         return True
