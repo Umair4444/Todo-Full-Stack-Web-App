@@ -23,6 +23,7 @@ The API returns standard HTTP status codes:
 
 - `200 OK` - Request successful
 - `201 Created` - Resource created successfully
+- `204 No Content` - Request successful, no content to return
 - `400 Bad Request` - Invalid request data
 - `404 Not Found` - Resource does not exist
 - `422 Unprocessable Entity` - Validation error
@@ -78,7 +79,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
   {
     "title": "string (required, 1-255 chars)",
     "description": "string (optional, max 1000 chars)",
-    "is_completed": "boolean (optional, default: false)"
+    "is_completed": "boolean (optional, default: false)",
+    "priority": "string (optional, 'low', 'medium', or 'high', default: 'low')"
   }
   ```
 - **Response**: Created todo item
@@ -89,7 +91,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     -d '{
       "title": "New todo",
       "description": "Description of the new todo",
-      "is_completed": false
+      "is_completed": false,
+      "priority": "high"
     }'
   ```
 - **Example Response**:
@@ -99,6 +102,7 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     "title": "New todo",
     "description": "Description of the new todo",
     "is_completed": false,
+    "priority": "high",
     "created_at": "2023-01-01T10:00:00",
     "updated_at": "2023-01-01T10:00:00"
   }
@@ -136,7 +140,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
   {
     "title": "string (optional, 1-255 chars)",
     "description": "string (optional, max 1000 chars)",
-    "is_completed": "boolean (optional)"
+    "is_completed": "boolean (optional)",
+    "priority": "string (optional, 'low', 'medium', or 'high')"
   }
   ```
 - **Response**: Updated todo item or 404 if not found
@@ -146,7 +151,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     -H "Content-Type: application/json" \
     -d '{
       "title": "Updated todo",
-      "is_completed": true
+      "is_completed": true,
+      "priority": "high"
     }'
   ```
 - **Example Response**:
@@ -156,6 +162,7 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     "title": "Updated todo",
     "description": "Description of the new todo",
     "is_completed": true,
+    "priority": "high",
     "created_at": "2023-01-01T10:00:00",
     "updated_at": "2023-01-01T11:00:00"
   }
@@ -175,6 +182,55 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
   ```json
   {
     "message": "Todo item deleted successfully"
+  }
+  ```
+
+#### Bulk delete todos
+- **Endpoint**: `POST /api/v1/todos/bulk-delete`
+- **Description**: Delete multiple todo items by their IDs
+- **Request Body**:
+  ```json
+  {
+    "todo_ids": "array of integers (required)"
+  }
+  ```
+- **Response**: Result of the bulk delete operation
+- **Example Request**:
+  ```bash
+  curl -X POST "http://localhost:8000/api/v1/todos/bulk-delete" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "todo_ids": [1, 2, 3]
+    }'
+  ```
+- **Example Response**:
+  ```json
+  {
+    "message": "Successfully deleted 3 out of 3 todos",
+    "deleted_count": 3,
+    "requested_count": 3
+  }
+  ```
+
+#### Toggle completion status
+- **Endpoint**: `PATCH /api/v1/todos/{id}/toggle-completion`
+- **Description**: Toggle the completion status of a specific todo item
+- **Path Parameter**:
+  - `id` (integer): ID of the todo item
+- **Response**: Updated todo item or 404 if not found
+- **Example Request**:
+  ```bash
+  curl -X PATCH "http://localhost:8000/api/v1/todos/1/toggle-completion"
+  ```
+- **Example Response**:
+  ```json
+  {
+    "id": 1,
+    "title": "Complete project",
+    "description": "Finish the todo app backend",
+    "is_completed": true,
+    "created_at": "2023-01-01T10:00:00",
+    "updated_at": "2023-01-01T11:00:00"
   }
   ```
 
@@ -201,6 +257,17 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
   }
   ```
 
+### Metrics
+
+#### Get Prometheus metrics
+- **Endpoint**: `GET /metrics`
+- **Description**: Get application metrics in Prometheus format
+- **Response**: Metrics in Prometheus text format
+- **Example Request**:
+  ```bash
+  curl -X GET "http://localhost:8000/metrics"
+  ```
+
 ## Data Models
 
 ### TodoItem
@@ -208,6 +275,7 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
 - `title` (string): Title of the todo item (1-255 characters)
 - `description` (string, nullable): Detailed description (max 1000 characters)
 - `is_completed` (boolean): Completion status (default: false)
+- `priority` (string): Priority level ("low", "medium", or "high", default: "low")
 - `created_at` (datetime): Timestamp when the item was created
 - `updated_at` (datetime): Timestamp when the item was last updated
 
@@ -229,26 +297,44 @@ from src.api_client import TodoAPIClient
 # Initialize the client
 client = TodoAPIClient(base_url="http://localhost:8000")
 
-# Create a new todo
+# Create a new todo with priority
 new_todo = client.create_todo(
     title="Sample Todo",
     description="This is a sample todo item",
-    is_completed=False
+    is_completed=False,
+    priority="high"  # Priority as string: "low", "medium", or "high"
 )
 
 # Get all todos
 todos = client.get_todos()
 
-# Update a todo
+# Update a todo with priority
 updated_todo = client.update_todo(
     todo_id=new_todo["id"],
     title="Updated Sample Todo",
-    is_completed=True
+    is_completed=True,
+    priority="medium"  # Update priority to medium
 )
 
 # Delete a todo
 delete_result = client.delete_todo(new_todo["id"])
+
+# Toggle completion status
+toggled_todo = client.toggle_completion(new_todo["id"])
+
+# Bulk delete todos
+bulk_delete_result = client.bulk_delete_todos([1, 2, 3])
 ```
+
+## Priority Management
+
+The API now supports priority management for todo items. Priority levels are represented as strings:
+
+- "low": Low priority
+- "medium": Medium priority
+- "high": High priority
+
+When creating a new todo item, you can specify the priority level as a string (defaults to "low" if not specified). You can also update the priority of existing items using the PUT endpoint.
 
 ## API Versioning
 
@@ -261,3 +347,12 @@ The API allows cross-origin requests from all origins. In production, this shoul
 ## Performance
 
 The API is designed to respond to requests in under 200ms for 95% of requests under normal load conditions.
+
+## Monitoring and Observability
+
+The application includes comprehensive monitoring and observability features:
+- Prometheus metrics endpoint at `/metrics`
+- Structured logging with multiple log levels
+- Performance monitoring for API endpoints
+- Database connection monitoring
+- System resource monitoring

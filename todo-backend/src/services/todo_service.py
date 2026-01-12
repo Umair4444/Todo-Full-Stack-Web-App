@@ -27,6 +27,7 @@ class TodoService:
             title=db_todo.title,
             description=db_todo.description,
             is_completed=db_todo.is_completed,
+            priority=db_todo.priority,
             created_at=db_todo.created_at,
             updated_at=db_todo.updated_at
         )
@@ -53,6 +54,7 @@ class TodoService:
             title=db_todo.title,
             description=db_todo.description,
             is_completed=db_todo.is_completed,
+            priority=db_todo.priority,
             created_at=db_todo.created_at,
             updated_at=db_todo.updated_at
         )
@@ -96,6 +98,7 @@ class TodoService:
                 title=db_todo.title,
                 description=db_todo.description,
                 is_completed=db_todo.is_completed,
+                priority=db_todo.priority,
                 created_at=db_todo.created_at,
                 updated_at=db_todo.updated_at
             )
@@ -135,6 +138,7 @@ class TodoService:
             title=db_todo.title,
             description=db_todo.description,
             is_completed=db_todo.is_completed,
+            priority=db_todo.priority,
             created_at=db_todo.created_at,
             updated_at=db_todo.updated_at
         )

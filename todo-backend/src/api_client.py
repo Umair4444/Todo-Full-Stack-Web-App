@@ -58,7 +58,7 @@ class TodoAPIClient:
 
         return self._make_request("GET", "/api/v1/todos", params=params)
 
-    def create_todo(self, title: str, description: Optional[str] = None, is_completed: bool = False) -> Dict[str, Any]:
+    def create_todo(self, title: str, description: Optional[str] = None, is_completed: bool = False, priority: str = "low") -> Dict[str, Any]:
         """
         Create a new todo item.
 
@@ -66,6 +66,7 @@ class TodoAPIClient:
             title: Title of the todo item (required)
             description: Description of the todo item (optional)
             is_completed: Completion status (default: False)
+            priority: Priority level ("low", "medium", or "high", default: "low")
 
         Returns:
             Created todo item
@@ -73,7 +74,8 @@ class TodoAPIClient:
         data = {
             "title": title,
             "description": description,
-            "is_completed": is_completed
+            "is_completed": is_completed,
+            "priority": priority
         }
         return self._make_request("POST", "/api/v1/todos", json=data)
 
@@ -89,8 +91,8 @@ class TodoAPIClient:
         """
         return self._make_request("GET", f"/api/v1/todos/{todo_id}")
 
-    def update_todo(self, todo_id: int, title: Optional[str] = None, 
-                    description: Optional[str] = None, is_completed: Optional[bool] = None) -> Dict[str, Any]:
+    def update_todo(self, todo_id: int, title: Optional[str] = None,
+                    description: Optional[str] = None, is_completed: Optional[bool] = None, priority: Optional[str] = None) -> Dict[str, Any]:
         """
         Update a specific todo item by ID.
 
@@ -99,6 +101,7 @@ class TodoAPIClient:
             title: New title (optional)
             description: New description (optional)
             is_completed: New completion status (optional)
+            priority: New priority level ("low", "medium", or "high", optional)
 
         Returns:
             Updated todo item
@@ -110,6 +113,8 @@ class TodoAPIClient:
             data["description"] = description
         if is_completed is not None:
             data["is_completed"] = is_completed
+        if priority is not None:
+            data["priority"] = priority
 
         return self._make_request("PUT", f"/api/v1/todos/{todo_id}", json=data)
 
@@ -140,11 +145,12 @@ if __name__ == "__main__":
     # Initialize the client
     client = TodoAPIClient(base_url="http://localhost:8000")
 
-    # Create a new todo
+    # Create a new todo with priority
     new_todo = client.create_todo(
         title="Sample Todo",
         description="This is a sample todo item",
-        is_completed=False
+        is_completed=False,
+        priority="high"  # High priority
     )
     print(f"Created todo: {new_todo}")
 
@@ -152,11 +158,12 @@ if __name__ == "__main__":
     todos = client.get_todos()
     print(f"All todos: {todos}")
 
-    # Update the todo
+    # Update the todo with new priority
     updated_todo = client.update_todo(
         todo_id=new_todo["id"],
         title="Updated Sample Todo",
-        is_completed=True
+        is_completed=True,
+        priority="medium"  # Medium priority
     )
     print(f"Updated todo: {updated_todo}")
 

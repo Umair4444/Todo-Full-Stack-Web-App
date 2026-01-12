@@ -1,7 +1,7 @@
 # How-To: Use the Todo API
 
 ## Overview
-This guide explains how to use the Todo API endpoints to manage todo items. The API provides full CRUD (Create, Read, Update, Delete) functionality for todo items.
+This guide explains how to use the Todo API endpoints to manage todo items. The API provides full CRUD (Create, Read, Update, Delete) functionality for todo items, plus additional features like bulk operations and completion toggling.
 
 ## Base URL
 The base URL for all API requests is:
@@ -66,7 +66,8 @@ Create a new todo item.
 {
   "title": "string (required, max 255 chars)",
   "description": "string (optional, max 1000 chars)",
-  "is_completed": "boolean (optional, default: false)"
+  "is_completed": "boolean (optional, default: false)",
+  "priority": "string (optional, 'low', 'medium', or 'high', default: 'low')"
 }
 ```
 
@@ -77,7 +78,8 @@ curl -X POST "http://localhost:8000/api/v1/todos" \
   -d '{
     "title": "Learn FastAPI",
     "description": "Complete the tutorial and build an app",
-    "is_completed": false
+    "is_completed": false,
+    "priority": "high"
   }'
 ```
 
@@ -88,6 +90,7 @@ curl -X POST "http://localhost:8000/api/v1/todos" \
   "title": "Learn FastAPI",
   "description": "Complete the tutorial and build an app",
   "is_completed": false,
+  "priority": "high",
   "created_at": "2023-01-01T12:00:00",
   "updated_at": "2023-01-01T12:00:00"
 }
@@ -131,7 +134,8 @@ Update an existing todo item. Partial updates are supported.
 {
   "title": "string (optional)",
   "description": "string (optional)",
-  "is_completed": "boolean (optional)"
+  "is_completed": "boolean (optional)",
+  "priority": "string (optional, 'low', 'medium', or 'high')"
 }
 ```
 
@@ -141,7 +145,8 @@ curl -X PUT "http://localhost:8000/api/v1/todos/1" \
   -H "Content-Type: application/json" \
   -d '{
     "is_completed": true,
-    "description": "Milk, bread, eggs, fruits"
+    "description": "Milk, bread, eggs, fruits",
+    "priority": "high"
   }'
 ```
 
@@ -152,6 +157,7 @@ curl -X PUT "http://localhost:8000/api/v1/todos/1" \
   "title": "Buy groceries",
   "description": "Milk, bread, eggs, fruits",
   "is_completed": true,
+  "priority": "high",
   "created_at": "2023-01-01T10:00:00",
   "updated_at": "2023-01-01T13:00:00"
 }
@@ -177,15 +183,107 @@ curl -X DELETE "http://localhost:8000/api/v1/todos/1"
 }
 ```
 
+### 6. Bulk Delete Todos
+Delete multiple todo items by their IDs.
+
+**Endpoint:** `POST /todos/bulk-delete`
+
+**Request Body:**
+```json
+{
+  "todo_ids": "array of integers (required)"
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST "http://localhost:8000/api/v1/todos/bulk-delete" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "todo_ids": [1, 2, 3]
+  }'
+```
+
+**Response:**
+```json
+{
+  "message": "Successfully deleted 3 out of 3 todos",
+  "deleted_count": 3,
+  "requested_count": 3
+}
+```
+
+### 7. Toggle Completion Status
+Toggle the completion status of a specific todo item.
+
+**Endpoint:** `PATCH /todos/{id}/toggle-completion`
+
+**Path Parameter:**
+- `id` (integer): The ID of the todo item to update
+
+**Example Request:**
+```bash
+curl -X PATCH "http://localhost:8000/api/v1/todos/1/toggle-completion"
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "title": "Buy groceries",
+  "description": "Milk, bread, eggs",
+  "is_completed": true,
+  "created_at": "2023-01-01T10:00:00",
+  "updated_at": "2023-01-01T13:00:00"
+}
+```
+
+## Utility Endpoints
+
+### Health Check
+Check the health status of the API and database connection.
+
+**Endpoint:** `GET /health`
+
+**Example Request:**
+```bash
+curl -X GET "http://localhost:8000/health"
+```
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": 1672531200.123456,
+  "response_time_ms": 15.23,
+  "details": {
+    "database": "connected",
+    "api": "responsive"
+  }
+}
+```
+
+### Metrics
+Get application metrics in Prometheus format.
+
+**Endpoint:** `GET /metrics`
+
+**Example Request:**
+```bash
+curl -X GET "http://localhost:8000/metrics"
+```
+
 ## Error Handling
 
 The API returns appropriate HTTP status codes and error messages:
 
 - `200 OK`: Request successful
 - `201 Created`: Resource created successfully
+- `204 No Content`: Request successful, no content to return
 - `400 Bad Request`: Invalid request parameters or body
 - `404 Not Found`: Requested resource does not exist
 - `422 Unprocessable Entity`: Validation error
+- `429 Too Many Requests`: Rate limit exceeded
 - `500 Internal Server Error`: Server error
 
 **Example Error Response:**
@@ -202,3 +300,5 @@ The API returns appropriate HTTP status codes and error messages:
 3. **Use HTTPS**: Always use HTTPS in production environments
 4. **Rate Limiting**: Be mindful of the rate limits (100 requests/hour per IP)
 5. **Pagination**: Use pagination for large datasets to improve performance
+6. **Bulk Operations**: Use bulk delete for removing multiple items efficiently
+7. **Completion Toggling**: Use the toggle endpoint to change completion status without knowing the current state

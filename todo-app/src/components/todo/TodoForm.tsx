@@ -65,7 +65,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ onTodoAdded }) => {
   };
 
   return (
-    <Card>
+    <Card className="transition-all duration-300 ease-in-out hover:shadow-lg">
       <CardHeader>
         <CardTitle>Add New Task</CardTitle>
         <CardDescription>Create a new task to stay organized</CardDescription>
@@ -79,15 +79,16 @@ const TodoForm: React.FC<TodoFormProps> = ({ onTodoAdded }) => {
               placeholder="What needs to be done?"
               required
               maxLength={100}
+              className="focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 border-2 border-input focus:border-primary rounded-lg"
             />
           </div>
-          
+
           <div className="space-y-2">
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add details (optional)..."
-              className="min-h-[80px]"
+              className="min-h-[80px] focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 border-2 border-input focus:border-primary rounded-lg"
               maxLength={500}
             />
           </div>
@@ -95,18 +96,22 @@ const TodoForm: React.FC<TodoFormProps> = ({ onTodoAdded }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Select value={priority} onValueChange={(value: 'low' | 'medium' | 'high') => setPriority(value)}>
-                <SelectTrigger>
+                <SelectTrigger className="focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 border-2 border-input focus:border-primary rounded-lg hover:shadow-md">
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low Priority</SelectItem>
-                  <SelectItem value="medium">Medium Priority</SelectItem>
-                  <SelectItem value="high">High Priority</SelectItem>
+                  <SelectItem value="low" className="bg-emerald-50 text-emerald-800 hover:bg-emerald-100">Low Priority</SelectItem>
+                  <SelectItem value="medium" className="bg-amber-50 text-amber-800 hover:bg-amber-100">Medium Priority</SelectItem>
+                  <SelectItem value="high" className="bg-rose-50 text-rose-800 hover:bg-rose-100">High Priority</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
-            <Button type="submit" disabled={loading} className="w-full">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg"
+            >
               {loading ? 'Adding Task...' : 'Add Task'}
             </Button>
           </div>

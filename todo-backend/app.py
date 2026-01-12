@@ -46,9 +46,15 @@ app = FastAPI(
 )
 
 # Add CORS middleware for frontend integration
+allowed_origins = ["*"]  # Default to allow all in case environment variable is not set
+
+# Check if we have specific allowed origins from environment variables
+if hasattr(settings, 'ALLOWED_ORIGINS') and settings.ALLOWED_ORIGINS:
+    allowed_origins = [origin.strip() for origin in settings.ALLOWED_ORIGINS.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, replace with specific origins
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -56,7 +56,7 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
 
   return (
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-2xl animate-in slide-in-from-bottom-4 duration-300">
-      <div className="bg-gradient-to-r from-background to-secondary/30 border border-border rounded-xl shadow-xl p-5 backdrop-blur-lg bg-opacity-95 transition-all duration-300">
+      <div className="bg-gradient-to-r from-background to-secondary/30 border border-border rounded-xl shadow-xl p-5 backdrop-blur-lg bg-opacity-95 transition-all duration-300 hover:shadow-2xl">
         {progress > 0 && (
           <div className="mb-3">
             <div className="w-full bg-secondary rounded-full h-1.5">
@@ -68,7 +68,7 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
           </div>
         )}
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="relative">
               <Checkbox
@@ -76,7 +76,7 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
                 checked={areAllSelected}
                 onCheckedChange={toggleSelectAll}
                 aria-label="Select all todos"
-                className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground h-5 w-5 transition-transform duration-200 hover:scale-110"
+                className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground h-5 w-5 transition-transform duration-200 hover:scale-110 data-[state=unchecked]:hover:bg-accent"
               />
               {(someSelected || areAllSelected) && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -102,13 +102,13 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
               variant="outline"
               size="sm"
               onClick={toggleSelectAll}
-              className="ml-2"
+              className="ml-2 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
             >
               {areAllSelected ? 'Deselect All' : 'Select All'}
             </Button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
             {!showConfirmation && (
               <Button
                 variant="outline"
@@ -117,7 +117,7 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
                   setSelectedIds([]);
                   setIsBulkDeleteActive(false);
                 }}
-                className="flex items-center gap-1 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                className="flex items-center gap-1 hover:bg-destructive/10 hover:text-destructive transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
               >
                 <XIcon className="h-4 w-4" />
                 Cancel
@@ -136,7 +136,7 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
                 Delete
               </Button>
             ) : (
-              <div className="flex items-center gap-2 bg-destructive/10 p-3 rounded-lg border border-destructive/30 animate-in fade-in zoom-in-95">
+              <div className="flex items-center gap-2 bg-destructive/10 p-3 rounded-lg border border-destructive/30 animate-in fade-in zoom-in-95 transition-all duration-300 hover:shadow-md">
                 <span className="text-sm font-medium">
                   Delete {selectedIds.length} {selectedIds.length === 1 ? 'item' : 'items'}?
                 </span>
@@ -145,7 +145,7 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
                   size="sm"
                   onClick={handleBulkDelete}
                   disabled={loading}
-                  className="flex items-center gap-1 bg-destructive hover:bg-destructive/90"
+                  className="flex items-center gap-1 bg-destructive hover:bg-destructive/90 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
                 >
                   {loading ? (
                     <>
@@ -159,7 +159,7 @@ export function TodoBulkActions({ todoIds, selectedIds, setSelectedIds, isBulkDe
                   size="sm"
                   onClick={() => setShowConfirmation(false)}
                   disabled={loading}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
                 >
                   No, Keep
                 </Button>
