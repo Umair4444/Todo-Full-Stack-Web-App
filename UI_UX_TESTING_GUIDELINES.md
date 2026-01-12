@@ -87,7 +87,7 @@ Perform a Lighthouse audit in Chrome DevTools to check:
 ## Known Issues
 - List any known UI/UX issues here
 - Document browser-specific quirks
-- Note any responsive breakpoints that need adjustment.
+- Note any responsive breakpoints that need adjustment
 
 ## Browser Support
 The application supports:
