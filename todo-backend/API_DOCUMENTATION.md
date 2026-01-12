@@ -79,7 +79,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
   {
     "title": "string (required, 1-255 chars)",
     "description": "string (optional, max 1000 chars)",
-    "is_completed": "boolean (optional, default: false)"
+    "is_completed": "boolean (optional, default: false)",
+    "priority": "string (optional, 'low', 'medium', or 'high', default: 'low')"
   }
   ```
 - **Response**: Created todo item
@@ -90,7 +91,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     -d '{
       "title": "New todo",
       "description": "Description of the new todo",
-      "is_completed": false
+      "is_completed": false,
+      "priority": "high"
     }'
   ```
 - **Example Response**:
@@ -100,6 +102,7 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     "title": "New todo",
     "description": "Description of the new todo",
     "is_completed": false,
+    "priority": "high",
     "created_at": "2023-01-01T10:00:00",
     "updated_at": "2023-01-01T10:00:00"
   }
@@ -137,7 +140,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
   {
     "title": "string (optional, 1-255 chars)",
     "description": "string (optional, max 1000 chars)",
-    "is_completed": "boolean (optional)"
+    "is_completed": "boolean (optional)",
+    "priority": "string (optional, 'low', 'medium', or 'high')"
   }
   ```
 - **Response**: Updated todo item or 404 if not found
@@ -147,7 +151,8 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     -H "Content-Type: application/json" \
     -d '{
       "title": "Updated todo",
-      "is_completed": true
+      "is_completed": true,
+      "priority": "high"
     }'
   ```
 - **Example Response**:
@@ -157,6 +162,7 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
     "title": "Updated todo",
     "description": "Description of the new todo",
     "is_completed": true,
+    "priority": "high",
     "created_at": "2023-01-01T10:00:00",
     "updated_at": "2023-01-01T11:00:00"
   }
@@ -269,6 +275,7 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
 - `title` (string): Title of the todo item (1-255 characters)
 - `description` (string, nullable): Detailed description (max 1000 characters)
 - `is_completed` (boolean): Completion status (default: false)
+- `priority` (string): Priority level ("low", "medium", or "high", default: "low")
 - `created_at` (datetime): Timestamp when the item was created
 - `updated_at` (datetime): Timestamp when the item was last updated
 
@@ -290,21 +297,23 @@ from src.api_client import TodoAPIClient
 # Initialize the client
 client = TodoAPIClient(base_url="http://localhost:8000")
 
-# Create a new todo
+# Create a new todo with priority
 new_todo = client.create_todo(
     title="Sample Todo",
     description="This is a sample todo item",
-    is_completed=False
+    is_completed=False,
+    priority="high"  # Priority as string: "low", "medium", or "high"
 )
 
 # Get all todos
 todos = client.get_todos()
 
-# Update a todo
+# Update a todo with priority
 updated_todo = client.update_todo(
     todo_id=new_todo["id"],
     title="Updated Sample Todo",
-    is_completed=True
+    is_completed=True,
+    priority="medium"  # Update priority to medium
 )
 
 # Delete a todo
@@ -316,6 +325,16 @@ toggled_todo = client.toggle_completion(new_todo["id"])
 # Bulk delete todos
 bulk_delete_result = client.bulk_delete_todos([1, 2, 3])
 ```
+
+## Priority Management
+
+The API now supports priority management for todo items. Priority levels are represented as strings:
+
+- "low": Low priority
+- "medium": Medium priority
+- "high": High priority
+
+When creating a new todo item, you can specify the priority level as a string (defaults to "low" if not specified). You can also update the priority of existing items using the PUT endpoint.
 
 ## API Versioning
 

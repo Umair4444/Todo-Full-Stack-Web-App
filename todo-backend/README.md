@@ -24,6 +24,7 @@ This is a FastAPI backend for managing todo items deployed on Hugging Face Space
 - Comprehensive monitoring and observability
 - Bulk delete functionality
 - Toggle completion status endpoint
+- Priority management (low, medium, high scale)
 
 ## Database Configuration
 
@@ -60,9 +61,9 @@ Once the application is running, you can access the following endpoints:
 
 ### Todo Items
 - `GET /api/v1/todos` - Get all todo items
-- `POST /api/v1/todos` - Create a new todo item
-- `GET /api/v1/todos/{id}` - Get a specific todo item
-- `PUT /api/v1/todos/{id}` - Update a specific todo item
+- `POST /api/v1/todos` - Create a new todo item (with optional priority)
+- `GET /api/v1/todos/{id}` - Get a specific todo item (includes priority)
+- `PUT /api/v1/todos/{id}` - Update a specific todo item (including priority)
 - `DELETE /api/v1/todos/{id}` - Delete a specific todo item
 - `POST /api/v1/todos/bulk-delete` - Delete multiple todo items by ID
 - `PATCH /api/v1/todos/{id}/toggle-completion` - Toggle completion status of a todo item

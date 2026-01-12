@@ -66,7 +66,8 @@ Create a new todo item.
 {
   "title": "string (required, max 255 chars)",
   "description": "string (optional, max 1000 chars)",
-  "is_completed": "boolean (optional, default: false)"
+  "is_completed": "boolean (optional, default: false)",
+  "priority": "string (optional, 'low', 'medium', or 'high', default: 'low')"
 }
 ```
 
@@ -77,7 +78,8 @@ curl -X POST "http://localhost:8000/api/v1/todos" \
   -d '{
     "title": "Learn FastAPI",
     "description": "Complete the tutorial and build an app",
-    "is_completed": false
+    "is_completed": false,
+    "priority": "high"
   }'
 ```
 
@@ -88,6 +90,7 @@ curl -X POST "http://localhost:8000/api/v1/todos" \
   "title": "Learn FastAPI",
   "description": "Complete the tutorial and build an app",
   "is_completed": false,
+  "priority": "high",
   "created_at": "2023-01-01T12:00:00",
   "updated_at": "2023-01-01T12:00:00"
 }
@@ -131,7 +134,8 @@ Update an existing todo item. Partial updates are supported.
 {
   "title": "string (optional)",
   "description": "string (optional)",
-  "is_completed": "boolean (optional)"
+  "is_completed": "boolean (optional)",
+  "priority": "string (optional, 'low', 'medium', or 'high')"
 }
 ```
 
@@ -141,7 +145,8 @@ curl -X PUT "http://localhost:8000/api/v1/todos/1" \
   -H "Content-Type: application/json" \
   -d '{
     "is_completed": true,
-    "description": "Milk, bread, eggs, fruits"
+    "description": "Milk, bread, eggs, fruits",
+    "priority": "high"
   }'
 ```
 
@@ -152,6 +157,7 @@ curl -X PUT "http://localhost:8000/api/v1/todos/1" \
   "title": "Buy groceries",
   "description": "Milk, bread, eggs, fruits",
   "is_completed": true,
+  "priority": "high",
   "created_at": "2023-01-01T10:00:00",
   "updated_at": "2023-01-01T13:00:00"
 }

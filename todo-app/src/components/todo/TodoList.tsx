@@ -72,18 +72,18 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
 
   return (
     <div className="pb-32"> {/* Add padding to account for floating bulk actions bar */}
-      <Card>
+      <Card className="transition-all duration-300 ease-in-out hover:shadow-lg">
         <CardHeader>
           <CardTitle>My Tasks</CardTitle>
-          <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          <div className="flex flex-col sm:flex-row gap-4 mt-4 flex-wrap">
             <Input
               placeholder="Search todos..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-xs"
+              className="max-w-xs focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 border-2 border-input focus:border-primary rounded-lg hover:shadow-md"
             />
             <Select value={filterStatus} onValueChange={(value: 'all' | 'active' | 'completed') => setFilterStatus(value)}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 border-2 border-input focus:border-primary rounded-lg hover:shadow-md">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -93,18 +93,23 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
               </SelectContent>
             </Select>
             <Select value={filterPriority} onValueChange={(value: 'all' | 'low' | 'medium' | 'high') => setFilterPriority(value)}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all duration-200 border-2 border-input focus:border-primary rounded-lg hover:shadow-md">
                 <SelectValue placeholder="Filter by priority" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Priorities</SelectItem>
-                <SelectItem value="low">Low Priority</SelectItem>
-                <SelectItem value="medium">Medium Priority</SelectItem>
-                <SelectItem value="high">High Priority</SelectItem>
+                <SelectItem value="low" className="bg-emerald-50 text-emerald-800 hover:bg-emerald-100">Low Priority</SelectItem>
+                <SelectItem value="medium" className="bg-amber-50 text-amber-800 hover:bg-amber-100">Medium Priority</SelectItem>
+                <SelectItem value="high" className="bg-rose-50 text-rose-800 hover:bg-rose-100">High Priority</SelectItem>
               </SelectContent>
             </Select>
             {onRefresh && (
-              <Button variant="outline" onClick={onRefresh} disabled={loading}>
+              <Button
+                variant="outline"
+                onClick={onRefresh}
+                disabled={loading}
+                className="transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
+              >
                 {loading ? 'Refreshing...' : 'Refresh'}
               </Button>
             )}
@@ -124,7 +129,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
                 }
               }
             }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
           >
             <Trash2Icon className="h-4 w-4" />
             {isBulkDeleteActive ? 'Cancel Bulk Delete' : 'Bulk Delete'}
@@ -169,10 +174,11 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
 
           {/* Pagination controls */}
           {totalPages > 1 && (
-            <div className="flex justify-between items-center mt-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
               <Button
                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
+                className="transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
               >
                 Previous
               </Button>
@@ -182,6 +188,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
               <Button
                 onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
+                className="transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md"
               >
                 Next
               </Button>

@@ -17,7 +17,7 @@ This document outlines the monitoring and observability setup for the Todo Backe
 - HTTP request duration (by method and endpoint)
 - Error rate (by status code)
 - Database connection pool metrics
-- Custom business metrics
+- Custom business metrics including priority distribution
 
 ### Implementation
 The application uses Prometheus client library to expose metrics at the `/metrics` endpoint. The following metrics are collected:

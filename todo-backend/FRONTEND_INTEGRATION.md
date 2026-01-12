@@ -42,9 +42,9 @@ To allow your Vercel frontend to communicate with your backend, you need to conf
 Your backend provides the following endpoints:
 
 - `GET /api/v1/todos` - Get all todo items
-- `POST /api/v1/todos` - Create a new todo item
-- `GET /api/v1/todos/{id}` - Get a specific todo item
-- `PUT /api/v1/todos/{id}` - Update a specific todo item
+- `POST /api/v1/todos` - Create a new todo item (with optional priority)
+- `GET /api/v1/todos/{id}` - Get a specific todo item (includes priority)
+- `PUT /api/v1/todos/{id}` - Update a specific todo item (including priority)
 - `DELETE /api/v1/todos/{id}` - Delete a specific todo item
 - `POST /api/v1/todos/bulk-delete` - Delete multiple todo items by ID
 - `PATCH /api/v1/todos/{id}/toggle-completion` - Toggle completion status of a todo item
@@ -97,11 +97,11 @@ Here's an example of how to make API calls from your frontend to your backend:
 async function fetchTodos() {
   try {
     const response = await fetch('https://[your-username]-[your-space-name].hf.space/api/v1/todos');
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const todos = await response.json();
     return todos;
   } catch (error) {
@@ -110,21 +110,27 @@ async function fetchTodos() {
   }
 }
 
-// Function to create a new todo
+// Function to create a new todo with priority
 async function createTodo(todoData) {
   try {
+    // Default priority is "low", but you can set it to "low", "medium", or "high"
+    const todoWithPriority = {
+      ...todoData,
+      priority: todoData.priority || "low"  // Set priority level ("low", "medium", or "high")
+    };
+
     const response = await fetch('https://[your-username]-[your-space-name].hf.space/api/v1/todos', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(todoData),
+      body: JSON.stringify(todoWithPriority),
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const newTodo = await response.json();
     return newTodo;
   } catch (error) {
@@ -132,6 +138,54 @@ async function createTodo(todoData) {
     throw error;
   }
 }
+
+// Function to update a todo including priority
+async function updateTodo(todoId, updateData) {
+  try {
+    const response = await fetch(`https://[your-username]-[your-space-name].hf.space/api/v1/todos/${todoId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(updateData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const updatedTodo = await response.json();
+    return updatedTodo;
+  } catch (error) {
+    console.error('Error updating todo:', error);
+    throw error;
+  }
+}
+```
+
+## Priority Management
+
+The API now supports priority management for todo items. Priority levels are represented as strings:
+
+- "low": Low priority
+- "medium": Medium priority
+- "high": High priority
+
+When creating or updating a todo item, you can specify the priority level:
+
+```javascript
+// Creating a high priority todo
+const highPriorityTodo = await createTodo({
+  title: "Urgent task",
+  description: "This needs to be done immediately",
+  priority: "high"  // High priority
+});
+
+// Updating a todo's priority
+const updatedTodo = await updateTodo(todoId, {
+  title: "Updated task",
+  priority: "medium"  // Medium priority
+});
 ```
 
 ## Deployment Checklist
