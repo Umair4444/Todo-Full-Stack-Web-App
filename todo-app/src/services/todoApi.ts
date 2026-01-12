@@ -35,7 +35,7 @@ export async function getTodos(
   if (status === 'active') params.append('completed', 'false');
 
   const queryString = params.toString();
-  const endpoint = `/api/v1/todos${queryString ? `?${queryString}` : ''}`;
+  const endpoint = `/api/v1/todos/${queryString ? `?${queryString}` : ''}`;
 
   try {
     // Make request to backend
@@ -73,7 +73,7 @@ export async function getTodos(
 // Create a new todo
 export async function createTodo(todo: Omit<TodoItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<TodoItem> {
   const backendTodo = frontendToBackendTodo(todo);
-  const endpoint = '/api/v1/todos';
+  const endpoint = '/api/v1/todos/';
 
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {

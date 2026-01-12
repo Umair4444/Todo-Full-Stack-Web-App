@@ -10,6 +10,7 @@ from ..services.todo_service import TodoService
 class BulkDeleteRequest(BaseModel):
     todo_ids: List[int]
 
+# Create router with prefix as originally intended
 router = APIRouter(prefix="/api/v1/todos", tags=["todos"])
 
 

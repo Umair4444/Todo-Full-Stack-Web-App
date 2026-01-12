@@ -12,7 +12,14 @@ from fastapi import HTTPException as FastAPIHTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from src.monitoring import setup_monitoring
 
-app = FastAPI(title="Todo Backend", version="1.0.0")
+app = FastAPI(
+    title="Todo Backend",
+    version="1.0.0",
+    redoc_url="/redoc",
+    docs_url="/docs"
+)
+
+
 
 # Add CORS middleware for frontend integration
 app.add_middleware(

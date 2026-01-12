@@ -158,8 +158,8 @@ This frontend is designed to connect with a Python FastAPI backend. The API serv
 ### Backend Endpoints Used
 
 The frontend connects to these backend endpoints:
-- `GET /api/v1/todos` - Retrieve all todos
-- `POST /api/v1/todos` - Create a new todo
+- `GET /api/v1/todos/` - Retrieve all todos
+- `POST /api/v1/todos/` - Create a new todo
 - `GET /api/v1/todos/{id}` - Get a specific todo
 - `PUT /api/v1/todos/{id}` - Update a specific todo
 - `PATCH /api/v1/todos/{id}/toggle-completion` - Toggle completion status of a specific todo
