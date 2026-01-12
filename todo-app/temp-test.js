@@ -1,9 +1,16 @@
-// Simple test to validate the priority fix
-import React from 'react';
-import { TodoItem } from '@/lib/types';
+
+const backendToFrontendTodo = function backendToFrontendTodo(backendTodo: any): TodoItem {
+  // Validate and normalize priority value
+  let priority: 'low' | 'medium' | 'high' = 'medium'; // Default value
+
+  if (typeof backendTodo.priority === 'string') {
+    const normalizedPriority = backendTodo.priority.toLowerCase();
+    if (normalizedPriority === 'low' || normalizedPriority === 'medium' || normalizedPriority === 'high') {
+      priority = normalizedPriority;
+    };
 
 // Mock TodoItem with different priority types to test the fix
-const testTodos: any[] = [
+const testTodos = [
   { id: '1', title: 'Test Todo 1', priority: 'high', completed: false, createdAt: new Date(), updatedAt: new Date() },
   { id: '2', title: 'Test Todo 2', priority: 'medium', completed: false, createdAt: new Date(), updatedAt: new Date() },
   { id: '3', title: 'Test Todo 3', priority: 'low', completed: false, createdAt: new Date(), updatedAt: new Date() },
@@ -12,9 +19,6 @@ const testTodos: any[] = [
   { id: '6', title: 'Test Todo 6', priority: undefined, completed: false, createdAt: new Date(), updatedAt: new Date() }, // Undefined priority
   { id: '7', title: 'Test Todo 7', priority: '', completed: false, createdAt: new Date(), updatedAt: new Date() }, // Empty string priority
 ];
-
-// Test the backendToFrontendTodo function
-import { backendToFrontendTodo } from './src/services/backendAdapters';
 
 console.log('Testing backendToFrontendTodo function:');
 testTodos.forEach((todo, index) => {

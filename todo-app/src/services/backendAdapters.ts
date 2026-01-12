@@ -5,6 +5,33 @@ import { TodoItem } from '@/lib/types';
 
 // Convert backend todo response to frontend TodoItem
 export function backendToFrontendTodo(backendTodo: any): TodoItem {
+  // Validate and normalize priority value
+  let priority: 'low' | 'medium' | 'high' = 'medium'; // Default value
+
+  if (typeof backendTodo.priority === 'string') {
+    const normalizedPriority = backendTodo.priority.toLowerCase();
+    if (normalizedPriority === 'low' || normalizedPriority === 'medium' || normalizedPriority === 'high') {
+      priority = normalizedPriority;
+    }
+  } else if (typeof backendTodo.priority === 'number') {
+    // Handle numeric priority values (e.g., 0=low, 1=medium, 2=high or similar mapping)
+    switch (backendTodo.priority) {
+      case 0:
+        priority = 'low';
+        break;
+      case 1:
+        priority = 'medium';
+        break;
+      case 2:
+        priority = 'high';
+        break;
+      default:
+        priority = 'medium'; // Default fallback
+    }
+  } else if (backendTodo.priority === null || backendTodo.priority === undefined) {
+    priority = 'medium'; // Default when priority is null or undefined
+  }
+
   return {
     id: backendTodo.id.toString(), // Backend uses integer IDs, frontend expects strings
     title: backendTodo.title,
@@ -12,7 +39,7 @@ export function backendToFrontendTodo(backendTodo: any): TodoItem {
     completed: backendTodo.is_completed, // Backend uses snake_case, frontend uses camelCase
     createdAt: new Date(backendTodo.created_at),
     updatedAt: new Date(backendTodo.updated_at),
-    priority: backendTodo.priority || 'medium', // Default to medium if not provided
+    priority: priority, // Validated priority
     dueDate: backendTodo.due_date ? new Date(backendTodo.due_date) : undefined,
   };
 }

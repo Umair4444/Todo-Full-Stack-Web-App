@@ -23,7 +23,7 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [editedDescription, setEditedDescription] = useState(todo.description || '');
-  const [editedPriority, setEditedPriority] = useState(todo.priority);
+  const [editedPriority, setEditedPriority] = useState(typeof todo.priority === 'string' ? todo.priority : 'medium');
 
   const { actions } = useAppStore();
 
@@ -85,7 +85,7 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
     // Reset the edited values to the original values
     setEditedTitle(todo.title);
     setEditedDescription(todo.description || '');
-    setEditedPriority(todo.priority);
+    setEditedPriority(typeof todo.priority === 'string' ? todo.priority : 'medium');
     setIsEditing(false);
   };
 
@@ -93,8 +93,8 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
     <Card className={`transition-all duration-300 ease-in-out ${
       todo.completed
         ? 'opacity-80 bg-accent/50 border-primary/20'
-        : `hover:shadow-xl hover:-translate-y-0.5 ${todo.priority === 'high' ? 'border-l-4 border-l-rose-400' :
-           todo.priority === 'medium' ? 'border-l-4 border-l-amber-400' :
+        : `hover:shadow-xl hover:-translate-y-0.5 ${(typeof todo.priority === 'string' && todo.priority === 'high') ? 'border-l-4 border-l-rose-400' :
+           (typeof todo.priority === 'string' && todo.priority === 'medium') ? 'border-l-4 border-l-amber-400' :
            'border-l-4 border-l-emerald-400'}`
     } ${isSelected ? 'ring-2 ring-primary bg-primary/5 scale-[1.01]' : ''} ${
       isBulkDeleteActive ? 'transition-transform duration-200 hover:scale-[1.02]' : ''
@@ -189,12 +189,14 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
                   <Badge
                     className={`${todo.completed ? 'opacity-70' : ''}
-                      ${todo.priority === 'low' ? 'bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-200 hover:text-emerald-900 hover:shadow-md' :
-                        todo.priority === 'medium' ? 'bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-200 hover:text-amber-900 hover:shadow-md' :
+                      ${typeof todo.priority === 'string' && todo.priority === 'low' ? 'bg-emerald-100 text-emerald-800 border-emerald-200 hover:bg-emerald-200 hover:text-emerald-900 hover:shadow-md' :
+                        typeof todo.priority === 'string' && todo.priority === 'medium' ? 'bg-amber-100 text-amber-800 border-amber-200 hover:bg-amber-200 hover:text-amber-900 hover:shadow-md' :
                         'bg-rose-100 text-rose-800 border-rose-200 hover:bg-rose-200 hover:text-rose-900 hover:shadow-md'}
                       transition-all duration-200 ease-in-out cursor-default transform hover:-translate-y-0.5`}
                   >
-                    {todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)}
+                    {typeof todo.priority === 'string'
+                      ? todo.priority.charAt(0).toUpperCase() + todo.priority.slice(1)
+                      : 'Medium'} {/* Default fallback if priority is not a string */}
                   </Badge>
                   <span className="text-xs text-muted-foreground">
                     {todo.createdAt.toLocaleDateString()}

@@ -35,7 +35,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }
       (filterStatus === 'active' && !todo.completed) ||
       (filterStatus === 'completed' && todo.completed);
 
-    const matchesPriority = filterPriority === 'all' || todo.priority === filterPriority;
+    const matchesPriority = filterPriority === 'all' || (typeof todo.priority === 'string' && todo.priority === filterPriority);
 
     const matchesSearch = searchTerm === '' ||
       todo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
