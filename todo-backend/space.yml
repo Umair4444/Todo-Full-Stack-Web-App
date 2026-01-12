@@ -1,7 +1,0 @@
-title: Todo Backend API
-emoji: ✅
-color: "#BBD2FF"
-sdk: docker
-src: app.py
-license: mit
-hf_oauth: []

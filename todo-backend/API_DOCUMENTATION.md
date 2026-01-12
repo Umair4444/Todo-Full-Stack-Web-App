@@ -23,6 +23,7 @@ The API returns standard HTTP status codes:
 
 - `200 OK` - Request successful
 - `201 Created` - Resource created successfully
+- `204 No Content` - Request successful, no content to return
 - `400 Bad Request` - Invalid request data
 - `404 Not Found` - Resource does not exist
 - `422 Unprocessable Entity` - Validation error
@@ -178,6 +179,55 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
   }
   ```
 
+#### Bulk delete todos
+- **Endpoint**: `POST /api/v1/todos/bulk-delete`
+- **Description**: Delete multiple todo items by their IDs
+- **Request Body**:
+  ```json
+  {
+    "todo_ids": "array of integers (required)"
+  }
+  ```
+- **Response**: Result of the bulk delete operation
+- **Example Request**:
+  ```bash
+  curl -X POST "http://localhost:8000/api/v1/todos/bulk-delete" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "todo_ids": [1, 2, 3]
+    }'
+  ```
+- **Example Response**:
+  ```json
+  {
+    "message": "Successfully deleted 3 out of 3 todos",
+    "deleted_count": 3,
+    "requested_count": 3
+  }
+  ```
+
+#### Toggle completion status
+- **Endpoint**: `PATCH /api/v1/todos/{id}/toggle-completion`
+- **Description**: Toggle the completion status of a specific todo item
+- **Path Parameter**:
+  - `id` (integer): ID of the todo item
+- **Response**: Updated todo item or 404 if not found
+- **Example Request**:
+  ```bash
+  curl -X PATCH "http://localhost:8000/api/v1/todos/1/toggle-completion"
+  ```
+- **Example Response**:
+  ```json
+  {
+    "id": 1,
+    "title": "Complete project",
+    "description": "Finish the todo app backend",
+    "is_completed": true,
+    "created_at": "2023-01-01T10:00:00",
+    "updated_at": "2023-01-01T11:00:00"
+  }
+  ```
+
 ### Health Check
 
 #### Check API health
@@ -199,6 +249,17 @@ The API implements rate limiting at 100 requests per hour per IP address. Exceed
       "api": "responsive"
     }
   }
+  ```
+
+### Metrics
+
+#### Get Prometheus metrics
+- **Endpoint**: `GET /metrics`
+- **Description**: Get application metrics in Prometheus format
+- **Response**: Metrics in Prometheus text format
+- **Example Request**:
+  ```bash
+  curl -X GET "http://localhost:8000/metrics"
   ```
 
 ## Data Models
@@ -248,6 +309,12 @@ updated_todo = client.update_todo(
 
 # Delete a todo
 delete_result = client.delete_todo(new_todo["id"])
+
+# Toggle completion status
+toggled_todo = client.toggle_completion(new_todo["id"])
+
+# Bulk delete todos
+bulk_delete_result = client.bulk_delete_todos([1, 2, 3])
 ```
 
 ## API Versioning
@@ -261,3 +328,12 @@ The API allows cross-origin requests from all origins. In production, this shoul
 ## Performance
 
 The API is designed to respond to requests in under 200ms for 95% of requests under normal load conditions.
+
+## Monitoring and Observability
+
+The application includes comprehensive monitoring and observability features:
+- Prometheus metrics endpoint at `/metrics`
+- Structured logging with multiple log levels
+- Performance monitoring for API endpoints
+- Database connection monitoring
+- System resource monitoring

@@ -1,7 +1,7 @@
 # How-To: Use the Todo API
 
 ## Overview
-This guide explains how to use the Todo API endpoints to manage todo items. The API provides full CRUD (Create, Read, Update, Delete) functionality for todo items.
+This guide explains how to use the Todo API endpoints to manage todo items. The API provides full CRUD (Create, Read, Update, Delete) functionality for todo items, plus additional features like bulk operations and completion toggling.
 
 ## Base URL
 The base URL for all API requests is:
@@ -177,15 +177,107 @@ curl -X DELETE "http://localhost:8000/api/v1/todos/1"
 }
 ```
 
+### 6. Bulk Delete Todos
+Delete multiple todo items by their IDs.
+
+**Endpoint:** `POST /todos/bulk-delete`
+
+**Request Body:**
+```json
+{
+  "todo_ids": "array of integers (required)"
+}
+```
+
+**Example Request:**
+```bash
+curl -X POST "http://localhost:8000/api/v1/todos/bulk-delete" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "todo_ids": [1, 2, 3]
+  }'
+```
+
+**Response:**
+```json
+{
+  "message": "Successfully deleted 3 out of 3 todos",
+  "deleted_count": 3,
+  "requested_count": 3
+}
+```
+
+### 7. Toggle Completion Status
+Toggle the completion status of a specific todo item.
+
+**Endpoint:** `PATCH /todos/{id}/toggle-completion`
+
+**Path Parameter:**
+- `id` (integer): The ID of the todo item to update
+
+**Example Request:**
+```bash
+curl -X PATCH "http://localhost:8000/api/v1/todos/1/toggle-completion"
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "title": "Buy groceries",
+  "description": "Milk, bread, eggs",
+  "is_completed": true,
+  "created_at": "2023-01-01T10:00:00",
+  "updated_at": "2023-01-01T13:00:00"
+}
+```
+
+## Utility Endpoints
+
+### Health Check
+Check the health status of the API and database connection.
+
+**Endpoint:** `GET /health`
+
+**Example Request:**
+```bash
+curl -X GET "http://localhost:8000/health"
+```
+
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": 1672531200.123456,
+  "response_time_ms": 15.23,
+  "details": {
+    "database": "connected",
+    "api": "responsive"
+  }
+}
+```
+
+### Metrics
+Get application metrics in Prometheus format.
+
+**Endpoint:** `GET /metrics`
+
+**Example Request:**
+```bash
+curl -X GET "http://localhost:8000/metrics"
+```
+
 ## Error Handling
 
 The API returns appropriate HTTP status codes and error messages:
 
 - `200 OK`: Request successful
 - `201 Created`: Resource created successfully
+- `204 No Content`: Request successful, no content to return
 - `400 Bad Request`: Invalid request parameters or body
 - `404 Not Found`: Requested resource does not exist
 - `422 Unprocessable Entity`: Validation error
+- `429 Too Many Requests`: Rate limit exceeded
 - `500 Internal Server Error`: Server error
 
 **Example Error Response:**
@@ -202,3 +294,5 @@ The API returns appropriate HTTP status codes and error messages:
 3. **Use HTTPS**: Always use HTTPS in production environments
 4. **Rate Limiting**: Be mindful of the rate limits (100 requests/hour per IP)
 5. **Pagination**: Use pagination for large datasets to improve performance
+6. **Bulk Operations**: Use bulk delete for removing multiple items efficiently
+7. **Completion Toggling**: Use the toggle endpoint to change completion status without knowing the current state

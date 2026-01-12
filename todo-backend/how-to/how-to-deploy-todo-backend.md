@@ -1,332 +1,214 @@
-# How-To: Deploy the Todo Backend
+# How-To: Deploy the Todo Backend to Hugging Face Spaces
 
 ## Overview
-This guide explains how to deploy the Todo Backend API to different environments, from local testing to production.
+This guide explains how to deploy the Todo Backend API to Hugging Face Spaces, which is the primary deployment target for this application.
 
 ## Prerequisites
 
 Before deploying, ensure you have:
 
-- Access to a target environment (cloud platform, VPS, etc.)
-- Proper credentials for the target environment
-- A configured database (PostgreSQL)
-- Domain name (for production deployments)
-- SSL certificate (for production deployments)
+- A Hugging Face account
+- A GitHub repository with your application code
+- Access to a PostgreSQL database (Neon Serverless recommended)
+- Basic familiarity with Docker and environment variables
 
-## Deployment Options
+## Deployment to Hugging Face Spaces
 
-### Option 1: Deploy to Cloud Platform (Railway)
+### Step 1: Prepare Your Repository
 
-1. **Install Railway CLI:**
-   ```bash
-   npm install -g @railway/cli
+Make sure your repository contains all necessary files for the deployment:
+
+- `app.py` - Main application entry point
+- `Dockerfile` - Docker configuration
+- `requirements.txt` - Python dependencies
+- `space.yml` - Hugging Face Space configuration
+- All other source code files in the `src` directory
+
+### Step 2: Configure Your Space
+
+Your repository already includes a `space.yml` file that specifies the Space configuration:
+
+```yaml
+title: Todo Backend API
+emoji: ✅
+color: "#BBD2FF"
+sdk: docker
+src: app.py
+license: mit
+hf_oauth: []
+```
+
+This configuration tells Hugging Face Spaces to:
+- Use the Docker SDK
+- Run the `app.py` file as the main application
+- Apply the specified styling and metadata
+
+### Step 3: Understand the Docker Configuration
+
+Your `Dockerfile` is already properly configured for Hugging Face Spaces:
+
+```dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Copy the requirements file
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application
+COPY . .
+
+# Expose the port (Hugging Face Spaces will set the PORT environment variable)
+EXPOSE 8000
+
+# Run the application
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-8000}"]
+```
+
+Key points:
+- The application listens on port 8000
+- It uses the `PORT` environment variable provided by Hugging Face Spaces
+- All dependencies from `requirements.txt` are installed
+
+### Step 4: Set Up Your External Database
+
+Since Hugging Face Spaces have ephemeral storage, you must use an external database:
+
+1. Choose a PostgreSQL provider (Neon is recommended for its serverless capabilities)
+2. Create a new PostgreSQL database
+3. Note your database connection string in the format:
+   ```
+   postgresql://username:password@host:port/database_name
    ```
 
-2. **Login to Railway:**
-   ```bash
-   railway login
+### Step 5: Create Your Hugging Face Space
+
+1. Go to [Hugging Face Spaces](https://huggingface.co/new-space)
+2. Fill in the space details:
+   - Name: Choose a unique name for your space
+   - License: MIT (as specified in your space.yml)
+   - SDK: Docker (as specified in your space.yml)
+   - Hardware: Choose CPU for this application (GPU is not needed)
+   - Visibility: Public or Private as per your preference
+3. Click "Create Space"
+
+### Step 6: Connect Your Repository
+
+After creating the space:
+
+1. In your space page, click on the "Files" tab
+2. Click on "Edit Files" in the top-right corner
+3. Select "Duplicate Space" to create a copy you can modify
+4. In your duplicated space, go to the "Files" tab
+5. Click on "Files" → "Add file" → "Upload files"
+6. Upload all files from your todo-backend directory, or connect your GitHub repository:
+   - Go to "Settings" → "Repository" → "Connect to GitHub"
+   - Follow the prompts to connect your repository
+
+### Step 7: Configure Environment Variables
+
+After your files are uploaded:
+
+1. Go to the "Files" tab in your space
+2. Click on "Environment Variables" (or "Secrets" depending on the interface)
+3. Add the following environment variables:
+
+   - `DATABASE_URL`: Your PostgreSQL connection string
+   - `SECRET_KEY`: Generate a strong secret key (you can use Python to generate one: `python -c 'import secrets; print(secrets.token_urlsafe(32))'`)
+   - `ALGORITHM`: HS256 (default)
+   - `ACCESS_TOKEN_EXPIRE_MINUTES`: 30 (or your preferred value)
+   - `ENVIRONMENT`: production
+   - `ALLOWED_ORIGINS`: Comma-separated list of allowed origins for CORS (e.g., `https://yourdomain.vercel.app,http://localhost:3000`)
+
+### Step 8: Wait for Deployment
+
+After configuring everything:
+
+1. The space will automatically start building
+2. Monitor the "Logs" tab to see the build and startup process
+3. Once the build completes successfully, your application will be available at:
+   ```
+   https://[your-username]-[your-space-name].hf.space
    ```
 
-3. **Initialize a new project:**
-   ```bash
-   railway init
-   ```
+### Step 9: Verify Your Deployment
 
-4. **Set environment variables:**
-   ```bash
-   railway vars set DATABASE_URL=your_neon_db_url
-   railway vars set SECRET_KEY=your_secret_key
-   railway vars set ENVIRONMENT=production
-   ```
+1. Visit your space URL to confirm the application is running
+2. Test the API endpoints:
+   - Health check: `https://[your-username]-[your-space-name].hf.space/health`
+   - API docs: `https://[your-username]-[your-space-name].hf.space/docs`
+   - ReDoc: `https://[your-username]-[your-space-name].hf.space/redoc`
+3. Test the Todo API endpoints as needed
 
-5. **Deploy:**
-   ```bash
-   railway up
-   ```
-
-6. **Open the deployed application:**
-   ```bash
-   railway open
-   ```
-
-### Option 2: Deploy to Heroku
-
-1. **Install Heroku CLI:**
-   Follow instructions at: https://devcenter.heroku.com/articles/heroku-cli
-
-2. **Login to Heroku:**
-   ```bash
-   heroku login
-   ```
-
-3. **Create a new app:**
-   ```bash
-   heroku create your-app-name
-   ```
-
-4. **Set environment variables:**
-   ```bash
-   heroku config:set DATABASE_URL=your_neon_db_url
-   heroku config:set SECRET_KEY=your_secret_key
-   heroku config:set ENVIRONMENT=production
-   ```
-
-5. **Deploy:**
-   ```bash
-   git push heroku main
-   ```
-
-6. **Open the deployed application:**
-   ```bash
-   heroku open
-   ```
-
-### Option 3: Deploy to DigitalOcean App Platform
-
-1. **Create a DigitalOcean account** and navigate to App Platform
-
-2. **Connect your GitHub/GitLab account** to DigitalOcean
-
-3. **Select your repository** containing the Todo Backend code
-
-4. **Configure the deployment:**
-   - Set environment variables:
-     - `DATABASE_URL`: Your PostgreSQL connection string
-     - `SECRET_KEY`: Your secret key
-     - `ENVIRONMENT`: production
-   - Set the run command: `uvicorn src.main:app --host 0.0.0.0 --port $PORT`
-
-5. **Deploy** by clicking the "Deploy" button
-
-### Option 4: Deploy to AWS (EC2)
-
-1. **Launch an EC2 instance** with Ubuntu 20.04 or later
-
-2. **SSH into the instance:**
-   ```bash
-   ssh -i your-key.pem ubuntu@your-instance-ip
-   ```
-
-3. **Update the system and install dependencies:**
-   ```bash
-   sudo apt update
-   sudo apt install python3 python3-pip python3-venv nginx git supervisor -y
-   ```
-
-4. **Clone your repository:**
-   ```bash
-   git clone <your-repo-url>
-   cd todo-backend
-   ```
-
-5. **Set up the virtual environment:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install --upgrade pip
-   pip install uv
-   uv pip install -r requirements.txt
-   ```
-
-6. **Configure environment variables:**
-   ```bash
-   nano .env  # Add your environment variables
-   ```
-
-7. **Set up the database:**
-   ```bash
-   python init_db.py
-   ```
-
-8. **Create a systemd service file:**
-   ```bash
-   sudo nano /etc/systemd/system/todo-backend.service
-   ```
-   
-   Add the following content:
-   ```
-   [Unit]
-   Description=Todo Backend API
-   After=network.target
-
-   [Service]
-   Type=simple
-   User=ubuntu
-   WorkingDirectory=/home/ubuntu/todo-backend
-   EnvironmentFile=/home/ubuntu/todo-backend/.env
-   ExecStart=/home/ubuntu/todo-backend/venv/bin/uvicorn src.main:app --host 0.0.0.0 --port 8000
-   Restart=always
-   RestartSec=10
-
-   [Install]
-   WantedBy=multi-user.target
-   ```
-
-9. **Enable and start the service:**
-   ```bash
-   sudo systemctl daemon-reload
-   sudo systemctl enable todo-backend
-   sudo systemctl start todo-backend
-   ```
-
-10. **Set up Nginx as a reverse proxy:**
-    ```bash
-    sudo nano /etc/nginx/sites-available/todo-backend
-    ```
-    
-    Add the following content:
-    ```
-    server {
-        listen 80;
-        server_name your-domain.com;
-
-        location / {
-            proxy_pass http://127.0.0.1:8000;
-            proxy_set_header Host $host;
-            proxy_set_header X-Real-IP $remote_addr;
-            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto $scheme;
-        }
-    }
-    ```
-    
-    Enable the site:
-    ```bash
-    sudo ln -s /etc/nginx/sites-available/todo-backend /etc/nginx/sites-enabled/
-    sudo nginx -t
-    sudo systemctl reload nginx
-    ```
-
-11. **Set up SSL with Let's Encrypt (optional but recommended):**
-    ```bash
-    sudo apt install certbot python3-certbot-nginx -y
-    sudo certbot --nginx -d your-domain.com
-    ```
-
-### Option 5: Deploy with Docker
-
-1. **Build the Docker image:**
-   ```bash
-   docker build -t todo-backend .
-   ```
-
-2. **Run the container:**
-   ```bash
-   docker run -d \
-     --name todo-backend \
-     -p 8000:8000 \
-     -e DATABASE_URL=your_db_url \
-     -e SECRET_KEY=your_secret_key \
-     -e ENVIRONMENT=production \
-     todo-backend
-   ```
-
-## Configuration for Different Environments
+## Configuration for Production
 
 ### Environment Variables
 
-Ensure these environment variables are set for each environment:
+Ensure these environment variables are set:
 
 - `DATABASE_URL`: PostgreSQL connection string
 - `SECRET_KEY`: Secret key for JWT tokens
-- `ENVIRONMENT`: development, staging, or production
-- `LOG_LEVEL`: DEBUG, INFO, WARNING, or ERROR
-- `ALLOWED_HOSTS`: Comma-separated list of allowed hosts (for production)
+- `ENVIRONMENT`: production
+- `LOG_LEVEL`: INFO or ERROR for production
+- `ALLOWED_ORIGINS`: Comma-separated list of allowed origins for CORS
 
 ### Database Configuration
 
 For production deployments:
 
-1. Use a managed PostgreSQL service (like Neon, AWS RDS, or Google Cloud SQL)
+1. Use a managed PostgreSQL service (like Neon Serverless)
 2. Ensure proper backup and recovery procedures are in place
-3. Set up read replicas if expecting high traffic
-4. Configure connection pooling appropriately
+3. Configure connection pooling appropriately
 
 ### Security Considerations
 
 1. **Never commit secrets to version control**
-2. **Use HTTPS in production**
-3. **Restrict allowed hosts**
-4. **Implement rate limiting**
-5. **Keep dependencies updated**
-6. **Monitor for vulnerabilities**
+2. **Use strong, randomly generated secret keys**
+3. **Implement proper CORS settings with specific origins**
+4. **Keep dependencies updated**
+5. **Monitor for vulnerabilities**
 
 ## Post-Deployment Tasks
 
 ### Verify Deployment
 
-1. **Check if the service is running:**
-   ```bash
-   # For systemd services
-   sudo systemctl status todo-backend
-   
-   # For Docker containers
-   docker ps
-   ```
-
+1. **Check the application logs in the "Logs" tab of your Space**
 2. **Test the API endpoints:**
    ```bash
-   curl http://your-domain.com/health
-   ```
-
-3. **Check application logs:**
-   ```bash
-   # For systemd services
-   sudo journalctl -u todo-backend -f
-   
-   # For Docker containers
-   docker logs -f todo-backend
+   curl https://[your-username]-[your-space-name].hf.space/health
    ```
 
 ### Set Up Monitoring
 
-1. **Configure log aggregation**
+1. **Configure log monitoring through Hugging Face Spaces interface**
 2. **Set up health checks**
-3. **Implement performance monitoring**
-4. **Set up alerting for critical issues**
-
-### Set Up Backups
-
-1. **Database backups**
-2. **Configuration backups**
-3. **Automated backup schedules**
-4. **Test backup restoration procedures**
+3. **Monitor the `/metrics` endpoint if using Prometheus**
 
 ## Troubleshooting Common Deployment Issues
 
 ### Application Won't Start
 
-1. Check logs for error messages
+1. Check the logs in the "Logs" tab of your Space
 2. Verify environment variables are set correctly
-3. Ensure the database is accessible
-4. Check file permissions
+3. Ensure your database connection string is correct
 
 ### Database Connection Issues
 
-1. Verify the database URL is correct
-2. Check if the database server is running
-3. Ensure the database user has proper permissions
-4. Check network connectivity between app and database
+1. Verify your PostgreSQL connection string
+2. Check if your database provider allows connections from Hugging Face IPs
+3. Ensure your database credentials are correct
+
+### CORS Issues
+
+1. Verify that `ALLOWED_ORIGINS` includes your frontend domain
+2. Check that the domain format is correct (includes `https://`)
 
 ### Performance Issues
 
-1. Monitor resource usage (CPU, memory)
+1. Monitor resource usage through Hugging Face Spaces interface
 2. Check database query performance
-3. Implement caching if needed
-4. Consider scaling options
-
-## Rolling Back a Deployment
-
-If you need to roll back to a previous version:
-
-### For Git-based deployments (Heroku, Railway, etc.)
-1. Identify the previous commit that worked
-2. Deploy that specific commit
-
-### For Docker deployments
-1. Tag your images with version numbers
-2. Deploy the previous version tag
-
-### For manual deployments
-1. Keep backups of previous versions
-2. Have a script to restore the previous version
+3. Consider upgrading to a paid Space for better performance if needed

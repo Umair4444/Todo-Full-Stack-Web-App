@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = Field("HS256", description="Algorithm for JWT encoding")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(30, description="Token expiration time in minutes")
     TEST_DATABASE_URL: Optional[str] = Field(None, description="Test database connection URL")
+    ALLOWED_ORIGINS: Optional[str] = Field(None, description="Comma-separated list of allowed origins for CORS")
 
     class Config:
         env_file = ".env"
