@@ -1,117 +1,97 @@
-// API service for backend connection
-// This handles communication with the Python FastAPI backend
+// src/services/api.ts
+import axios from 'axios';
 
-import { toast } from 'sonner';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-// Define the shape of API responses
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: {
-    code: string;
-    message: string;
-    details?: any;
-  };
-}
+// Create axios instance with defaults
+const apiClient = axios.create({
+  baseURL: `${API_BASE_URL}/api`,
+  timeout: 10000, // 10 seconds timeout
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-// Base API URL from environment variables
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-// Create a base request function with error handling
-async function baseRequest<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  try {
-    const url = `${BASE_URL}${endpoint}`;
-
-    // Add timeout to prevent hanging requests
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-    const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        // Add authorization header if token exists
-        ...getAuthHeader(),
-        ...options.headers,
-      },
-      ...options,
-      signal: controller.signal, // Add abort signal for timeout
-    });
-
-    clearTimeout(timeoutId); // Clear timeout if request completes
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      const errorResponse: ApiResponse<T> = {
-        success: false,
-        error: {
-          code: `HTTP_${response.status}`,
-          message: data.detail || response.statusText, // Backend uses 'detail' for error messages
-          details: data,
-        },
-      };
-
-      // Show error toast notification
-      toast.error(data.detail || response.statusText);
-
-      return errorResponse;
+// Request interceptor to add auth token
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access_token'); // or however you store the JWT
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
-
-    return {
-      success: true,
-      data: data as T
-    };
-  } catch (error) {
-    console.error(`API request error for ${endpoint}:`, error);
-
-    // Check if the error is due to timeout
-    if (error instanceof Error && error.name === 'AbortError') {
-      const timeoutResponse: ApiResponse<T> = {
-        success: false,
-        error: {
-          code: 'TIMEOUT_ERROR',
-          message: 'Request timed out. Please check your connection and try again.',
-          details: 'The request took too long to complete',
-        },
-      };
-
-      // Show timeout error toast notification
-      toast.error('Request timed out. Please check your connection and try again.');
-      return timeoutResponse;
-    }
-
-    const errorResponse: ApiResponse<T> = {
-      success: false,
-      error: {
-        code: 'NETWORK_ERROR',
-        message: 'Network error occurred',
-        details: error instanceof Error ? error.message : String(error),
-      },
-    };
-
-    // Show error toast notification
-    toast.error('Network error occurred. Please check your connection and try again.');
-
-    return errorResponse;
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-}
+);
 
-// Helper function to get authorization header
-function getAuthHeader(): { Authorization?: string } {
-  // In a real implementation, this would retrieve the JWT token from storage
-  const token = localStorage.getItem('authToken');
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
+// Response interceptor to handle common errors
+apiClient.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token might be expired, redirect to login
+      localStorage.removeItem('access_token');
+      window.location.href = '/login'; // or use router.push('/login')
+    }
+    return Promise.reject(error);
+  }
+);
 
-// Health check endpoint
-export async function checkHealth(): Promise<ApiResponse<{ status: string; timestamp: string; response_time_ms: number; details: object }>> {
-  return baseRequest('/health', { method: 'GET' });
-}
+export default apiClient;
 
-// Export the base request function for custom API calls
-export { baseRequest };
+// Export specific API functions
+export const authAPI = {
+  register: (userData: { email: string; password: string; first_name?: string; last_name?: string }) =>
+    apiClient.post('/auth/register', userData),
+
+  login: (credentials: { email: string; password: string }) =>
+    apiClient.post('/auth/login', credentials).then(response => {
+      // Store the token in localStorage for future requests
+      if (response.data.access_token) {
+        localStorage.setItem('access_token', response.data.access_token);
+      }
+      return response;
+    }),
+
+  logout: async () => {
+    try {
+      // Make the logout API call first
+      const response = await apiClient.post('/auth/logout');
+      // Clear the token after successful logout
+      localStorage.removeItem('access_token');
+      return response;
+    } catch (error) {
+      // Even if the backend logout fails, clear the local token
+      // so the user is effectively logged out locally
+      localStorage.removeItem('access_token');
+      // Still log the error but don't necessarily throw it
+      // depending on whether we want to notify the user of the failure
+      console.error('Backend logout failed:', error);
+      // Return a mock response to maintain the API contract
+      return { data: { success: true }, status: 200 };
+    }
+  },
+};
+
+export const todoAPI = {
+  getTodos: (params?: { status?: 'active' | 'completed' | 'all'; page?: number; limit?: number }) =>
+    apiClient.get('/todos', { params }),
+
+  createTodo: (todoData: { title: string; description?: string }) =>
+    apiClient.post('/todos', todoData),
+
+  updateTodo: (id: string, todoData: { title?: string; description?: string; is_completed?: boolean }) =>
+    apiClient.put(`/todos/${id}`, todoData),
+
+  deleteTodo: (id: string) =>
+    apiClient.delete(`/todos/${id}`),
+};
+
+export const todoLogAPI = {
+  getLogs: (params?: { page?: number; limit?: number; action?: 'CREATE' | 'UPDATE' | 'DELETE' }) =>
+    apiClient.get('/todos/logs', { params }),
+};

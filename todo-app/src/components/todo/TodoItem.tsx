@@ -34,16 +34,11 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
   const handleToggle = async () => {
     // Optimistically update the UI immediately
     const previousState = todo.completed;
-    actions.toggleTodoCompletion(todo.id);
-
     try {
-      // Call the API to update the todo
-      await import('@/services/todoApi').then(api => api.toggleTodoCompletion(todo.id));
-
+      await actions.toggleTodoCompletion(todo.id);
       toast.success(!previousState ? 'Task marked as complete!' : 'Task marked as incomplete');
     } catch (error) {
-      // Revert the optimistic update if the API call fails
-      actions.toggleTodoCompletion(todo.id);
+      // The store action already handles reverting the optimistic update if the API call fails
       toast.error('Failed to update task. Please try again.');
     }
   };

@@ -3,175 +3,266 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
+import { authAPI } from '@/services/api';
+import { useAppStore } from '@/lib/store';
 
-// Define the shape of our authentication context
+interface User {
+  id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+interface User {
+  id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  phone?: string;
+  bio?: string;
+  company?: string;
+  website?: string;
+  location?: string;
+}
+
 interface AuthContextType {
-  user: any; // In a real app, this would be a more specific User type
+  user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  loading: boolean;
+  isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name?: string) => Promise<void>;
+  register: (email: string, password: string, firstName?: string, lastName?: string) => Promise<void>;
   logout: () => void;
-  refreshToken: () => Promise<void>;
+  checkAuthStatus: () => void;
+  updateUser: (userData: Partial<User>) => void;
 }
 
-// Create the authentication context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Define the props for the AuthProvider component
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-// AuthProvider component that wraps the app and provides authentication context
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<any>(null);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Check if user is authenticated on initial load
+  // Check authentication status on mount
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('user');
+    const initAuth = async () => {
+      try {
+        const storedToken = localStorage.getItem('access_token');
+        const storedUser = localStorage.getItem('user');
 
-    if (token && userData) {
-      setToken(token);
-      setUser(JSON.parse(userData));
-    }
+        if (storedToken) {
+          setToken(storedToken);
 
-    setLoading(false);
+          // If we don't have stored user details, try to reconstruct them from the token
+          if (storedUser) {
+            try {
+              setUser(JSON.parse(storedUser));
+            } catch (e) {
+              console.error('Error parsing stored user:', e);
+            }
+          } else {
+            // Decode the token to get user ID
+            try {
+              const tokenParts = storedToken.split('.');
+              if (tokenParts.length === 3) {
+                const payload = tokenParts[1];
+                const decodedPayload = atob(payload);
+                const tokenPayload = JSON.parse(decodedPayload);
+                const userId = tokenPayload.sub;
+
+                // Create a minimal user object from the token
+                const userObj = {
+                  id: userId,
+                  email: '', // Email is not available in the token
+                  is_active: true,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                };
+                setUser(userObj);
+              }
+            } catch (e) {
+              console.error('Error decoding stored JWT token:', e);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, []);
 
-  // Login function
-  const login = async (email: string, password: string) => {
-    setLoading(true);
+  const checkAuthStatus = () => {
     try {
-      // Call the backend login API
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          username: email,
-          password: password,
-        }),
-      });
+      const storedToken = localStorage.getItem('access_token');
+      const storedUser = localStorage.getItem('user');
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Login failed');
+      if (storedToken) {
+        setToken(storedToken);
+
+        // If we don't have stored user details, try to reconstruct them from the token
+        if (storedUser) {
+          try {
+            setUser(JSON.parse(storedUser));
+          } catch (e) {
+            console.error('Error parsing stored user:', e);
+          }
+        } else {
+          // Decode the token to get user ID
+          try {
+            const tokenParts = storedToken.split('.');
+            if (tokenParts.length === 3) {
+              const payload = tokenParts[1];
+              const decodedPayload = atob(payload);
+              const tokenPayload = JSON.parse(decodedPayload);
+              const userId = tokenPayload.sub;
+
+              // Create a minimal user object from the token
+              const userObj = {
+                id: userId,
+                email: '', // Email is not available in the token
+                is_active: true,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+              };
+              setUser(userObj);
+            }
+          } catch (e) {
+            console.error('Error decoding stored JWT token:', e);
+          }
+        }
       }
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+    }
+  };
 
-      const data = await response.json();
-      const { access_token } = data;
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await authAPI.login({ email, password });
+      const { access_token } = response.data;
 
-      // Store the token and user data
+      // Store token
+      localStorage.setItem('access_token', access_token);
       setToken(access_token);
-      localStorage.setItem('authToken', access_token);
 
-      // Get user profile after successful login
-      const profileResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/me`, {
-        headers: {
-          'Authorization': `Bearer ${access_token}`,
-        },
-      });
-
-      if (profileResponse.ok) {
-        const userProfile = await profileResponse.json();
-        setUser(userProfile);
-        localStorage.setItem('user', JSON.stringify(userProfile));
+      // Decode the JWT to get user ID
+      let userId = '';
+      try {
+        const tokenParts = access_token.split('.');
+        if (tokenParts.length === 3) {
+          const payload = tokenParts[1];
+          const decodedPayload = atob(payload);
+          const tokenPayload = JSON.parse(decodedPayload);
+          userId = tokenPayload.sub; // subject claim usually contains user ID
+        } else {
+          console.warn('Token does not have 3 parts, cannot decode:', tokenParts.length);
+        }
+      } catch (e) {
+        console.error('Error decoding JWT token:', e);
+        console.error('Access token that failed to decode:', access_token);
+        // If we can't decode the token, we'll proceed with an empty ID
+        userId = '';
       }
 
-      // Redirect to dashboard/todo page after login
+      // Create user object with the decoded ID
+      const userObj = {
+        id: userId,
+        email,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      localStorage.setItem('user', JSON.stringify(userObj));
+      setUser(userObj);
+
       router.push('/todo-app');
     } catch (error: any) {
-      console.error('Login error:', error);
-      throw new Error(error.message || 'Login failed');
-    } finally {
-      setLoading(false);
+      // Check if error has response data
+      if (error.response?.data?.detail) {
+        throw new Error(error.response.data.detail);
+      } else if (error.response?.data) {
+        throw new Error(JSON.stringify(error.response.data));
+      } else if (error.message) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('Login failed: Unknown error occurred');
+      }
     }
   };
 
-  // Register function
-  const register = async (email: string, password: string, name?: string) => {
-    setLoading(true);
+  const register = async (email: string, password: string, firstName?: string, lastName?: string) => {
     try {
-      // Call the backend register API
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/register`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          name: name || email.split('@')[0], // Use part of email as name if not provided
-        }),
+      const response = await authAPI.register({
+        email,
+        password,
+        first_name: firstName,
+        last_name: lastName
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Registration failed');
-      }
-
-      const userData = await response.json();
-      setUser(userData);
-
-      // Automatically log in after registration
-      await login(email, password);
+      // After registration, typically you'd either auto-login or redirect to login
+      // For this implementation, we'll redirect to login
+      router.push('/login');
     } catch (error: any) {
-      console.error('Registration error:', error);
-      throw new Error(error.message || 'Registration failed');
-    } finally {
-      setLoading(false);
+      throw new Error(error.response?.data?.detail || 'Registration failed');
     }
   };
 
-  // Logout function
-  const logout = () => {
-    // Remove token and user data from state and storage
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-
-    // Redirect to home page after logout
-    router.push('/');
+  const logout = async () => {
+    try {
+      // Call the store's logout function to ensure consistent state
+      await useAppStore.getState().actions.logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      // Also update local state for immediate UI feedback
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
+      setToken(null);
+      setUser(null);
+      router.push('/login');
+    }
   };
 
-  // Refresh token function
-  const refreshToken = async () => {
-    // In a real implementation, you would have a refresh token endpoint
-    // For now, we'll just return a promise
-    return Promise.resolve();
+  const updateUser = (userData: Partial<User>) => {
+    if (user) {
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+
+      // Update the user in localStorage as well
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    }
   };
 
-  // The value provided to consumers of this context
-  const value: AuthContextType = {
+  const value = {
     user,
     token,
-    isAuthenticated: !!token,
-    loading,
+    isAuthenticated: !!(token && user),
+    isLoading,
     login,
     register,
     logout,
-    refreshToken,
+    checkAuthStatus,
+    updateUser,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Custom hook to use the auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

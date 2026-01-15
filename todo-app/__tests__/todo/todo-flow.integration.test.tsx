@@ -9,7 +9,7 @@ import { useAppStore } from '@/lib/store';
 
 // Mock the store
 const mockAddTodo = vi.fn();
-const mockToggleTodoCompletion = vi.fn();
+const mockToggleTodoCompletion = vi.fn().mockResolvedValue({});
 const mockDeleteTodo = vi.fn();
 const mockUpdateTodo = vi.fn();
 vi.mock('@/lib/store', () => ({
