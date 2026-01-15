@@ -1,16 +1,20 @@
 // src/services/todoApi.ts
 import { TodoItem } from '@/lib/types';
-import { baseRequest } from './api';
+import axios from 'axios';
+import apiClient from './api';
 import { backendToFrontendTodo, frontendToBackendTodo, frontendToBackendUpdate } from './backendAdapters';
 
 // Define the shape of backend todo API responses
 interface BackendTodoResponse {
-  id: number;
+  id: string; // Changed to string to match UUID
   title: string;
   description?: string;
   is_completed: boolean;
+  user_id: string;
+  priority: string;
   created_at: string;
   updated_at: string;
+  completed_at?: string;
 }
 
 // Get all todos for the current user
@@ -21,46 +25,43 @@ export async function getTodos(
   priority?: 'all' | 'low' | 'medium' | 'high',
   search?: string
 ): Promise<{ items: TodoItem[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
-  // Calculate offset based on page and limit
-  const offset = (page - 1) * limit;
+  // Calculate skip based on page and limit (backend uses 'skip' instead of 'offset')
+  const skip = (page - 1) * limit;
 
   // Construct query parameters for backend
-  const params = new URLSearchParams({
-    offset: offset.toString(),
+  const params: Record<string, string> = {
+    skip: skip.toString(),
     limit: limit.toString(),
-  });
+  };
 
   // Map status to completed filter for backend
-  if (status === 'completed') params.append('completed', 'true');
-  if (status === 'active') params.append('completed', 'false');
-
-  const queryString = params.toString();
-  const endpoint = `/api/v1/todos/${queryString ? `?${queryString}` : ''}`;
+  if (status === 'completed') params.completed = 'true';
+  if (status === 'active') params.completed = 'false';
 
   try {
-    // Make request to backend
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`);
+    // Make request to backend using apiClient
+    const response = await apiClient.get('/todos', { params });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to fetch todos: ${response.status} - ${errorText}`);
-    }
-
-    const backendTodos: BackendTodoResponse[] = await response.json();
+    const backendTodos: BackendTodoResponse[] = response.data;
 
     // Convert backend todos to frontend format
     const frontendTodos = backendTodos.map(backendToFrontendTodo);
 
-    // Calculate pagination info
-    const total = frontendTodos.length; // This would need to come from the backend in a real implementation
-    const totalPages = Math.ceil(total / limit);
+    // The backend should return pagination info, but for now we'll calculate based on response
+    // In a real implementation, the backend would return total count separately
+    // For now, we'll assume the total is unknown and just return the count of items received
+    const total = response.headers['x-total-count'] || frontendTodos.length; // Backend should send total count in header
+
+    // For now, we'll just use the length of items returned
+    const actualTotal = frontendTodos.length;
+    const totalPages = Math.ceil(actualTotal / limit);
 
     return {
       items: frontendTodos,
       pagination: {
         page,
         limit,
-        total,
+        total: actualTotal,
         totalPages
       }
     };
@@ -73,23 +74,11 @@ export async function getTodos(
 // Create a new todo
 export async function createTodo(todo: Omit<TodoItem, 'id' | 'createdAt' | 'updatedAt'>): Promise<TodoItem> {
   const backendTodo = frontendToBackendTodo(todo);
-  const endpoint = '/api/v1/todos/';
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(backendTodo),
-    });
+    const response = await apiClient.post('/todos/', backendTodo);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to create todo: ${response.status} - ${errorText}`);
-    }
-
-    const createdBackendTodo: BackendTodoResponse = await response.json();
+    const createdBackendTodo: BackendTodoResponse = response.data;
 
     // Convert backend response to frontend format
     return backendToFrontendTodo(createdBackendTodo);
@@ -101,17 +90,10 @@ export async function createTodo(todo: Omit<TodoItem, 'id' | 'createdAt' | 'upda
 
 // Get a specific todo by ID
 export async function getTodoById(id: string): Promise<TodoItem> {
-  const endpoint = `/api/v1/todos/${id}`;
-
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`);
+    const response = await apiClient.get(`/todos/${id}`);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to fetch todo: ${response.status} - ${errorText}`);
-    }
-
-    const backendTodo: BackendTodoResponse = await response.json();
+    const backendTodo: BackendTodoResponse = response.data;
 
     // Convert backend response to frontend format
     return backendToFrontendTodo(backendTodo);
@@ -124,23 +106,11 @@ export async function getTodoById(id: string): Promise<TodoItem> {
 // Update a todo
 export async function updateTodo(id: string, updates: Partial<TodoItem>): Promise<TodoItem> {
   const backendUpdates = frontendToBackendUpdate(updates);
-  const endpoint = `/api/v1/todos/${id}`;
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(backendUpdates),
-    });
+    const response = await apiClient.put(`/todos/${id}`, backendUpdates);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to update todo: ${response.status} - ${errorText}`);
-    }
-
-    const updatedBackendTodo: BackendTodoResponse = await response.json();
+    const updatedBackendTodo: BackendTodoResponse = response.data;
 
     // Convert backend response to frontend format
     return backendToFrontendTodo(updatedBackendTodo);
@@ -152,26 +122,14 @@ export async function updateTodo(id: string, updates: Partial<TodoItem>): Promis
 
 // Toggle todo completion status
 export async function toggleTodoCompletion(id: string): Promise<{ id: string; completed: boolean; updatedAt: string }> {
-  const endpoint = `/api/v1/todos/${id}/toggle-completion`;
-
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await apiClient.patch(`/todos/${id}/toggle-completion`);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to toggle todo completion: ${response.status} - ${errorText}`);
-    }
-
-    const result = await response.json();
+    const result = response.data;
 
     // Convert backend response to frontend format
     return {
-      id: result.id.toString(),
+      id: result.id,
       completed: result.is_completed,
       updatedAt: result.updated_at
     };
@@ -183,17 +141,8 @@ export async function toggleTodoCompletion(id: string): Promise<{ id: string; co
 
 // Delete a todo
 export async function deleteTodo(id: string): Promise<void> {
-  const endpoint = `/api/v1/todos/${id}`;
-
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
-      method: 'DELETE',
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to delete todo: ${response.status} - ${errorText}`);
-    }
+    await apiClient.delete(`/todos/${id}`);
   } catch (error) {
     console.error('Error deleting todo:', error);
     throw error;
@@ -202,26 +151,10 @@ export async function deleteTodo(id: string): Promise<void> {
 
 // Bulk delete todos
 export async function bulkDeleteTodos(ids: string[]): Promise<{ deleted_count: number; requested_count: number }> {
-  const endpoint = '/api/v1/todos/bulk-delete';
-
   try {
-    // Convert string IDs to integers for backend
-    const todoIds = ids.map(id => parseInt(id));
+    const response = await apiClient.post('/todos/bulk-delete', { todo_ids: ids });
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ todo_ids: todoIds }), // Send the array wrapped in an object as expected by backend
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to bulk delete todos: ${response.status} - ${errorText}`);
-    }
-
-    const result = await response.json();
+    const result = response.data;
     return {
       deleted_count: result.deleted_count,
       requested_count: result.requested_count
@@ -229,5 +162,147 @@ export async function bulkDeleteTodos(ids: string[]): Promise<{ deleted_count: n
   } catch (error) {
     console.error('Error bulk deleting todos:', error);
     throw error;
+  }
+}
+
+// Define the shape of backend todo log API responses
+interface BackendTodoLogResponse {
+  id: string;
+  action: 'CREATE' | 'UPDATE' | 'DELETE';
+  todo_id?: string;
+  user_id: string;
+  timestamp: string;
+  previous_state?: any;
+  new_state?: any;
+}
+
+// Get todo logs for the current user
+export async function getTodoLogs(
+  page: number = 1,
+  limit: number = 10,
+  action?: 'CREATE' | 'UPDATE' | 'DELETE'
+): Promise<{ items: any[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
+  // Validate inputs to prevent 422 errors
+  if (page < 1) page = 1;
+  if (limit < 1 || limit > 100) limit = 10; // Set reasonable limits
+
+  // Calculate skip based on page and limit (backend uses 'skip' instead of 'offset')
+  const skip = (page - 1) * limit;
+
+  // Construct query parameters for backend
+  const params: Record<string, string> = {
+    skip: skip.toString(),
+    limit: limit.toString(),
+  };
+
+  // Add action filter if provided and valid
+  if (action && ['CREATE', 'UPDATE', 'DELETE'].includes(action)) {
+    params.action = action;
+  }
+
+  try {
+    // Make request to backend using apiClient
+    const response = await apiClient.get('/todos/logs', { params });
+
+    // Backend now returns just an array of logs
+    const backendLogs: BackendTodoLogResponse[] = response.data;
+
+    // Transform the logs to the expected format
+    const frontendLogs = backendLogs.map(log => ({
+      ...log,
+      timestamp: new Date(log.timestamp).toISOString()
+    }));
+
+    // Calculate pagination info
+    // Get total count from response headers if available, otherwise use array length
+    const total = parseInt(response.headers['x-total-count']) || frontendLogs.length;
+    const totalPages = Math.ceil(total / limit);
+
+    return {
+      items: frontendLogs,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      }
+    };
+  } catch (error) {
+    console.error('Error fetching todo logs:', error);
+
+    // Check if it's an Axios error with response
+    if (axios.isAxiosError(error)) {
+      // More defensive error handling
+      const status = error.response?.status;
+      const statusText = error.response?.statusText;
+      const data = error.response?.data;
+      const message = error.message;
+      const url = error.config?.url;
+      const requestParams = error.config?.params;
+
+      const errorDetails = {
+        status: status,
+        statusText: statusText,
+        data: data,
+        message: message,
+        url: url,
+        params: requestParams,
+        raw_error: error
+      };
+
+      console.error('Axios error details:', errorDetails);
+
+      // For 422 errors, return an empty result instead of throwing to prevent UI crashes
+      if (status === 422) {
+        console.warn('Todo logs endpoint not available or validation failed. Returning empty logs.');
+        return {
+          items: [],
+          pagination: {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          }
+        };
+      }
+
+      // For 401/403 errors (authentication), return empty logs
+      if (status === 401 || status === 403) {
+        console.warn('Authentication required for todo logs. Returning empty logs.');
+        return {
+          items: [],
+          pagination: {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1
+          }
+        };
+      }
+
+      // For other types of errors, return empty logs as fallback
+      console.warn(`Error ${status} while fetching todo logs. Returning empty logs.`);
+      return {
+        items: [],
+        pagination: {
+          page: 1,
+          limit: 10,
+          total: 0,
+          totalPages: 1
+        }
+      };
+    }
+
+    // If it's not an Axios error, return empty logs as fallback
+    console.warn('Network error while fetching todo logs. Returning empty logs.', error);
+    return {
+      items: [],
+      pagination: {
+        page: 1,
+        limit: 10,
+        total: 0,
+        totalPages: 1
+      }
+    };
   }
 }

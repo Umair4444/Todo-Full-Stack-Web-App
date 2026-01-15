@@ -1,9 +1,10 @@
-# Todo Full-Stack Web Application (Frontend)
+# Todo Full-Stack Web Application with Authentication
 
-A modern and vibrant todo application built with Next.js, TypeScript, and Tailwind CSS. This application allows users to manage their tasks efficiently with features like dark/light mode, multilingual support, and a simulated chatbot assistant.
+A modern and vibrant todo application built with Next.js, TypeScript, and Tailwind CSS. This application allows users to manage their tasks efficiently with features like user authentication, dark/light mode, multilingual support, and a simulated chatbot assistant.
 
 ## Features
 
+- **User Authentication**: Secure registration and login with JWT-based authentication
 - **Task Management**: Create, read, update, and delete todo items
 - **Enhanced Toggle UX**: Intuitive and responsive completion toggles with visual feedback
   - Smooth animations and transitions
@@ -28,6 +29,7 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
   - Cancel button available directly in the floating action bar
   - Automatic deactivation after successful deletion or when all items are deselected
 - **Filtering & Sorting**: Filter tasks by status (active/completed) and priority (low/medium/high)
+- **Activity Logs**: Track and view history of todo actions (create, update, delete)
 - **Responsive Design**: Works seamlessly across all device sizes
 - **Dark/Light Mode**: Toggle between light and dark themes
 - **Multilingual Support**: Available in English and Urdu
@@ -48,6 +50,7 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
 - **Notifications**: Sonner
 - **Icons**: Lucide React
 - **Internationalization**: next-i18next
+- **Authentication**: Better Auth with JWT tokens
 
 ## Getting Started
 
@@ -96,55 +99,9 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
 - `npm run lint` - Run ESLint to check for code issues
 - `npm run test` - Run tests (if configured)
 
-## Project Structure
-
-```
-todo-app/
-├── public/                 # Static assets (images, favicon, etc.)
-│   ├── favicon.ico
-│   ├── logo.svg
-│   └── images/
-├── src/
-│   ├── components/         # Reusable UI components
-│   │   ├── ui/            # shadcn UI components
-│   │   ├── layout/        # Layout components (header, footer)
-│   │   ├── navigation/    # Navbar, footer, etc.
-│   │   ├── todo/          # Todo-specific components
-│   │   ├── theme/         # Theme provider and toggle
-│   │   ├── i18n/          # Internationalization components
-│   │   └── chatbot/       # Chatbot components
-│   ├── pages/             # Next.js pages
-│   │   ├── index.tsx      # Home page
-│   │   ├── todo-app.tsx   # Todo application page
-│   │   ├── about.tsx      # About page
-│   │   ├── contact.tsx    # Contact page
-│   │   └── 404.tsx        # 404 error page
-│   ├── lib/               # Utilities and shared code
-│   │   ├── store.ts       # Zustand store
-│   │   ├── types.ts       # TypeScript type definitions
-│   │   ├── utils.ts       # Utility functions
-│   │   └── constants.ts   # Application constants
-│   ├── hooks/             # Custom React hooks
-│   │   ├── useLocalStorage.ts
-│   │   └── useScrollDirection.ts
-│   ├── styles/            # Global styles
-│   │   └── globals.css
-│   └── services/          # Service layer
-│       ├── api.ts         # API service
-│       └── storage.ts     # Local storage service
-├── .env                   # Environment variables
-├── .env.local             # Local environment variables
-├── next.config.ts         # Next.js configuration
-├── package.json           # Project dependencies and scripts
-├── postcss.config.mjs     # PostCSS configuration
-├── tailwind.config.js     # Tailwind CSS configuration
-├── tsconfig.json          # TypeScript configuration
-└── README.md              # Project documentation
-```
-
 ## API Integration
 
-This frontend is designed to connect with a Python FastAPI backend. The API service is located in `src/services/api.ts` and the todo-specific API functions are in `src/services/todoApi.ts`.
+This frontend is designed to connect with a Python FastAPI backend with JWT-based authentication. The API service is located in `src/services/api.ts` and the todo-specific API functions are in `src/services/todoApi.ts`.
 
 ### Connecting to the Backend
 
@@ -158,14 +115,23 @@ This frontend is designed to connect with a Python FastAPI backend. The API serv
 ### Backend Endpoints Used
 
 The frontend connects to these backend endpoints:
-- `GET /api/v1/todos/` - Retrieve all todos
-- `POST /api/v1/todos/` - Create a new todo
-- `GET /api/v1/todos/{id}` - Get a specific todo
-- `PUT /api/v1/todos/{id}` - Update a specific todo
-- `PATCH /api/v1/todos/{id}/toggle-completion` - Toggle completion status of a specific todo
-- `DELETE /api/v1/todos/{id}` - Delete a specific todo
-- `POST /api/v1/todos/bulk-delete` - Delete multiple todos at once
+- `POST /api/auth/register` - Register a new user
+- `POST /api/auth/login` - Authenticate user and return JWT token
+- `POST /api/auth/logout` - Logout user (invalidate session)
+- `GET /api/todos` - Retrieve all todos for authenticated user
+- `POST /api/todos` - Create a new todo for authenticated user
+- `GET /api/todos/{id}` - Get a specific todo for authenticated user
+- `PUT /api/todos/{id}` - Update a specific todo for authenticated user
+- `DELETE /api/todos/{id}` - Delete a specific todo for authenticated user
+- `GET /api/todos/logs` - Get activity logs for authenticated user
 - `GET /health` - Check backend health status
+
+### Authentication Flow
+
+1. User registers or logs in via the authentication endpoints
+2. JWT token is received and stored in secure HTTP-only cookies
+3. JWT token is sent in Authorization header for all protected API requests
+4. Backend validates JWT and ensures users can only access their own data
 
 ### Data Mapping
 
@@ -197,3 +163,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Tailwind CSS](https://tailwindcss.com/) for the utility-first CSS framework
 - [Zustand](https://github.com/pmndrs/zustand) for the lightweight state management
 - [Framer Motion](https://www.framer.com/motion/) for the smooth animations
+- [Better Auth](https://better-auth.com/) for the authentication solution

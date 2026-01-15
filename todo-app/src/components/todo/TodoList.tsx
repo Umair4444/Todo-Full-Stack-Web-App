@@ -18,10 +18,11 @@ interface TodoListProps {
   todos: TodoItem[];
   loading?: boolean;
   onRefresh?: () => void;
+  defaultFilterStatus?: 'all' | 'active' | 'completed';
 }
 
-const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh }) => {
-  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'completed'>('all');
+const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh, defaultFilterStatus = 'all' }) => {
+  const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'completed'>(defaultFilterStatus);
   const [filterPriority, setFilterPriority] = useState<'all' | 'low' | 'medium' | 'high'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);

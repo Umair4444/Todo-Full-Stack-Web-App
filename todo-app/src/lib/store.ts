@@ -11,12 +11,25 @@ export interface User {
   updatedAt: Date;
 }
 
+export interface TodoLog {
+  id: string;
+  action: 'CREATE' | 'UPDATE' | 'DELETE';
+  todo_id?: string;
+  user_id: string;
+  timestamp: string;
+  previous_state?: any;
+  new_state?: any;
+}
+
 export interface AppState {
   // Todo items state
   todos: TodoItem[];
   filteredTodos: TodoItem[];
   loading: boolean;
   error: string | null;
+
+  // Todo logs state
+  todoLogs: TodoLog[];
 
   // User preferences state
   preferences: UserPreferences;
@@ -46,7 +59,10 @@ export interface AppState {
     addTodo: (todo: Omit<TodoItem, 'id' | 'createdAt' | 'updatedAt'>) => void;
     updateTodo: (id: string, updates: Partial<TodoItem>) => void;
     deleteTodo: (id: string) => void;
-    toggleTodoCompletion: (id: string) => void;
+    toggleTodoCompletion: (id: string) => Promise<any>;
+
+    // Todo logs operations
+    loadTodoLogs: () => Promise<void>;
 
     // Preference operations
     updateTheme: (theme: 'light' | 'dark') => void;
@@ -101,6 +117,9 @@ const initialState: Omit<AppState, 'actions'> = {
   filteredTodos: [],
   loading: false,
   error: null,
+
+  // Todo logs state
+  todoLogs: [],
 
   // User preferences state
   preferences: {
@@ -312,9 +331,20 @@ export const useAppStore = create<AppState>()(
               ),
               error: null,
             }));
+
+            return result;
           } catch (error) {
+            // Revert the optimistic update if the API call fails
+            set((state) => ({
+              ...state,
+              todos: state.todos.map(todo =>
+                todo.id === id ? { ...todo, completed: !todo.completed, updatedAt: new Date() } : todo
+              ),
+            }));
+
             // Handle error by showing an error message
             console.error('Error toggling todo completion:', error);
+            throw error; // Re-throw the error so the caller can handle it
           }
         },
 
@@ -354,34 +384,52 @@ export const useAppStore = create<AppState>()(
           preferences: { ...state.preferences, ...prefs },
         })),
 
-        // Authentication operations (currently using mock authentication since backend auth is not implemented)
+        // Authentication operations
         login: async (email, password) => {
           set({ loading: true });
           try {
-            // For now, we'll simulate authentication since the backend doesn't have auth endpoints yet
-            // In a real implementation, this would call the backend auth API
-            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+            // Call the real backend auth API
+            const { authAPI } = await import('../services/api');
+            const response = await authAPI.login({ email, password });
+            const { access_token } = response.data;
 
-            // In a real implementation, we would get user data from the backend
-            // For now, we'll create a mock user with just the email
-            const mockUser = {
-              id: '1',
+            // Decode the JWT to get user ID
+            let userId = '';
+            try {
+              const tokenParts = access_token.split('.');
+              if (tokenParts.length === 3) {
+                const payload = tokenParts[1];
+                const decodedPayload = atob(payload);
+                const tokenPayload = JSON.parse(decodedPayload);
+                userId = tokenPayload.sub; // subject claim usually contains user ID
+              }
+            } catch (e) {
+              console.error('Error decoding JWT token:', e);
+              // If we can't decode the token, we'll proceed with an empty ID
+              userId = '';
+            }
+
+            // Create user object with the decoded ID
+            const userObj = {
+              id: userId,
               email,
               createdAt: new Date(),
               updatedAt: new Date(),
             };
 
             set({
-              user: mockUser,
-              token: 'mock-jwt-token-for-now',
+              user: userObj,
+              token: access_token,
               isAuthenticated: true,
               loading: false,
             });
 
-            // Store in localStorage for persistence
-            localStorage.setItem('authToken', 'mock-jwt-token-for-now');
-            localStorage.setItem('user', JSON.stringify(mockUser));
+            // Store in localStorage for persistence (using same key as axios interceptors)
+            localStorage.setItem('access_token', access_token);
+            localStorage.setItem('user', JSON.stringify(userObj));
           } catch (error) {
+            console.error('Login error in store:', error); // Debug log
+            console.error('Login error response:', (error as any).response); // Debug log
             set({ loading: false, error: (error as Error).message });
             throw error; // Re-throw so calling code can handle it
           }
@@ -390,45 +438,49 @@ export const useAppStore = create<AppState>()(
         register: async (email, password, name) => {
           set({ loading: true });
           try {
-            // For now, we'll simulate registration since the backend doesn't have auth endpoints yet
-            // In a real implementation, this would call the backend auth API
-            await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-
-            // Create a mock user
-            const mockUser = {
-              id: '1',
+            // Call the real backend auth API
+            const { authAPI } = await import('../services/api');
+            await authAPI.register({
               email,
-              name: name || email.split('@')[0] || 'User',
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            };
+              password,
+              first_name: name,
+            });
 
+            // After registration, redirect to login (typical flow)
+            // We don't automatically log in after registration for security reasons
             set({
-              user: mockUser,
-              token: 'mock-jwt-token-for-now',
-              isAuthenticated: true,
               loading: false,
             });
 
-            // Store in localStorage for persistence
-            localStorage.setItem('authToken', 'mock-jwt-token-for-now');
-            localStorage.setItem('user', JSON.stringify(mockUser));
+            // Optionally, you could redirect to login page here
+            // For now, we'll just update the loading state
           } catch (error) {
+            console.error('Registration error in store:', error); // Debug log
+            console.error('Registration error response:', (error as any).response); // Debug log
             set({ loading: false, error: (error as Error).message });
             throw error; // Re-throw so calling code can handle it
           }
         },
 
-        logout: () => {
-          set({
-            user: null,
-            token: null,
-            isAuthenticated: false,
-          });
+        logout: async () => {
+          try {
+            // Call the real backend logout API
+            const { authAPI } = await import('../services/api');
+            await authAPI.logout();
+          } catch (error) {
+            // Even if the backend logout fails, we should clear the local token
+            console.error('Logout error:', error);
+          } finally {
+            set({
+              user: null,
+              token: null,
+              isAuthenticated: false,
+            });
 
-          // Remove from localStorage
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
+            // Remove from localStorage (using same key as axios interceptors)
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user');
+          }
         },
 
         updateUser: (userData) => set((state) => ({
@@ -611,6 +663,36 @@ export const useAppStore = create<AppState>()(
             }));
           } catch (error) {
             set({ loading: false, error: (error as Error).message });
+          }
+        },
+
+        loadTodoLogs: async () => {
+          set({ loading: true });
+          try {
+            // Load todo logs from backend API
+            const { getTodoLogs } = await import('../services/todoApi');
+            const result = await getTodoLogs(1, 100); // Get first 100 logs
+
+            // Update state with fetched logs
+            set((state) => ({
+              ...state,
+              todoLogs: result.items,
+              loading: false,
+              error: null,
+            }));
+          } catch (error) {
+            // Log the error but don't set it as a global error since logs are not critical
+            console.error('Error loading todo logs:', error);
+
+            // Set an empty array for logs to prevent downstream errors
+            set((state) => ({
+              ...state,
+              todoLogs: [],
+              loading: false,
+            }));
+
+            // Optionally, you could set a specific error for logs only
+            // For now, just log the error and continue without logs
           }
         },
 
