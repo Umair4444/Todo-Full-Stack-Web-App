@@ -125,11 +125,11 @@ The frontend connects to these backend endpoints:
 - `POST /api/auth/logout` - Logout user (invalidate session)
 - `GET /api/todos` - Retrieve all todos for authenticated user
 - `POST /api/todos` - Create a new todo for authenticated user
-- `GET /api/todos/{id}` - Get a specific todo for authenticated user
-- `PUT /api/todos/{id}` - Update a specific todo for authenticated user
-- `DELETE /api/todos/{id}` - Delete a specific todo for authenticated user
+- `GET /api/todos/{todo_id}` - Get a specific todo for authenticated user
+- `PUT /api/todos/{todo_id}` - Update a specific todo for authenticated user
+- `DELETE /api/todos/{todo_id}` - Delete a specific todo for authenticated user
 - `GET /api/todos/logs` - Get activity logs for authenticated user
-- `GET /health` - Check backend health status
+- `GET /health/` - Check backend health status
 
 ### Authentication Flow
 

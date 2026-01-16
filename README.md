@@ -60,48 +60,138 @@ A modern, full-stack todo application built with Next.js (TypeScript) for the fr
 
 ```
 Todo-Full-Stack-Web-App/
+├── .gitignore
+├── IMPLEMENTATION_SUMMARY.md
+├── QWEN.md
+├── README.md
+├── .qwen/
+│   └── commands/
+├── .specify/
+│   ├── memory/
+│   ├── scripts/
+│   └── templates/
+├── history/
+│   └── prompts/
+├── specs/
+│   ├── 001-fastapi-todo-backend/
+│   ├── 1-todo-frontend-app/
+│   └── 3-auth-todo-app/
 ├── todo-app/                 # Next.js frontend application
-│   ├── public/
-│   ├── src/
-│   │   ├── app/             # Next.js App Router pages
-│   │   ├── components/      # Reusable UI components
-│   │   ├── services/        # API services and utilities
-│   │   └── lib/            # Shared utilities and configurations
+│   ├── .env
+│   ├── .env.example
+│   ├── .env.local
+│   ├── .eslintignore
+│   ├── .gitignore
+│   ├── env-test.js
+│   ├── eslint.config.mjs
+│   ├── next-env.d.ts
+│   ├── next.config.ts
+│   ├── package-lock.json
 │   ├── package.json
-│   └── README.md
+│   ├── postcss.config.mjs
+│   ├── README.md
+│   ├── tailwind.config.js
+│   ├── tsconfig.json
+│   ├── UI_UX_IMPROVEMENTS.md
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   ├── file.svg
+│   │   ├── globe.svg
+│   │   ├── next.svg
+│   │   ├── vercel.svg
+│   │   ├── window.svg
+│   │   └── locales/
+│   │       ├── en/
+│   │       │   └── common.json
+│   │       └── ur/
+│   │           └── common.json
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── about/
+│   │   │   ├── contact/
+│   │   │   ├── login/
+│   │   │   ├── profile/
+│   │   │   ├── register/
+│   │   │   ├── todo-app/
+│   │   │   │   └── profile/
+│   │   │   ├── favicon.ico
+│   │   │   ├── globals.css
+│   │   │   ├── layout.tsx
+│   │   │   ├── not-found.tsx
+│   │   │   └── page.tsx
+│   │   ├── components/
+│   │   │   ├── auth/
+│   │   │   ├── chatbot/
+│   │   │   ├── contact/
+│   │   │   ├── error/
+│   │   │   ├── error-boundary/
+│   │   │   ├── i18n/
+│   │   │   ├── layout/
+│   │   │   ├── navigation/
+│   │   │   ├── theme/
+│   │   │   ├── todo/
+│   │   │   └── ui/
+│   │   ├── contexts/
+│   │   ├── hooks/
+│   │   ├── lib/
+│   │   ├── services/
+│   │   │   └── sync/
+│   │   └── styles/
+│   ├── tests/
+│   └── __tests__/
 ├── todo-app-backend/         # FastAPI backend application
-│   ├── main.py              # Main application entry point
-│   ├── app.py               # Previous version (deprecated)
-│   ├── start_server.py      # Server startup script
-│   ├── Dockerfile           # Container configuration
-│   ├── requirements.txt     # Production dependencies
-│   ├── requirements-dev.txt # Development dependencies
-│   ├── alembic.ini          # Database migration configuration
-│   ├── .env                 # Environment variables (local)
-│   ├── .env.example         # Example environment variables
-│   ├── pyproject.toml       # Project configuration
-│   ├── scripts/             # Utility and debugging scripts
-│   │   ├── debug_*.py      # Debugging scripts
-│   │   ├── check_*.py      # Database checking scripts
-│   │   ├── fix_schema.py   # Schema fixing script
-│   │   ├── reset_db_schema.py # Schema reset script
-│   │   ├── verify_logs_format.py # Log verification script
-│   │   ├── init_db.py      # Database initialization script
-│   │   └── test_*.py       # Test scripts
-│   ├── src/                 # Source code
-│   │   ├── api/            # API route definitions
-│   │   ├── models/         # Data models
-│   │   ├── services/       # Business logic
-│   │   ├── database/       # Database configuration
-│   │   ├── middleware/     # Middleware implementations
-│   │   ├── config/         # Application settings
-│   │   ├── monitoring.py   # Monitoring and observability
-│   │   └── exception_handlers.py # Global exception handlers
-│   ├── tests/               # Test files
-│   ├── docs/                # Documentation
-│   └── alembic/            # Database migration files
-│       └── versions/       # Migration version files
-├── specs/                   # Feature specifications
+│   ├── .env
+│   ├── .env.example
+│   ├── .gitignore
+│   ├── alembic.ini
+│   ├── app.py
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── pyproject.toml
+│   ├── README.md
+│   ├── requirements-dev.txt
+│   ├── requirements.txt
+│   ├── uv.lock
+│   ├── alembic/
+│   │   ├── env.py
+│   │   ├── script.py.mako
+│   │   └── versions/
+│   ├── docs/
+│   │   ├── API_DOCUMENTATION.md
+│   │   ├── DEPLOYMENT.md
+│   │   ├── FRONTEND_INTEGRATION.md
+│   │   ├── HOW_TO_DEPLOY_ON_HUGGING_FACE.md
+│   │   ├── MONITORING.md
+│   │   ├── SETUP_DATABASE.md
+│   │   └── how-to/
+│   ├── scripts/
+│   │   ├── check_tables.py
+│   │   ├── check_users.py
+│   │   ├── init_db.py
+│   │   ├── reset_db_schema.py
+│   │   └── test_server.py
+│   ├── src/
+│   │   ├── api/
+│   │   │   ├── auth_router.py
+│   │   │   ├── health_router.py
+│   │   │   ├── response_format.py
+│   │   │   ├── todo_log_router.py
+│   │   │   ├── todo_router.py
+│   │   │   ├── todo_router_new.py
+│   │   │   └── __init__.py
+│   │   ├── config/
+│   │   ├── database/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── routing/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── exception_handlers.py
+│   │   ├── main.py
+│   │   ├── monitoring.py
+│   │   └── __init__.py
+│   ├── tests/
+│   └── __pycache__/
 └── README.md               # This file
 ```
 
@@ -211,17 +301,17 @@ The frontend connects to these backend endpoints:
 #### Todo Management
 - `GET /api/todos` - Retrieve all todos for authenticated user
 - `POST /api/todos` - Create a new todo for authenticated user
-- `GET /api/todos/{id}` - Get a specific todo for authenticated user
-- `PUT /api/todos/{id}` - Update a specific todo for authenticated user
-- `DELETE /api/todos/{id}` - Delete a specific todo for authenticated user
+- `GET /api/todos/{todo_id}` - Get a specific todo for authenticated user
+- `PUT /api/todos/{todo_id}` - Update a specific todo for authenticated user
+- `DELETE /api/todos/{todo_id}` - Delete a specific todo for authenticated user
 - `POST /api/todos/bulk-delete` - Delete multiple todo items by ID
-- `PATCH /api/v1/todos/{id}/toggle-completion` - Toggle completion status of a todo item
+- `PATCH /api/todos/{todo_id}/toggle-completion` - Toggle completion status of a todo item
 
 #### Activity Logs
 - `GET /api/todos/logs` - Get activity logs for authenticated user
 
 #### Health Check
-- `GET /health` - Check backend health status
+- `GET /health/` - Check backend health status
 
 #### Documentation
 - `GET /docs` - Interactive API documentation (Swagger UI)
