@@ -18,13 +18,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TodoApp - Modern Task Management",
+  title: `${process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'} - Modern Task Management`,
   description: "A modern and vibrant todo application to help you organize your life and increase productivity.",
   metadataBase: new URL("https://todoapp.example.com"),
   keywords: "todo, task management, productivity, organizer, tasks, checklist",
-  authors: [{ name: "TodoApp Team" }],
-  creator: "TodoApp Team",
-  publisher: "TodoApp Team",
+  authors: [{ name: `${process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'} Team` }],
+  creator: `${process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'} Team`,
+  publisher: `${process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'} Team`,
   formatDetection: {
     email: false,
     address: false,
@@ -33,20 +33,20 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://todoapp.example.com",
-    title: "TodoApp - Modern Task Management",
+    title: `${process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'} - Modern Task Management`,
     description: "A modern and vibrant todo application to help you organize your life and increase productivity.",
     images: [
       {
         url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "TodoApp - Modern Task Management",
+        alt: `${process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'} - Modern Task Management`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "TodoApp - Modern Task Management",
+    title: `${process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'} - Modern Task Management`,
     description: "A modern and vibrant todo application to help you organize your life and increase productivity.",
     images: ["/images/twitter-image.jpg"],
   },

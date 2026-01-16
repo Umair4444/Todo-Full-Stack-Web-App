@@ -73,7 +73,12 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
    npm install
    ```
 
-3. Create a `.env.local` file in the root directory with the following content:
+3. Copy the example environment file and update the values as needed:
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Then update the values in `.env.local` according to your environment:
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:8000
    NEXT_PUBLIC_APP_NAME=Todo App

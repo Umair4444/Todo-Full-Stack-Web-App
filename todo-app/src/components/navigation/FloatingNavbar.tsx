@@ -41,7 +41,7 @@ export const FloatingNavbar: React.FC = () => {
                 <div className="h-6 w-6 text-white">📋</div>
               </div>
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
-                TodoApp
+                {process.env.NEXT_PUBLIC_APP_NAME || 'TodoApp'}
               </span>
             </Link>
 
