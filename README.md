@@ -259,3 +259,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [SQLModel](https://sqlmodel.tiangolo.com/) for the SQL databases with Python
 - [Neon](https://neon.tech/) for the Serverless PostgreSQL solution
 - [Umair4444](https://github.com/Umair4444) - My GitHub profile
+
+## 📚 Repository Links
+
+- **Frontend Repository**: [Todo-Full-Stack-Web-App](https://github.com/Umair4444/Todo-Full-Stack-Web-App) - The Next.js frontend application
+- **Backend Repository**: [Hugging Face Space](https://huggingface.co/spaces/Umair44) - The FastAPI backend deployed as a Hugging Face Space

@@ -169,3 +169,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Zustand](https://github.com/pmndrs/zustand) for the lightweight state management
 - [Framer Motion](https://www.framer.com/motion/) for the smooth animations
 - [Better Auth](https://better-auth.com/) for the authentication solution
+
+## Repository Links
+
+- **Frontend Repository**: [Todo-Full-Stack-Web-App](https://github.com/Umair4444/Todo-Full-Stack-Web-App) - The Next.js frontend application
+- **Backend Repository**: [Hugging Face Space](https://huggingface.co/spaces/Umair44) - The FastAPI backend deployed as a Hugging Face Space
