@@ -76,7 +76,7 @@ export async function createTodo(todo: Omit<TodoItem, 'id' | 'createdAt' | 'upda
   const backendTodo = frontendToBackendTodo(todo);
 
   try {
-    const response = await apiClient.post('/todos/', backendTodo);
+    const response = await apiClient.post('/todos', backendTodo);
 
     const createdBackendTodo: BackendTodoResponse = response.data;
 
