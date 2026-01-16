@@ -1,4 +1,4 @@
-# Directories and files to ignore
+# Directories and files to be ignore
 .DS_Store
 Thumbs.db
 *.log
