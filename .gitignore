@@ -1,4 +1,4 @@
-# Directories and files to ignore
+# Directories and files to be ignore
 .DS_Store
 Thumbs.db
 *.log
@@ -18,13 +18,8 @@ coverage/
 __pycache__/
 *.pyc
 .pytest_cache/
-todo-app-backend/.venv/
-todo-app-backend/__pycache__/
-todo-app-backend/*.log
-todo-app-backend/.env
-todo-app-backend/.env.local
-todo-app-backend/uv.lock
 todo-app/.next/
 todo-app/.env.local
 todo-app/node_modules/
 todo-app/coverage/
+todo-app-backend/
