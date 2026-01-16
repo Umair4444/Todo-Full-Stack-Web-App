@@ -63,7 +63,7 @@ alembic upgrade head
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Run the development server with auto-reload
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The application will be accessible at `http://localhost:8000`.
@@ -74,7 +74,7 @@ The application will be accessible at `http://localhost:8000`.
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Run with gunicorn (install if needed: pip install gunicorn)
-gunicorn -k uvicorn.workers.UvicornWorker src.main:app --workers 4 --bind 0.0.0.0:8000
+gunicorn -k uvicorn.workers.UvicornWorker main:app --workers 4 --bind 0.0.0.0:8000
 ```
 
 ## API Endpoints

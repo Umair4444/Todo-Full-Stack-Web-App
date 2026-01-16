@@ -68,12 +68,14 @@ All tasks from 60 to 70 in the `tasks.md` file have been successfully completed:
 - `run_tests.py` - Test execution script
 
 ### Modified Files:
-- `main.py` - Added monitoring setup
+- `main.py` - Added monitoring setup and lifespan context manager
 - `src/database/database.py` - Improved session management
 - `src/models/todo_model.py` - Enhanced model validation
 - `src/services/todo_service.py` - Added documentation
 - `specs/001-fastapi-todo-backend/tasks.md` - Updated task status
 - `QWEN.md` - Added implementation details
+- Various markdown files - Updated to reference main.py as the primary entry point instead of app.py
+- Test files - Updated imports to use main.py instead of app.py
 
 ## Quality Assurance
 

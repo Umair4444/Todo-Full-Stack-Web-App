@@ -143,7 +143,7 @@ Todo-Full-Stack-Web-App/
 
 5. Run the development server:
    ```bash
-   uvicorn src.main:app --reload
+   uvicorn main:app --reload
    ```
 
 6. The backend API will be available at [http://localhost:8000](http://localhost:8000)

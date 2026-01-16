@@ -40,6 +40,8 @@ todo-backend/
 │   ├── conftest.py
 │   ├── test_todo_api.py
 │   └── test_user_api.py
+├── app.py  # Previous version, deprecated
+├── main.py  # Current main application entry point
 ├── requirements.txt
 ├── requirements-dev.txt
 └── alembic/
@@ -48,13 +50,18 @@ todo-backend/
     └── versions/
 ```
 
+## Application Entry Points
+
+- `main.py` - Current main application entry point with authentication support and lifespan context manager
+- `app.py` - Previous version without authentication support (deprecated)
+
 ## Commands
 
 - Activate Python virtual environment before package operations
 - Install dependencies with uv: `uv pip install -r requirements.txt`
 - Run tests: `pytest`
-- Run development server: `uvicorn src.main:app --reload`
-- Run with production server: `gunicorn -k uvicorn.workers.UvicornWorker src.main:app`
+- Run development server: `uvicorn main:app --reload`
+- Run with production server: `gunicorn -k uvicorn.workers.UvicornWorker main:app`
 
 ## Code Style
 
