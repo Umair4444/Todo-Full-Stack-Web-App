@@ -70,16 +70,38 @@ Todo-Full-Stack-Web-App/
 │   ├── package.json
 │   └── README.md
 ├── todo-app-backend/         # FastAPI backend application
-│   ├── src/
-│   │   ├── models/          # Database models
-│   │   ├── api/            # API routers
+│   ├── main.py              # Main application entry point
+│   ├── app.py               # Previous version (deprecated)
+│   ├── start_server.py      # Server startup script
+│   ├── Dockerfile           # Container configuration
+│   ├── requirements.txt     # Production dependencies
+│   ├── requirements-dev.txt # Development dependencies
+│   ├── alembic.ini          # Database migration configuration
+│   ├── .env                 # Environment variables (local)
+│   ├── .env.example         # Example environment variables
+│   ├── pyproject.toml       # Project configuration
+│   ├── scripts/             # Utility and debugging scripts
+│   │   ├── debug_*.py      # Debugging scripts
+│   │   ├── check_*.py      # Database checking scripts
+│   │   ├── fix_schema.py   # Schema fixing script
+│   │   ├── reset_db_schema.py # Schema reset script
+│   │   ├── verify_logs_format.py # Log verification script
+│   │   ├── init_db.py      # Database initialization script
+│   │   └── test_*.py       # Test scripts
+│   ├── src/                 # Source code
+│   │   ├── api/            # API route definitions
+│   │   ├── models/         # Data models
+│   │   ├── services/       # Business logic
 │   │   ├── database/       # Database configuration
-│   │   └── config/         # Configuration settings
-│   ├── tests/
-│   ├── requirements.txt
-│   └── README.md
+│   │   ├── middleware/     # Middleware implementations
+│   │   ├── config/         # Application settings
+│   │   ├── monitoring.py   # Monitoring and observability
+│   │   └── exception_handlers.py # Global exception handlers
+│   ├── tests/               # Test files
+│   ├── docs/                # Documentation
+│   └── alembic/            # Database migration files
+│       └── versions/       # Migration version files
 ├── specs/                   # Feature specifications
-├── how-to/                  # How-to guides
 └── README.md               # This file
 ```
 

@@ -15,45 +15,50 @@ Auto-generated from all feature plans. Last updated: 2026-01-10
 - Neon Serverless PostgreSQL with SQLModel ORM
 - pytest with FastAPI test client, coverage for 80%+ code coverage
 
-## Project Structure
-
-```text
-todo-backend/
-├── src/
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── todo_model.py
-│   │   └── user_model.py
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── todo_router.py
-│   │   └── user_router.py
-│   ├── database/
-│   │   ├── __init__.py
-│   │   └── database.py
-│   ├── config/
-│   │   ├── __init__.py
-│   │   └── settings.py
-│   └── main.py
-├── tests/
-│   ├── __init__.py
-│   ├── conftest.py
-│   ├── test_todo_api.py
-│   └── test_user_api.py
-├── app.py  # Previous version, deprecated
-├── main.py  # Current main application entry point
-├── requirements.txt
-├── requirements-dev.txt
-└── alembic/
-    ├── env.py
-    ├── script.py.mako
-    └── versions/
+```
+todo-app-backend/
+├── main.py                 # Main application entry point
+├── app.py                  # Previous version (deprecated)
+├── start_server.py         # Server startup script
+├── Dockerfile              # Container configuration
+├── requirements.txt        # Production dependencies
+├── requirements-dev.txt    # Development dependencies
+├── alembic.ini             # Database migration configuration
+├── .env                    # Environment variables (local)
+├── .env.example            # Example environment variables
+├── pyproject.toml          # Project configuration
+├── scripts/                # Utility and debugging scripts
+│   ├── debug_*.py         # Debugging scripts
+│   ├── check_*.py         # Database checking scripts
+│   ├── fix_schema.py      # Schema fixing script
+│   ├── reset_db_schema.py # Schema reset script
+│   ├── verify_logs_format.py # Log verification script
+│   ├── init_db.py         # Database initialization script
+│   └── test_*.py          # Test scripts
+├── src/                   # Source code
+│   ├── api/              # API route definitions
+│   ├── models/           # Data models
+│   ├── services/         # Business logic
+│   ├── database/         # Database configuration
+│   ├── middleware/       # Middleware implementations
+│   ├── config/           # Application settings
+│   ├── monitoring.py     # Monitoring and observability
+│   └── exception_handlers.py # Global exception handlers
+├── tests/                 # Test files
+├── docs/                  # Documentation
+└── alembic/              # Database migration files
+    └── versions/         # Migration version files
 ```
 
 ## Application Entry Points
 
 - `main.py` - Current main application entry point with authentication support and lifespan context manager
 - `app.py` - Previous version without authentication support (deprecated)
+
+## Directory Organization
+
+- `scripts/` - Utility and debugging scripts
+- Root directory - Essential runtime files and project metadata
 
 ## Commands
 

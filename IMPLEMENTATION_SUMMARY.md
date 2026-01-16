@@ -77,6 +77,19 @@ All tasks from 60 to 70 in the `tasks.md` file have been successfully completed:
 - Various markdown files - Updated to reference main.py as the primary entry point instead of app.py
 - Test files - Updated imports to use main.py instead of app.py
 
+### Organizational Changes:
+- Created `scripts/` directory and moved utility/debugging scripts there:
+  - `debug_logs_endpoint.py`
+  - `debug_routes.py`
+  - `debug_db_init.py`
+  - `check_tables.py`
+  - `check_users.py`
+  - `fix_schema.py`
+  - `reset_db_schema.py`
+  - `verify_logs_format.py`
+  - `init_db.py`
+- Updated documentation to reflect new project structure
+
 ## Quality Assurance
 
 All code follows the established patterns and conventions of the project:
