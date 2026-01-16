@@ -258,4 +258,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Better Auth](https://better-auth.com/) for the authentication solution
 - [SQLModel](https://sqlmodel.tiangolo.com/) for the SQL databases with Python
 - [Neon](https://neon.tech/) for the Serverless PostgreSQL solution
-- [Umair4444](https://github.com/Umair4444) - My GitHub profile link
+- [Umair4444](https://github.com/Umair4444) - My GitHub profile
