@@ -24,7 +24,7 @@ Integrate OpenAI ChatKit UI with OpenAI Agents SDK using OpenAIChatCompletionsMo
 
 - [X] T001 Set up Python dependencies for OPENAI AGENTS SDK PYTHON with Google Gemini integration in todo-app-backend
 - [X] T001a Install openai-agents and openai-agents[litellm] packages in todo-app-backend
-- [X] T002 Install frontend dependencies for OpenAI ChatKit in todo-app
+- [X] T002 Install frontend dependencies for chat UI components in todo-app
 - [X] T003 Add required environment variables for GEMINI_API_KEY and GEMINI_MODEL to both frontend and backend
 - [X] T003a [P] Research and document OPENAI AGENTS SDK PYTHON using Context7 in todo-app-backend/docs/agents_sdk.md
 - [X] T003b [P] Research and document OpenAI ChatKit using Context7 in todo-app-backend/docs/gemini_integration.md
@@ -34,13 +34,13 @@ Integrate OpenAI ChatKit UI with OpenAI Agents SDK using OpenAIChatCompletionsMo
 
 ## Phase 2: Foundational
 
-- [ ] T004 Create ChatHistory model in todo-app-backend/src/models/chat_history_model.py
-- [ ] T005 [P] Create database migration for ChatHistory model in todo-app-backend/alembic/versions/
-- [ ] T006 [P] Create ChatHistory service in todo-app-backend/src/services/chat_history_service.py
-- [ ] T007 Create agent tools base structure in todo-app-backend/src/agents/tools_base.py
-- [ ] T007a Create documentation for agent tools architecture in todo-app-backend/docs/agent_tools.md
-- [ ] T008 Set up LiteLLM configuration to use Google Gemini with OpenAI Agents SDK in todo-app-backend/src/config/litellm_config.py
-- [ ] T009 Create authentication middleware to pass user context to agent in todo-app-backend/src/middleware/agent_auth_middleware.py
+- [X] T004 Create ChatHistory model in todo-app-backend/src/models/chat_history_model.py
+- [X] T005 [P] Create database migration for ChatHistory model in todo-app-backend/alembic/versions/
+- [X] T006 [P] Create ChatHistory service in todo-app-backend/src/services/chat_history_service.py
+- [X] T007 Create agent tools base structure in todo-app-backend/src/agents/tools_base.py
+- [X] T007a Create documentation for agent tools architecture in todo-app-backend/docs/agent_tools.md
+- [X] T008 Set up LiteLLM configuration to use Google Gemini with OpenAI Agents SDK in todo-app-backend/src/config/litellm_config.py
+- [X] T009 Create authentication middleware to pass user context to agent in todo-app-backend/src/middleware/agent_auth_middleware.py
 
 ## Phase 3: User Story 1 - Authenticated Chat Interface (Priority: P1)
 
@@ -52,19 +52,19 @@ Can be fully tested by logging in, entering a query, and verifying the agent res
 
 ### Implementation Tasks
 
-- [ ] T010 [US1] Create OpenAI Agent with Google Gemini integration in todo-app-backend/src/agents/chat_agent.py
-- [ ] T011 [US1] Implement basic chat endpoint in todo-app-backend/src/api/chat_router.py
-- [ ] T012 [US1] Create chat service to handle agent interactions in todo-app-backend/src/services/chat_service.py
-- [ ] T013 [P] [US1] Create dedicated chat page component in todo-app/src/app/chat/page.tsx
-- [ ] T014 [P] [US1] Create floating chat widget component in todo-app/src/components/ChatWidget.tsx
-- [ ] T015 [P] [US1] Create chat API service in todo-app/src/services/chatService.ts
-- [ ] T016 [US1] Implement JWT validation for chat endpoints in todo-app-backend/src/api/chat_router.py
-- [ ] T017 [US1] Integrate agent with chat service to handle user queries in todo-app-backend/src/services/chat_service.py
-- [ ] T018 [US1] Connect frontend chat UI to backend API in todo-app/src/components/ChatInterface.tsx
+- [X] T010 [US1] Create OpenAI Agent with Google Gemini integration in todo-app-backend/src/agents/chat_agent.py
+- [X] T011 [US1] Implement basic chat endpoint in todo-app-backend/src/api/chat_router.py
+- [X] T012 [US1] Create chat service to handle agent interactions in todo-app-backend/src/services/chat_service.py
+- [X] T013 [P] [US1] Create dedicated chat page component using OpenAI ChatKit in todo-app/src/app/chat/page.tsx
+- [X] T014 [P] [US1] Create floating chat widget component using OpenAI ChatKit in todo-app/src/components/ChatWidget.tsx
+- [X] T015 [P] [US1] Create chat API service in todo-app/src/services/chatService.ts
+- [X] T016 [US1] Implement JWT validation for chat endpoints in todo-app-backend/src/api/chat_router.py
+- [X] T017 [US1] Integrate agent with chat service to handle user queries in todo-app-backend/src/services/chat_service.py
+- [X] T018 [US1] Connect frontend chat UI to backend API using OpenAI ChatKit in todo-app/src/components/ChatInterface.tsx
 
 ### Acceptance Tests
-- [ ] T019 [US1] Test that authenticated users can submit queries and receive responses within 10 seconds under normal load (up to 10 concurrent users)
-- [ ] T020 [US1] Test that unauthenticated users are denied access to chat functionality
+- [X] T019 [US1] Test that authenticated users can submit queries and receive responses within 10 seconds under normal load (up to 10 concurrent users)
+- [X] T020 [US1] Test that unauthenticated users are denied access to chat functionality
 
 ## Phase 4: User Story 2 - Chat History Persistence (Priority: P2)
 
