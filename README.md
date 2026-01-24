@@ -193,7 +193,7 @@ The frontend connects to these backend endpoints:
 - `PUT /api/todos/{id}` - Update a specific todo for authenticated user
 - `DELETE /api/todos/{id}` - Delete a specific todo for authenticated user
 - `POST /api/todos/bulk-delete` - Delete multiple todo items by ID
-- `PATCH /api/v1/todos/{id}/toggle-completion` - Toggle completion status of a todo item
+- `PATCH /api/todos/{id}/toggle-completion` - Toggle completion status of a todo item
 
 #### Activity Logs
 - `GET /api/todos/logs` - Get activity logs for authenticated user
