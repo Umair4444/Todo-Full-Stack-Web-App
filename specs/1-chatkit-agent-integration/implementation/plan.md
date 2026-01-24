@@ -85,3 +85,4 @@ All research tasks have been completed and documented in research.md:
 
 ### Agent Context Update
 - ✓ Research completed on how to integrate with existing codebase
+- ✓ Dependencies to install: openai-agents and openai-agents[litellm] for backend, @openai/chatkit-react for frontend

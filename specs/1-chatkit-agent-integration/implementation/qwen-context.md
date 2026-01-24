@@ -1,5 +1,10 @@
 # Qwen Agent Context: ChatKit Agent Integration
 
+## Dependencies
+- Frontend: @openai/chatkit-react for ChatKit UI components
+- Backend: openai-agents for OpenAI Agents SDK
+- Backend: openai-agents[litellm] for LiteLLM integration to support Google Gemini models
+
 ## Technology Stack
 - OpenAI Agents SDK with OpenAIChatCompletionsModel
 - Google Gemini model integration via LiteLLM

@@ -29,7 +29,7 @@ NEXT_PUBLIC_CHAT_API_URL=http://localhost:8000/api/chat  # Adjust if hosted else
 
 1. Install new Python dependencies:
    ```bash
-   uv pip install openai-agents google-generativeai litellm
+   uv pip install "openai-agents[litellm]"
    ```
 
 2. Update the database models by running migrations:

@@ -21,6 +21,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-21
 - asyncpg (0.30.0) - Async PostgreSQL driver
 - psutil (6.0.0) - System monitoring
 - prometheus-client (0.20.0) - Metrics collection
+- openai-agents (0.0.10) - OpenAI Agents SDK for building multi-agent workflows
+- openai-agents[litellm] (0.0.10) - LiteLLM extension for multi-provider LLM support including Google Gemini
 
 ### Frontend (Next.js/React)
 - Next.js (16.0.1) - React framework
@@ -38,6 +40,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-21
 - Axios (1.13.2) - HTTP client
 - UUID (13.0.0) - UUID generation
 - Vitest (4.0.16) - Testing framework
+- @openai/chatkit-react (1.0.0) - OpenAI ChatKit UI components for chat interfaces
 
 ## Project Structure
 
@@ -45,6 +48,7 @@ Auto-generated from all feature plans. Last updated: 2026-01-21
 Todo-Full-Stack-Web-App/
 ├── specs/
 │   ├── 001-fastapi-todo-backend/
+│   ├── 1-chatkit-agent-integration/
 │   ├── 1-todo-frontend-app/
 │   └── 3-auth-todo-app/
 ├── todo-app/ (Next.js frontend)
@@ -145,6 +149,11 @@ Todo-Full-Stack-Web-App/
 - Added activity logs for todo actions
 - Integrated with backend API for all operations
 - Added comprehensive testing and monitoring
+- 1-chatkit-agent-integration: Added OpenAI ChatKit UI with OpenAI Agents SDK using OpenAIChatCompletionsModel with Google Gemini support
+- Integrated @openai/chatkit-react for chat interface components
+- Added openai-agents and openai-agents[litellm] for agent functionality with Google Gemini Pro
+- Implemented chat history persistence in database
+- Added agent tools for todo operations
 
 ## Implementation Details Added
 
@@ -159,6 +168,7 @@ Todo-Full-Stack-Web-App/
 - **Migration Tool**: Alembic (1.13.2)
 - **Authentication**: JWT with bcrypt hashing
 - **Monitoring**: Prometheus metrics
+- **AI Agents**: OpenAI Agents SDK with LiteLLM extension for multi-provider LLM support
 
 #### Key Features Implemented
 1. **CRUD Operations**: Full create, read, update, and delete functionality for todo items
@@ -174,6 +184,9 @@ Todo-Full-Stack-Web-App/
 11. **Bulk Operations**: Bulk delete functionality for multiple todo items
 12. **Toggle Completion**: Dedicated endpoint to toggle completion status
 13. **Activity Logging**: Track creation, updates, and deletions of todo items
+14. **AI Agent Integration**: OpenAI Agents SDK with Google Gemini support via LiteLLM
+15. **Chat History**: Persistent storage of user queries, agent responses, and performed tasks
+16. **Agent Tools**: Specialized tools for performing todo operations through the agent
 
 #### Data Models
 - **TodoItem**: Represents a todo item with title, description, completion status, priority, and timestamps
@@ -184,6 +197,7 @@ Todo-Full-Stack-Web-App/
 - **UserCreate**: Attributes for registering new users
 - **UserUpdate**: Allows partial updates of user information
 - **UserResponse**: Complete representation for user API responses
+- **ChatHistory**: Stores chat interactions with user_query, agent_response, and task_performed fields
 
 #### API Endpoints
 - `GET /api/todos` - Retrieve all todo items with pagination and filtering
@@ -197,6 +211,9 @@ Todo-Full-Stack-Web-App/
 - `POST /api/auth/register` - Register a new user
 - `POST /api/auth/login` - Authenticate user and return JWT token
 - `POST /api/auth/logout` - Logout user (invalidate session)
+- `GET /api/chat/session` - Initiate new chat session with AI agent
+- `POST /api/chat/session/{session_id}/message` - Send message to chat session
+- `GET /api/chat/history` - Retrieve chat history for authenticated user
 - `GET /health` - Health check endpoint
 - `GET /metrics` - Prometheus metrics endpoint
 - `GET /docs` - Interactive API documentation
@@ -209,6 +226,7 @@ Todo-Full-Stack-Web-App/
 - Rate limiting to prevent abuse
 - CORS configuration to prevent XSS attacks
 - SQL injection prevention through SQLModel/SQLAlchemy
+- Agent operations validated within authenticated user context
 
 #### Performance Optimizations
 - Connection pooling for database connections
@@ -237,6 +255,7 @@ Todo-Full-Stack-Web-App/
 - **Icons**: Lucide React
 - **Internationalization**: next-i18next
 - **Authentication**: Better Auth with JWT tokens
+- **Chat UI**: @openai/chatkit-react for ChatKit UI components
 
 #### Key Features Implemented
 1. **User Authentication**: Secure registration and login with JWT-based authentication
@@ -252,6 +271,8 @@ Todo-Full-Stack-Web-App/
 11. **Simulated Chatbot**: Get help and support through the chatbot available on all pages
 12. **Modern UI**: Built with shadcn/ui components and Framer Motion animations
 13. **Persistent Storage**: Todos and preferences are saved in localStorage
+14. **AI Chat Interface**: OpenAI ChatKit UI components for seamless agent interaction
+15. **Dual UI Modes**: Both dedicated chat page and floating widget implementations
 
 #### Components
 - **TodoForm**: For creating and updating todo items
@@ -263,18 +284,23 @@ Todo-Full-Stack-Web-App/
 - **ActivityLog**: Display of historical actions performed on todo items
 - **ThemeToggle**: Switch between light and dark modes
 - **LanguageSwitcher**: Toggle between English and Urdu languages
+- **ChatInterface**: OpenAI ChatKit UI component for agent interaction
+- **ChatWidget**: Floating chat widget for quick access
+- **ChatHistory**: Component to display conversation history
 
 #### Pages
 - **Home Page**: Main dashboard with todo list and controls
 - **Login/Register**: Authentication pages
 - **Activity Log**: Detailed view of todo actions history
 - **Settings**: User preferences and application settings
+- **Chat Page**: Dedicated page for extended chat interactions
 
 #### API Integration
 - **Backend Connection**: Connects to Python FastAPI backend
 - **Authentication Flow**: JWT token management and secure API calls
 - **Data Synchronization**: Real-time sync between frontend and backend
 - **Error Handling**: Graceful handling of API errors and network issues
+- **Chat Service**: Specialized service for agent communication
 
 ### DevOps and Deployment
 

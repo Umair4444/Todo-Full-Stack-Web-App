@@ -86,6 +86,7 @@ The agent can perform todo-related tasks such as creating, updating, or deleting
 - **TR-009**: All package/library documentation MUST be sourced from Context7
 - **TR-010**: OpenAI Agents SDK MUST be configured to use OpenAIChatCompletionsModel
 - **TR-011**: ChatKit UI components MUST be integrated using @openai/chatkit-react package
+- **TR-012**: Backend MUST use openai-agents and openai-agents[litellm] packages for agent functionality with Google Gemini Pro support
 
 ### Key Entities *(include if feature involves data)*
 

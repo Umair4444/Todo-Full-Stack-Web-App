@@ -46,6 +46,7 @@ A modern, full-stack todo application built with Next.js (TypeScript) for the fr
 - **Icons**: Lucide React
 - **Internationalization**: next-i18next
 - **Authentication**: Better Auth with JWT tokens
+- **Chat UI**: @openai/chatkit-react for ChatKit UI components
 
 ### Backend
 - **Framework**: FastAPI (0.115.0)
@@ -55,6 +56,7 @@ A modern, full-stack todo application built with Next.js (TypeScript) for the fr
 - **Validation**: Pydantic (2.9.2)
 - **Migration Tool**: Alembic (1.13.2)
 - **Testing**: pytest with FastAPI test client
+- **AI Agents**: openai-agents for OpenAI Agents SDK with LiteLLM extension for Google Gemini support
 
 ## 📁 Project Structure
 

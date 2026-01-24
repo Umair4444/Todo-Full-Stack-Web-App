@@ -1,5 +1,20 @@
 # Research Findings: ChatKit Agent Integration
 
+## Decision: Dependencies for OpenAI Agents SDK with Google Gemini
+
+### Rationale:
+Based on research, we need the following dependencies to implement the ChatKit Agent Integration:
+1. Frontend: `@openai/chatkit-react` for the ChatKit UI components
+2. Backend: `openai-agents` for the OpenAI Agents SDK
+3. Backend: `openai-agents[litellm]` for LiteLLM integration to support Google Gemini models
+
+The `openai-agents[litellm]` package allows using Google Gemini models with the format `gemini/gemini-2.0-flash` as the model name with LitellmModel, which fits the requirement to use OpenAIChatCompletionsModel with Google Models.
+
+### Alternatives considered:
+- Using separate `openai` and `google-generativeai` packages: Would require more complex integration
+- Using only the base `openai-agents` package without LiteLLM: Would not support Google Gemini models
+- Using LangChain: Possible but adds complexity for a simple agent integration
+
 ## Decision: Using Google Gemini with OpenAI Agents SDK
 
 ### Rationale:
