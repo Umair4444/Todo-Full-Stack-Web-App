@@ -22,15 +22,15 @@ Integrate OpenAI ChatKit UI with OpenAI Agents SDK using OpenAIChatCompletionsMo
 
 ## Phase 1: Setup
 
-- [ ] T001 Set up Python dependencies for OPENAI AGENTS SDK PYTHON with Google Gemini integration in todo-app-backend
-- [ ] T001a Install openai-agents and openai-agents[litellm] packages in todo-app-backend
-- [ ] T002 Install frontend dependencies for OpenAI ChatKit in todo-app
-- [ ] T003 Add required environment variables for GEMINI_API_KEY and GEMINI_MODEL to both frontend and backend
-- [ ] T003a [P] Research and document OPENAI AGENTS SDK PYTHON using Context7 in todo-app-backend/docs/agents_sdk.md
-- [ ] T003b [P] Research and document OpenAI ChatKit using Context7 in todo-app-backend/docs/gemini_integration.md
-- [ ] T003c [P] Research and document LiteLLM configuration using Context7 in todo-app-backend/docs/litellm_config.md
-- [ ] T003d [P] Research and document SQLMODEL using Context7 in todo-app-backend/docs/litellm_config.md
-- [ ] T003e [P] Research and document fastapi using Context7 in todo-app-backend/docs/litellm_config.md
+- [X] T001 Set up Python dependencies for OPENAI AGENTS SDK PYTHON with Google Gemini integration in todo-app-backend
+- [X] T001a Install openai-agents and openai-agents[litellm] packages in todo-app-backend
+- [X] T002 Install frontend dependencies for OpenAI ChatKit in todo-app
+- [X] T003 Add required environment variables for GEMINI_API_KEY and GEMINI_MODEL to both frontend and backend
+- [X] T003a [P] Research and document OPENAI AGENTS SDK PYTHON using Context7 in todo-app-backend/docs/agents_sdk.md
+- [X] T003b [P] Research and document OpenAI ChatKit using Context7 in todo-app-backend/docs/gemini_integration.md
+- [X] T003c [P] Research and document LiteLLM configuration using Context7 in todo-app-backend/docs/litellm_config.md
+- [X] T003d [P] Research and document SQLMODEL using Context7 in todo-app-backend/docs/litellm_config.md
+- [X] T003e [P] Research and document fastapi using Context7 in todo-app-backend/docs/litellm_config.md
 
 ## Phase 2: Foundational
 
