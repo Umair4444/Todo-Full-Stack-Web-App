@@ -135,7 +135,7 @@ export default function ChatWidget() {
                           : 'bg-muted'
                       }`}
                     >
-                      <p>{message.content}</p>
+                      <div className="whitespace-pre-wrap">{message.content}</div>
                     </div>
                   </div>
                 ))}

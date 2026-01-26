@@ -139,7 +139,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     : 'bg-muted'
                 }`}
               >
-                <p>{message.content}</p>
+                <div className="whitespace-pre-wrap">{message.content}</div>
                 <p className="text-xs opacity-70 mt-1">
                   {message.timestamp.toLocaleTimeString([], {
                     hour: '2-digit',
