@@ -7,6 +7,7 @@ const TRANSLATIONS = {
     // Navigation
     home: "Home",
     todoApp: "Todo App",
+    aichat: "AI Chat",
     about: "About",
     contact: "Contact",
     
@@ -152,6 +153,7 @@ const TRANSLATIONS = {
     // Navigation
     home: "ہوم",
     todoApp: "کام کی فہرست",
+    aichat: "AI چیٹ",
     about: "ہم",
     contact: "رابطہ",
     

@@ -26,6 +26,7 @@ export const Footer: React.FC = () => {
             <ul className="space-y-2">
               <li><Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('home')}</Link></li>
               <li><Link href="/todo-app" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('todoApp')}</Link></li>
+              <li><Link href="/chat" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('aichat')}</Link></li>
               <li><Link href="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('about')}</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{t('footerContact')}</Link></li>
             </ul>

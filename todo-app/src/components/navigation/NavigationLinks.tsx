@@ -62,6 +62,7 @@ export const NavigationLinks: React.FC<NavigationLinksProps> = ({
     <div className={`flex ${flexDirection} ${spacing}`}>
       <NavigationLink href="/" isVertical={isVertical} onCloseMenu={onCloseMenu}>{t('home')}</NavigationLink>
       <NavigationLink href="/todo-app" isVertical={isVertical} onCloseMenu={onCloseMenu}>{t('todoApp')}</NavigationLink>
+      <NavigationLink href="/chat" isVertical={isVertical} onCloseMenu={onCloseMenu}>{t('aichat')}</NavigationLink>
       <NavigationLink href="/about" isVertical={isVertical} onCloseMenu={onCloseMenu}>{t('about')}</NavigationLink>
       <NavigationLink href="/contact" isVertical={isVertical} onCloseMenu={onCloseMenu}>{t('contact')}</NavigationLink>
     </div>
