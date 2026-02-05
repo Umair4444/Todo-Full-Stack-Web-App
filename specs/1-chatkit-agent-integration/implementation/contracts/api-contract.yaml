@@ -1,0 +1,232 @@
+# API Contract: ChatKit Agent Integration
+
+## Base Path
+`/api/chat`
+
+## Authentication
+All endpoints require a valid JWT token in the Authorization header:
+`Authorization: Bearer {jwt_token}`
+
+## Endpoints
+
+### POST /session
+Initiate a new chat session with the AI agent.
+
+#### Request
+```json
+{
+  "message": "Hello, can you help me create a todo?",
+  "session_type": "floating_widget" // or "dedicated_page"
+}
+```
+
+#### Response (Success 200)
+```json
+{
+  "session_id": "uuid-string",
+  "response": "Sure, what would you like to name your new todo?",
+  "task_performed": "GENERAL_QUERY",
+  "timestamp": "2023-12-01T10:00:00Z"
+}
+```
+
+#### Response (Unauthorized 401)
+```json
+{
+  "detail": "Authentication required"
+}
+```
+
+### POST /session/{session_id}/message
+Send a message to an existing chat session.
+
+#### Request
+```json
+{
+  "message": "Create a todo called 'Buy groceries'"
+}
+```
+
+#### Response (Success 200)
+```json
+{
+  "response": "I've created the todo 'Buy groceries' for you.",
+  "task_performed": "CREATE_TODO",
+  "todo_id": "uuid-string",
+  "timestamp": "2023-12-01T10:05:00Z"
+}
+```
+
+#### Response (Unauthorized 401)
+```json
+{
+  "detail": "Authentication required"
+}
+```
+
+#### Response (Not Found 404)
+```json
+{
+  "detail": "Session not found"
+}
+```
+
+### GET /history
+Retrieve chat history for the authenticated user.
+
+#### Query Parameters
+- `limit` (optional, default: 50, max: 100): Number of records to return
+- `offset` (optional, default: 0): Number of records to skip
+- `from_date` (optional): Filter from specific date (ISO 8601 format)
+- `to_date` (optional): Filter to specific date (ISO 8601 format)
+
+#### Response (Success 200)
+```json
+{
+  "total_count": 150,
+  "offset": 0,
+  "limit": 50,
+  "history": [
+    {
+      "id": "uuid-string",
+      "user_query": "Create a todo called 'Buy groceries'",
+      "agent_response": "I've created the todo 'Buy groceries' for you.",
+      "task_performed": "CREATE_TODO",
+      "timestamp": "2023-12-01T10:05:00Z"
+    }
+  ]
+}
+```
+
+### GET /history/{history_id}
+Retrieve a specific chat history entry.
+
+#### Response (Success 200)
+```json
+{
+  "id": "uuid-string",
+  "user_query": "Create a todo called 'Buy groceries'",
+  "agent_response": "I've created the todo 'Buy groceries' for you.",
+  "task_performed": "CREATE_TODO",
+  "timestamp": "2023-12-01T10:05:00Z"
+}
+```
+
+#### Response (Unauthorized 401)
+```json
+{
+  "detail": "Authentication required"
+}
+```
+
+#### Response (Not Found 404)
+```json
+{
+  "detail": "History entry not found"
+}
+```
+
+### DELETE /history/{history_id}
+Delete a specific chat history entry.
+
+#### Response (Success 200)
+```json
+{
+  "message": "Chat history entry deleted successfully"
+}
+```
+
+#### Response (Unauthorized 401)
+```json
+{
+  "detail": "Authentication required"
+}
+```
+
+#### Response (Not Found 404)
+```json
+{
+  "detail": "History entry not found"
+}
+```
+
+### POST /agent/todo/create
+Direct endpoint to create a todo via agent (used by agent tools).
+
+#### Request
+```json
+{
+  "title": "Buy groceries",
+  "description": "Milk, bread, eggs",
+  "priority": "medium"
+}
+```
+
+#### Response (Success 201)
+```json
+{
+  "id": "uuid-string",
+  "title": "Buy groceries",
+  "description": "Milk, bread, eggs",
+  "is_completed": false,
+  "priority": "medium",
+  "user_id": "uuid-string",
+  "created_at": "2023-12-01T10:05:00Z",
+  "updated_at": "2023-12-01T10:05:00Z"
+}
+```
+
+### PUT /agent/todo/{todo_id}
+Direct endpoint to update a todo via agent (used by agent tools).
+
+#### Request
+```json
+{
+  "title": "Updated todo title",
+  "description": "Updated description",
+  "is_completed": true,
+  "priority": "high"
+}
+```
+
+#### Response (Success 200)
+```json
+{
+  "id": "uuid-string",
+  "title": "Updated todo title",
+  "description": "Updated description",
+  "is_completed": true,
+  "priority": "high",
+  "user_id": "uuid-string",
+  "created_at": "2023-12-01T10:05:00Z",
+  "updated_at": "2023-12-01T10:10:00Z"
+}
+```
+
+### DELETE /agent/todo/{todo_id}
+Direct endpoint to delete a todo via agent (used by agent tools).
+
+#### Response (Success 200)
+```json
+{
+  "message": "Todo item deleted successfully"
+}
+```
+
+### PATCH /agent/todo/{todo_id}/toggle-completion
+Direct endpoint to toggle completion status of a todo via agent (used by agent tools).
+
+#### Response (Success 200)
+```json
+{
+  "id": "uuid-string",
+  "title": "Buy groceries",
+  "description": "Milk, bread, eggs",
+  "is_completed": true,
+  "priority": "medium",
+  "user_id": "uuid-string",
+  "created_at": "2023-12-01T10:05:00Z",
+  "updated_at": "2023-12-01T10:15:00Z",
+  "completed_at": "2023-12-01T10:15:00Z"
+}
+```

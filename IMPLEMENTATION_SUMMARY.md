@@ -1,5 +1,12 @@
 # Implementation Completion Summary
 
+## ChatKit Agent Integration Dependencies Added
+
+New dependencies have been added to support the ChatKit Agent Integration feature:
+
+- Frontend: @openai/chatkit-react for ChatKit UI components
+- Backend: openai-agents and openai-agents[litellm] for OpenAI Agents SDK with Google Gemini support
+
 ## Tasks 60-70 Completed
 
 All tasks from 60 to 70 in the `tasks.md` file have been successfully completed:
