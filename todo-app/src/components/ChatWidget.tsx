@@ -1,7 +1,7 @@
 // src/components/ChatWidget.tsx
-// Updated to use the compact chat interface
-import CompactChatInterface from './CompactChatInterface';
+// Updated to use the floating chat widget
+import FloatingChatWidget from './FloatingChatWidget';
 
 export default function ChatWidget() {
-  return <CompactChatInterface />;
+  return <FloatingChatWidget />;
 }

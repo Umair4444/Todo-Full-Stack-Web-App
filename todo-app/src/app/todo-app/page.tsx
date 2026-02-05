@@ -25,6 +25,7 @@ import { TodoList } from '@/components/todo/TodoList';
 import { useAppStore } from '@/lib/store';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 const DashboardPageContent: React.FC = () => {
   const { user } = useAuth();
@@ -342,7 +343,9 @@ const DashboardPageContent: React.FC = () => {
 const DashboardPage: React.FC = () => {
   return (
     <ProtectedRoute>
-      <DashboardPageContent />
+      <MainLayout>
+        <DashboardPageContent />
+      </MainLayout>
     </ProtectedRoute>
   );
 };

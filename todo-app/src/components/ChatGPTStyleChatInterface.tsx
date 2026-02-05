@@ -1,4 +1,3 @@
-// src/components/RedesignedChatInterface.tsx
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -16,18 +15,23 @@ import {
   Plus,
   Trash2,
   Search,
-  Calendar,
-  Filter,
   MoreVertical,
-  Edit,
-  List,
+  Copy,
   Sparkles,
-  MessageSquare,
   Menu,
   X,
+  ThumbsUp,
+  ThumbsDown,
+  Edit,
+  List,
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Filter,
+  Paperclip,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -43,6 +47,7 @@ interface Message {
   content: string;
   timestamp: Date;
   taskId?: string;
+  feedback?: "positive" | "negative";
 }
 
 interface ChatHistoryItem {
@@ -53,42 +58,36 @@ interface ChatHistoryItem {
   timestamp: string;
 }
 
-interface RedesignedChatInterfaceProps {
+interface ChatGPTStyleChatInterfaceProps {
   sessionId?: string;
   userId?: string;
   className?: string;
   theme?: "light" | "dark";
-  height?: string;
-  width?: string;
 }
 
-const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
+const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
   sessionId,
   userId,
   className = "",
   theme = "light",
-  height = "500px",
-  width = "100%",
 }) => {
   const { isAuthenticated } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isHistoryPanelOpen, setIsHistoryPanelOpen] = useState(true);
-  const [isMobileHistoryOpen, setIsMobileHistoryOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [chatHistories, setChatHistories] = useState<ChatHistoryItem[]>([]);
   const [filteredHistories, setFilteredHistories] = useState<ChatHistoryItem[]>(
     [],
   );
   const [selectedHistory, setSelectedHistory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filterByDate, setFilterByDate] = useState<
-    "all" | "today" | "week" | "month"
-  >("all");
-  const [filterByTask, setFilterByTask] = useState<
-    "all" | "todo_operations" | "general"
-  >("all");
+  const [filterByDate, setFilterByDate] = useState<"all" | "today" | "week" | "month">("all");
+  const [filterByTask, setFilterByTask] = useState<"all" | "todo_operations" | "general">("all");
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Load chat histories on component mount
   useEffect(() => {
@@ -220,11 +219,19 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
 
       setMessages(formattedMessages);
 
-      // Close mobile history panel after selection
-      setIsMobileHistoryOpen(false);
+      // Close mobile sidebar after selection
+      setIsMobileSidebarOpen(false);
     } catch (error) {
       console.error("Error loading chat history:", error);
       toast.error("Failed to load chat history.");
+    }
+  };
+
+  // Handle Enter key press in input field
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as any);
     }
   };
 
@@ -255,6 +262,9 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
     setIsLoading(true);
 
     try {
+      // Show typing indicator
+      setIsTyping(true);
+
       // Call the chat API
       const response = await chatService.sendMessage(inputValue);
 
@@ -292,7 +302,28 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      setIsTyping(false);
+      // Scroll to bottom after message is sent
+      setTimeout(() => scrollToBottom(), 100);
     }
+  };
+
+  const handleFeedback = (messageIndex: number, feedback: "positive" | "negative") => {
+    setMessages(prev => {
+      const updatedMessages = [...prev];
+      updatedMessages[messageIndex] = {
+        ...updatedMessages[messageIndex],
+        feedback
+      };
+      return updatedMessages;
+    });
+
+    toast.success(feedback === "positive" ? "Thanks for your positive feedback!" : "Thanks for your feedback, I'll improve!");
+  };
+
+  const handleCopyMessage = (content: string) => {
+    navigator.clipboard.writeText(content);
+    toast.success("Copied to clipboard!");
   };
 
   const formatDate = (dateString: string) => {
@@ -314,73 +345,55 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
   };
 
   return (
-    <div
-      className={cn(
-        `${className} flex flex-col md:flex-row h-full w-full bg-background rounded-xl overflow-hidden border shadow-lg`,
-        height && width ? `${height} ${width}` : "",
-      )}
-    >
-      {/* Mobile Header */}
-      <div className="md:hidden p-4 border-b bg-background flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold flex items-center">
-            <Sparkles className="w-5 h-5 mr-2 text-primary" />
-            AI Assistant
-          </h2>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsMobileHistoryOpen(!isMobileHistoryOpen)}
-        >
-          {isMobileHistoryOpen ? (
-            <X className="w-5 h-5" />
-          ) : (
-            <Menu className="w-5 h-5" />
-          )}
-        </Button>
-      </div>
-
-      {/* Left Panel - Chat History */}
+    <div className={cn("flex h-screen bg-background text-foreground", className)}>
+      {/* Sidebar - Chat History */}
       <AnimatePresence>
-        {(isHistoryPanelOpen || isMobileHistoryOpen) && (
+        {(isSidebarOpen || isMobileSidebarOpen) && (
           <motion.div
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="w-full md:w-80 flex flex-col border-r bg-muted/20 h-full absolute md:relative z-10 md:z-0"
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="w-64 flex flex-col border-r bg-gradient-to-b from-background to-muted fixed md:relative h-full z-10 md:z-0"
           >
-            <div className="p-4 border-b flex-shrink-0 bg-background md:bg-transparent">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold flex items-center">
-                  <MessageSquare className="w-5 h-5 mr-2 text-primary" />
-                  Chat History
-                </h2>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNewChat}
-                  className="flex items-center gap-1"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span className="hidden sm:inline">New</span>
-                </Button>
+            <div className="p-3 border-b flex items-center justify-between">
+              <h2 className="text-lg font-semibold flex items-center">
+                <Sparkles className="w-5 h-5 mr-2 text-primary" />
+                Chat History
+              </h2>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsSidebarOpen(false)}
+                className="md:hidden"
+              >
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+
+            <div className="p-3 border-b">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleNewChat}
+                className="flex items-center gap-1 w-full justify-start mb-3"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                New chat
+              </Button>
+
+              <div className="relative mb-3">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search chats..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
               </div>
 
-              <div className="space-y-3">
-                {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search chats..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
-
-                {/* Filters */}
+              {/* Filter Controls */}
+              <div className="space-y-2">
                 <div className="flex gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -451,7 +464,7 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
             </div>
 
             {/* Scrollable container for history items */}
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
               <ScrollArea className="h-full w-full p-2">
                 <div className="space-y-1">
                   {filteredHistories.length === 0 ? (
@@ -463,13 +476,13 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
                     filteredHistories.map((history) => (
                       <motion.div
                         key={history.id}
-                        initial={{ opacity: 0, y: 10 }}
+                        initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className={`p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                        className={`p-3 rounded-xl cursor-pointer transition-all duration-200 mb-1 ${
                           selectedHistory === history.id
-                            ? "bg-primary text-primary-foreground"
-                            : "hover:bg-accent/50"
+                            ? "bg-primary text-primary-foreground shadow-md"
+                            : "hover:bg-accent"
                         }`}
                         onClick={() => handleSelectHistory(history.id)}
                       >
@@ -517,6 +530,15 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
                               <DropdownMenuItem
                                 onClick={(e) => {
                                   e.stopPropagation();
+                                  handleCopyMessage(history.user_query);
+                                }}
+                              >
+                                <Copy className="mr-2 h-4 w-4" />
+                                Copy Query
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={(e) => {
+                                  e.stopPropagation();
                                   handleDeleteChat(history.id);
                                 }}
                                 className="text-destructive focus:text-destructive"
@@ -534,168 +556,136 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
               </ScrollArea>
             </div>
 
-            {/* Close button for mobile */}
-            <div className="p-3 border-t md:hidden">
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setIsMobileHistoryOpen(false)}
-              >
-                Close History
-              </Button>
-            </div>
+       
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Overlay for mobile history panel */}
-      {isMobileHistoryOpen && isHistoryPanelOpen && (
+      {/* Overlay for mobile sidebar */}
+      {isMobileSidebarOpen && isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-0 md:hidden"
-          onClick={() => setIsMobileHistoryOpen(false)}
+          onClick={() => setIsMobileSidebarOpen(false)}
         />
       )}
 
-      {/* Right Panel - Chat Interface */}
-      <div className="flex-1 flex flex-col h-full relative">
-        {/* Toggle button for history panel */}
-        <div className="p-3 border-b flex-shrink-0 bg-background">
-          <div className="flex justify-between items-center">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                if (window.innerWidth < 768) {
-                  setIsMobileHistoryOpen(!isMobileHistoryOpen);
-                } else {
-                  setIsHistoryPanelOpen(!isHistoryPanelOpen);
-                }
-              }}
-              className="flex items-center gap-1"
-            >
-              {isHistoryPanelOpen && window.innerWidth >= 768
-                ? "Hide History"
-                : "Show History"}
-            </Button>
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold hidden md:block">
-                <span className="text-primary">AI</span> Assistant
-              </h2>
-            </div>
-          </div>
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col h-screen">
+        {/* Top Bar */}
+        <div className="p-3 border-b flex items-center bg-background sticky top-0 z-10">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="mr-2"
+          >
+            {isSidebarOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+          </Button>
+          <h1 className="text-xl font-bold flex items-center">
+            <Sparkles className="w-5 h-5 mr-2 text-primary" />
+            AI Assistant
+          </h1>
         </div>
 
-        {/* Messages Area - Scrollable container */}
-        <div className="flex-1 overflow-hidden p-2">
-          <ScrollArea className="h-full w-full p-2">
-            <div className="space-y-6 max-w-3xl mx-auto w-full">
-              {messages.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center py-12">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                    className="bg-gradient-to-br from-primary/10 to-secondary/10 p-6 rounded-2xl mb-6"
-                  >
-                    <div className="bg-primary/10 p-4 rounded-full inline-block">
-                      <Bot className="h-12 w-12 text-primary" />
-                    </div>
-                  </motion.div>
-                  <motion.h3
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-2xl font-bold mb-2"
-                  >
-                    Welcome to the AI Assistant
-                  </motion.h3>
-                  <motion.p
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-muted-foreground max-w-md mb-8"
-                  >
-                    Ask me anything or request help with your todos. I can help
-                    you create, update, or manage your tasks.
-                  </motion.p>
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/30">
+          <div className="max-w-3xl mx-auto w-full py-6 px-4">
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                  className="bg-gradient-to-br from-primary/10 to-secondary/10 p-8 rounded-2xl mb-8"
+                >
+                  <div className="bg-primary/10 p-4 rounded-full inline-block">
+                    <Bot className="h-14 w-14 text-primary" />
+                  </div>
+                </motion.div>
+                <motion.h3
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-3xl font-bold mb-4"
+                >
+                  How can I help you today?
+                </motion.h3>
+                <motion.p
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-muted-foreground max-w-md mb-8"
+                >
+                  Ask me anything or request help with your todos. I can help
+                  you create, update, or manage your tasks.
+                </motion.p>
 
-                  <motion.div
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md"
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg"
+                >
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      setInputValue("What can you help me with?")
+                    }
+                    className="justify-start gap-2 h-auto py-5"
                   >
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        setInputValue("What can you help me with?")
-                      }
-                      className="justify-start gap-2"
-                    >
-                      <Bot className="w-4 h-4" />
-                      <span>What can you help me with?</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setInputValue("Create a new todo for me")}
-                      className="justify-start gap-2"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>Create a new todo</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setInputValue("How do I update a todo?")}
-                      className="justify-start gap-2"
-                    >
-                      <Edit className="w-4 h-4" />
-                      <span>Update a todo</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setInputValue("Show me my recent todos")}
-                      className="justify-start gap-2"
-                    >
-                      <List className="w-4 h-4" />
-                      <span>Show recent todos</span>
-                    </Button>
-                  </motion.div>
-                </div>
-              ) : (
+                    <Bot className="w-4 h-4" />
+                    <span>What can you help me with?</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setInputValue("Create a new todo for me")}
+                    className="justify-start gap-2 h-auto py-5"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Create a new todo</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setInputValue("How do I update a todo?")}
+                    className="justify-start gap-2 h-auto py-5"
+                  >
+                    <Edit className="w-4 h-4" />
+                    <span>Update a todo</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setInputValue("Show me my recent todos")}
+                    className="justify-start gap-2 h-auto py-5"
+                  >
+                    <List className="w-4 h-4" />
+                    <span>Show recent todos</span>
+                  </Button>
+                </motion.div>
+              </div>
+            ) : (
+              <div className="space-y-6 pb-32">
                 <AnimatePresence>
                   {messages.map((message, index) => (
                     <motion.div
-                      key={index}
+                      key={`${index}-${message.timestamp.getTime()}`}
                       initial={{ opacity: 0, y: 20, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.95 }}
                       transition={{ duration: 0.2 }}
-                      className={`flex items-start gap-4 ${
-                        message.role === "user" ? "flex-row-reverse" : ""
-                      }`}
+                      className={`flex gap-3 ${message.role === "user" ? "justify-end" : ""}`}
                     >
-                      <Avatar
-                        className={`w-9 h-9 flex-shrink-0 ${message.role === "user" ? "" : "bg-primary"}`}
-                      >
-                        {message.role === "user" ? (
-                          <AvatarFallback className="bg-secondary">
-                            <User className="w-5 h-5" />
-                          </AvatarFallback>
-                        ) : (
+                      {message.role === "assistant" && (
+                        <Avatar className="w-9 h-9 flex-shrink-0 bg-primary mt-0.5">
                           <AvatarFallback className="bg-primary text-primary-foreground">
-                            <Bot className="w-5 h-5" />
+                            <Bot className="w-4 h-4" />
                           </AvatarFallback>
-                        )}
-                      </Avatar>
+                        </Avatar>
+                      )}
                       <div
-                        className={`rounded-2xl p-5 max-w-[80%] ${
+                        className={`max-w-[80%] rounded-2xl p-4 relative group ${
                           message.role === "user"
-                            ? "bg-primary text-primary-foreground ml-auto"
-                            : "bg-card border shadow-sm"
+                            ? "bg-primary text-primary-foreground rounded-br-none"
+                            : "bg-card border rounded-bl-none shadow-sm"
                         }`}
                       >
                         <div className="whitespace-pre-wrap break-words">
@@ -722,62 +712,123 @@ const RedesignedChatInterface: React.FC<RedesignedChatInterfaceProps> = ({
                               </Badge>
                             )}
                         </div>
+
+                        {/* Action buttons that appear on hover */}
+                        {message.role === "assistant" && (
+                          <div className="absolute -bottom-8 right-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleFeedback(index, "positive")}
+                              className={`h-8 w-8 p-0 ${
+                                message.feedback === "positive"
+                                  ? "text-green-500"
+                                  : "text-muted-foreground hover:text-green-500"
+                              }`}
+                            >
+                              <ThumbsUp className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleFeedback(index, "negative")}
+                              className={`h-8 w-8 p-0 ${
+                                message.feedback === "negative"
+                                  ? "text-red-500"
+                                  : "text-muted-foreground hover:text-red-500"
+                              }`}
+                            >
+                              <ThumbsDown className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleCopyMessage(message.content)}
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
                       </div>
+                      {message.role === "user" && (
+                        <Avatar className="w-9 h-9 flex-shrink-0 mt-0.5">
+                          <AvatarFallback className="bg-secondary">
+                            <User className="w-4 h-4" />
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
                     </motion.div>
                   ))}
                 </AnimatePresence>
-              )}
 
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="flex items-start gap-4"
-                >
-                  <Avatar className="w-9 h-9 flex-shrink-0 bg-primary">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      <Bot className="w-5 h-5" />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="rounded-2xl p-5 max-w-[80%] bg-card border shadow-sm">
-                    <div className="flex space-x-2">
-                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce"></div>
-                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-75"></div>
-                      <div className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce delay-150"></div>
+                {isTyping && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="flex gap-3"
+                  >
+                    <Avatar className="w-9 h-9 flex-shrink-0 bg-primary mt-0.5">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
+                        <Bot className="w-4 h-4" />
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="max-w-[80%] rounded-2xl p-4 bg-card border rounded-bl-none shadow-sm">
+                      <div className="flex space-x-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce delay-75"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce delay-150"></div>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollArea>
+                  </motion.div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Input Area */}
-        <div className="p-4 border-t bg-background flex-shrink-0">
+        <div className="p-4 border-t bg-background sticky bottom-0">
           <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
-            <div className="flex gap-2">
+            <div className="relative flex items-center">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+              >
+                <Paperclip className="w-4 h-4" />
+              </Button>
               <Input
+                ref={inputRef}
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Type your message here..."
+                onKeyDown={handleKeyDown}
+                placeholder="Message AI Assistant..."
                 disabled={isLoading}
-                className="flex-1"
+                className="py-6 pl-12 pr-16 rounded-full"
               />
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="shrink-0 bg-primary hover:bg-primary/90"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary hover:bg-primary/90 h-9 w-9 rounded-full p-0"
               >
-                <Send className="w-4 h-4" />
-                <span className="sr-only">Send</span>
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
               </Button>
             </div>
           </form>
+          <p className="text-xs text-center text-muted-foreground mt-2">
+            AI Assistant can make mistakes. Consider checking important information.
+          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default RedesignedChatInterface;
+export default ChatGPTStyleChatInterface;
