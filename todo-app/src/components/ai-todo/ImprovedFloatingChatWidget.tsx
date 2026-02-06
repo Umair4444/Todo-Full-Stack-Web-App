@@ -529,7 +529,7 @@ export default function ImprovedFloatingChatWidget() {
                           setIsAttachmentMenuOpen(!isAttachmentMenuOpen)
                         }
                         disabled={false} // Always enabled regardless of input state
-                        className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/30 rounded-full transition-all duration-200 z-20"
+                        className="h-8 w-8 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-100/50 dark:hover:bg-indigo-900/30 rounded-full transition-all duration-200 z-20 cursor-pointer"
                       >
                         <Paperclip
                           className={`w-4 h-4 transition-transform duration-200 ${isAttachmentMenuOpen ? "rotate-45" : ""}`}
@@ -547,7 +547,7 @@ export default function ImprovedFloatingChatWidget() {
                           <div className="py-1">
                             <button
                               type="button"
-                              className="flex items-center w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700/70 transition-colors duration-150"
+                              className="flex items-center w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700/70 transition-colors duration-150 cursor-pointer"
                               onClick={() => {
                                 // Simulate file upload
                                 setInputValue(
@@ -576,7 +576,7 @@ export default function ImprovedFloatingChatWidget() {
                             </button>
                             <button
                               type="button"
-                              className="flex items-center w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700/70 transition-colors duration-150"
+                              className="flex items-center w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700/70 transition-colors duration-150 cursor-pointer"
                               onClick={() => {
                                 // Simulate image upload
                                 setInputValue(
@@ -605,7 +605,7 @@ export default function ImprovedFloatingChatWidget() {
                             </button>
                             <button
                               type="button"
-                              className="flex items-center w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700/70 transition-colors duration-150"
+                              className="flex items-center w-full px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-indigo-50 dark:hover:bg-gray-700/70 transition-colors duration-150 cursor-pointer"
                               onClick={() => {
                                 // Simulate voice note
                                 setInputValue(
@@ -669,7 +669,7 @@ export default function ImprovedFloatingChatWidget() {
             whileHover={{ scale: 1.15, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-4 right-4 rounded-full w-16 h-16 p-0 shadow-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white border-4 border-white dark:border-gray-800 hover:shadow-2xl transition-all duration-300 z-50"
+            className="fixed bottom-4 right-4 rounded-full w-16 h-16 p-0 shadow-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white border-4 border-white dark:border-gray-800 hover:shadow-2xl transition-all duration-300 z-50 cursor-pointer"
             aria-label="Open chat"
           >
             <motion.div

@@ -31,7 +31,7 @@ const NavigationLink: React.FC<NavigationLinkProps> = ({ href, children, classNa
   return (
     <Link
       href={href}
-      className={`${paddingClass} ${textSize} rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+      className={`${paddingClass} ${textSize} rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer ${
         isActive
           ? 'bg-primary text-primary-foreground shadow-md'
           : 'text-foreground hover:bg-accent hover:shadow-sm'

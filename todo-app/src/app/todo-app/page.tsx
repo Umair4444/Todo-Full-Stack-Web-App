@@ -248,9 +248,9 @@ const DashboardPageContent: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {todoLogs.map((log) => (
-                    <div 
-                      key={log.id} 
-                      className="flex items-start p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors"
+                    <div
+                      key={log.id}
+                      className="flex items-start p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
                     >
                       <div className={`mr-4 mt-1 h-3 w-3 rounded-full ${
                         log.action === 'CREATE' ? 'bg-green-500' :

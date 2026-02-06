@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
         </div>
 
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-          <div className="p-4 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group">
+          <div className="p-4 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group cursor-pointer">
             <div className="w-14 h-14 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
               <div className="text-2xl">📝</div>
             </div>
@@ -53,7 +53,7 @@ const HomePage: React.FC = () => {
             <p className="text-muted-foreground text-sm lg:text-base">{t("createAndUpdateTasks")}</p>
           </div>
 
-          <div className="p-4 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group">
+          <div className="p-4 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group cursor-pointer">
             <div className="w-14 h-14 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
               <div className="text-2xl">🎨</div>
             </div>
@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
             <p className="text-muted-foreground text-sm lg:text-base">{t("enjoyBeautifulDesign")}</p>
           </div>
 
-          <div className="p-4 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group">
+          <div className="p-4 rounded-2xl border bg-card hover:shadow-lg transition-all duration-300 group cursor-pointer">
             <div className="w-14 h-14 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
               <div className="text-2xl">🌐</div>
             </div>

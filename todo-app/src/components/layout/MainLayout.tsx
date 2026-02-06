@@ -1,8 +1,8 @@
 // Reusable layout component with header, main content area, and footer
-import React from 'react';
-import { FloatingNavbar } from '../navigation/FloatingNavbar';
-import { Footer } from '../navigation/Footer';
-import ImprovedFloatingChatWidget from '../ImprovedFloatingChatWidget';
+import React from "react";
+import { FloatingNavbar } from "../navigation/FloatingNavbar";
+import { Footer } from "../navigation/Footer";
+import ImprovedFloatingChatWidget from "../ai-todo/ImprovedFloatingChatWidget";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -15,7 +15,9 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <FloatingNavbar />
 
       {/* Main Content Area */}
-      <main className="flex-grow pt-16"> {/* Add padding to account for fixed navbar */}
+      <main className="flex-grow pt-16">
+        {" "}
+        {/* Add padding to account for fixed navbar */}
         {children}
       </main>
 
@@ -23,7 +25,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <Footer />
 
       {/* Floating Chatbot Widget */}
-      <ImprovedFloatingChatWidget/>
+      <ImprovedFloatingChatWidget />
     </div>
   );
 };

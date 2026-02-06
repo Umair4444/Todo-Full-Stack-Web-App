@@ -77,7 +77,7 @@ const AuthNavigation: React.FC = () => {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={handleLogout}
-              className="cursor-pointer focus:bg-destructive/10 focus:text-destructive"
+              className="focus:bg-destructive/10 focus:text-destructive cursor-pointer"
             >
               <LogOutIcon className="mr-2 h-4 w-4" />
               <span>Log out</span>

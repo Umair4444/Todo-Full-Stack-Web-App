@@ -1,7 +1,7 @@
 "use client";
 
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { ChatGPTStyleChatInterface } from "@/components/ChatGPTStyleChatInterface";
+import { ChatGPTStyleChatInterface } from "@/components/ai-todo/ChatGPTStyleChatInterface";
 
 export default function ChatPage() {
   return (

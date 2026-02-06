@@ -495,7 +495,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2 }}
-                        className={`p-3 rounded-xl cursor-pointer transition-all duration-200 mb-1 ${
+                        className={`p-3 rounded-xl transition-all duration-200 mb-1 cursor-pointer ${
                           selectedHistory === history.id
                             ? "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-md"
                             : "bg-white dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800/70"

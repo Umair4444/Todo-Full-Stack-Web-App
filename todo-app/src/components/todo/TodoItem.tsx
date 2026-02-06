@@ -93,7 +93,7 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
   };
 
   return (
-    <Card className={`transition-all duration-300 ease-in-out ${
+    <Card className={`transition-all duration-300 ease-in-out cursor-pointer ${
       todo.completed
         ? 'opacity-80 bg-accent/50 border-primary/20'
         : `hover:shadow-xl hover:-translate-y-0.5 ${(
@@ -129,7 +129,7 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
             {!isBulkDeleteActive && (
               <button
                 onClick={handleToggle}
-                className={`relative flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 transform hover:scale-110 ${
+                className={`relative flex h-6 w-6 items-center justify-center rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-300 transform hover:scale-110 cursor-pointer ${
                   todo.completed
                     ? 'bg-emerald-500 border-emerald-500 shadow-md hover:bg-emerald-600 hover:shadow-lg'
                     : 'border-input hover:border-primary hover:bg-primary/10 hover:shadow-md'
@@ -189,11 +189,11 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
               </div>
             ) : (
               <div>
-                <h3 id={`todo-title-${todo.id}`} className={`text-lg font-semibold transition-all duration-200 ${todo.completed ? 'line-through text-muted-foreground' : 'hover:text-primary'}`}>
+                <h3 id={`todo-title-${todo.id}`} className={`text-lg font-semibold transition-all duration-200 ${todo.completed ? 'line-through text-muted-foreground' : 'hover:text-primary'} ${!isEditing ? 'cursor-pointer' : ''}`}>
                   {todo.title}
                 </h3>
                 {todo.description && (
-                  <p className={`mt-1 text-muted-foreground transition-all duration-200 ${todo.completed ? 'line-through' : 'hover:text-foreground'}`}>
+                  <p className={`mt-1 text-muted-foreground transition-all duration-200 ${todo.completed ? 'line-through' : 'hover:text-foreground'} ${!isEditing ? 'cursor-pointer' : ''}`}>
                     {todo.description}
                   </p>
                 )}
