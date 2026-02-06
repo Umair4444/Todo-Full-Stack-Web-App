@@ -92,16 +92,22 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isTyping]);
+    // Use requestAnimationFrame to ensure DOM has been updated before scrolling
+    requestAnimationFrame(() => {
+      scrollToBottom();
+    });
+  }, [messages]); // Removed isTyping dependency to ensure it scrolls after each message
 
   const scrollToBottom = () => {
     if (messagesContainerRef.current) {
-      // Scroll to the bottom of the container instantly
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+      // Scroll to the bottom of the container with smooth behavior
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
     } else {
       // Fallback to the previous method if container ref is not available
-      messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); // Instant scroll
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" }); // Smooth scroll
     }
   };
 
