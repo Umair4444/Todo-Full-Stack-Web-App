@@ -156,14 +156,6 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
     setFilteredHistories(filtered);
   }, [chatHistories, searchQuery, filterByDate, filterByTask]);
 
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   const loadChatHistories = async () => {
     try {
@@ -303,8 +295,6 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
     } finally {
       setIsLoading(false);
       setIsTyping(false);
-      // Scroll to bottom after message is sent
-      setTimeout(() => scrollToBottom(), 100);
     }
   };
 
