@@ -58,7 +58,13 @@ export default function ImprovedFloatingChatWidget() {
   }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Using a more reliable method to scroll to bottom
+    if (messagesEndRef.current) {
+      const container = messagesEndRef.current.parentElement;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -150,9 +156,9 @@ export default function ImprovedFloatingChatWidget() {
       <AnimatePresence>
         {isOpen ? (
           <motion.div
-            className="w-80 h-96 flex flex-col shadow-2xl border-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-800 dark:via-gray-800 dark:to-slate-900 rounded-2xl overflow-hidden backdrop-blur-xl"
+            className="w-80 sm:w-96 h-[500px] max-w-[90vw] flex flex-col shadow-2xl border-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-800 dark:via-gray-800 dark:to-slate-900 rounded-2xl overflow-hidden backdrop-blur-xl"
             initial={{ scale: 0.8, opacity: 0, height: 0 }}
-            animate={{ scale: 1, opacity: 1, height: 'auto' }}
+            animate={{ scale: 1, opacity: 1, height: '500px' }}
             exit={{ scale: 0.8, opacity: 0, height: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 300 }}
           >
@@ -176,7 +182,7 @@ export default function ImprovedFloatingChatWidget() {
                 </Button>
               </div>
               <CardContent className="flex-1 flex flex-col p-0">
-                <ScrollArea className="h-[calc(100%-80px)] p-4">
+                <ScrollArea className="h-[calc(500px-120px)] p-4">
                   <div className="space-y-4">
                     {messages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-center py-4">
@@ -308,7 +314,7 @@ export default function ImprovedFloatingChatWidget() {
                       onKeyDown={handleKeyDown}
                       placeholder="Ask me anything..."
                       disabled={isLoading}
-                      className="text-sm h-10 pl-10 pr-10 rounded-full border border-gray-300/50 dark:border-gray-600/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500/30"
+                      className="text-sm h-10 pl-10 pr-10 rounded-full border border-gray-300/50 dark:border-gray-600/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500/30 truncate max-w-[calc(100%-40px)]"
                       size={1}
                     />
                     <Button
