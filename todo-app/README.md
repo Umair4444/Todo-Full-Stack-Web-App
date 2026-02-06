@@ -1,6 +1,6 @@
 # Todo Full-Stack Web Application with Authentication
 
-A modern and vibrant todo application built with Next.js, TypeScript, and Tailwind CSS. This application allows users to manage their tasks efficiently with features like user authentication, dark/light mode, multilingual support, and a simulated chatbot assistant.
+A modern and vibrant todo application built with Next.js, TypeScript, and Tailwind CSS. This application allows users to manage their tasks efficiently with features like user authentication, dark/light mode, multilingual support, and AI-powered chat assistance.
 
 ## Features
 
@@ -34,7 +34,7 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
 - **Dark/Light Mode**: Toggle between light and dark themes
 - **Multilingual Support**: Available in English and Urdu
 - **Floating Navbar**: With glass effect that hides on scroll down and appears on scroll up
-- **Simulated Chatbot**: Get help and support through the chatbot available on all pages
+- **AI-Powered Assistant**: Get help and support through the integrated AI agent available on all pages
 - **Modern UI**: Built with shadcn/ui components and Framer Motion animations
 - **Persistent Storage**: Todos and preferences are saved in localStorage
 
@@ -130,6 +130,9 @@ The frontend connects to these backend endpoints:
 - `DELETE /api/todos/{id}` - Delete a specific todo for authenticated user
 - `GET /api/todos/logs` - Get activity logs for authenticated user
 - `GET /health` - Check backend health status
+- `POST /api/chat/session` - Initiate new chat session with AI agent
+- `POST /api/chat/session/{session_id}/message` - Send message to chat session
+- `GET /api/chat/history` - Retrieve chat history for authenticated user
 
 ### Authentication Flow
 
@@ -169,3 +172,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Zustand](https://github.com/pmndrs/zustand) for the lightweight state management
 - [Framer Motion](https://www.framer.com/motion/) for the smooth animations
 - [Better Auth](https://better-auth.com/) for the authentication solution
+- [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) for the multi-agent framework
+- [@openai/chatkit-react](https://www.npmjs.com/package/@openai/chatkit-react) for the ChatKit UI components
