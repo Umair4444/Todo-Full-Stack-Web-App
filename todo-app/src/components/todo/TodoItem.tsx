@@ -12,14 +12,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
 
-interface TodoItemProps {
+interface TodoItemCardProps {
   todo: TodoItemType;
   isSelected?: boolean;
   onSelect?: () => void;
   isBulkDeleteActive?: boolean;
 }
 
-export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = false, onSelect, isBulkDeleteActive = false }) => {
+const TodoItemCard: React.FC<TodoItemCardProps> = ({ todo, isSelected = false, onSelect, isBulkDeleteActive = false }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
   const [editedDescription, setEditedDescription] = useState(todo.description || '');
@@ -276,3 +276,5 @@ export const TodoItemComponent: React.FC<TodoItemProps> = ({ todo, isSelected = 
     </Card>
   );
 };
+
+export default TodoItemCard;

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { TodoItemComponent } from './TodoItem';
+import TodoItemCard from './TodoItem';
 import { useAppStore } from '@/lib/store';
 import { toast } from 'sonner';
 import { TodoBulkActions } from './TodoBulkActions';
@@ -162,7 +162,7 @@ const TodoList: React.FC<TodoListProps> = ({ todos, loading = false, onRefresh, 
           ) : (
             <div className="space-y-4">
               {paginatedTodos.map(todo => (
-                <TodoItemComponent
+                <TodoItemCard
                   key={todo.id}
                   todo={todo}
                   isSelected={isSelected(todo.id)}

@@ -41,7 +41,7 @@ interface Message {
   feedback?: "positive" | "negative";
 }
 
-export default function ImprovedFloatingChatWidget() {
+export default function AiTodoFloatingWidget() {
   const { isAuthenticated } = useAuth();
   const pathname = usePathname(); // Get the current route
   const [isOpen, setIsOpen] = useState(false);

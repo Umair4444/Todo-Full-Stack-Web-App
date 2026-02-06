@@ -58,14 +58,14 @@ interface ChatHistoryItem {
   timestamp: string;
 }
 
-interface ChatGPTStyleChatInterfaceProps {
+interface AiTodoChatInterfaceProps {
   sessionId?: string;
   userId?: string;
   className?: string;
   theme?: "light" | "dark";
 }
 
-const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
+const AiTodoChatInterface: React.FC<AiTodoChatInterfaceProps> = ({
   sessionId,
   userId,
   className = "",
@@ -849,4 +849,4 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
   );
 };
 
-export { ChatGPTStyleChatInterface };
+export { AiTodoChatInterface };

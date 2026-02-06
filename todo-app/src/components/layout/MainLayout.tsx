@@ -2,7 +2,7 @@
 import React from "react";
 import { FloatingNavbar } from "../navigation/FloatingNavbar";
 import { Footer } from "../navigation/Footer";
-import ImprovedFloatingChatWidget from "../ai-todo/ImprovedFloatingChatWidget";
+import AiTodoFloatingWidget from "../ai-todo/AiTodoFloatingWidget";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -25,7 +25,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <Footer />
 
       {/* Floating Chatbot Widget */}
-      <ImprovedFloatingChatWidget />
+      <AiTodoFloatingWidget />
     </div>
   );
 };
