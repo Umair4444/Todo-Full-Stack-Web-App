@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/contexts/AuthContext";
 import { chatService } from "@/services/chatService";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -215,7 +215,8 @@ export default function ImprovedFloatingChatWidget() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    // <div className="fixed z-50 flex items-center justify-center p-4">
+    <div className="fixed z-50">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -229,15 +230,20 @@ export default function ImprovedFloatingChatWidget() {
         )}
         {isOpen ? (
           <motion.div
-            className="w-full max-w-2xl h-[80vh] max-h-[800px] flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-800 dark:via-gray-800 dark:to-slate-900 rounded-2xl overflow-hidden backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-2xl z-50"
+            className="fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center p-4 container max-w-lg sm:max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl h-[80vh] max-h-[800px] bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-800 dark:via-gray-800 dark:to-slate-900 rounded-2xl overflow-hidden backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-2xl"
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 350, duration: 0.3 }}
+            transition={{
+              type: "spring",
+              damping: 25,
+              stiffness: 350,
+              duration: 0.3,
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             <Card className="w-full h-full flex flex-col border-0 shadow-none rounded-2xl overflow-hidden bg-transparent">
-              <div className="flex justify-between items-center p-4 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-100/30 to-purple-100/30 dark:from-indigo-900/20 dark:to-purple-900/20 backdrop-blur-sm">
+              <div className="flex justify-between items-center px-4 py-2 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-100/30 to-purple-100/30 dark:from-indigo-900/20 dark:to-purple-900/20 backdrop-blur-sm">
                 <h3 className="font-semibold flex items-center gap-2">
                   <div className="relative">
                     <Brain className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
@@ -274,7 +280,10 @@ export default function ImprovedFloatingChatWidget() {
                 </div>
               </div>
               <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-                <ScrollArea className="flex-1 min-h-[100px] p-4" style={{ maxHeight: 'calc(80vh - 150px)' }}>
+                <ScrollArea
+                  className="flex-1 min-h-[100px] p-4"
+                  style={{ maxHeight: "calc(80vh - 150px)" }}
+                >
                   <div className="space-y-5">
                     {messages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-center py-6">
