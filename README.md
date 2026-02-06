@@ -67,25 +67,93 @@ A modern, full-stack todo application built with Next.js (TypeScript) for the fr
 Todo-Full-Stack-Web-App/
 ├── todo-app/                 # Next.js frontend application
 │   ├── public/
+│   │   ├── locales/         # Translation files for i18n
+│   │   │   ├── en/         # English translations
+│   │   │   └── ur/         # Urdu translations
+│   │   └── images/          # Static images
 │   ├── src/
 │   │   ├── app/             # Next.js App Router pages
 │   │   ├── components/      # Reusable UI components
+│   │   ├── contexts/        # React context providers
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── lib/             # Shared utilities and configurations
 │   │   ├── services/        # API services and utilities
-│   │   └── lib/            # Shared utilities and configurations
+│   │   └── styles/          # Global styles
+│   ├── __tests__/           # Unit and integration tests
+│   ├── tests/               # E2E tests
+│   ├── .env.example         # Environment variables example
+│   ├── components.json      # Component library configuration
+│   ├── next.config.ts       # Next.js configuration
+│   ├── tailwind.config.js   # Tailwind CSS configuration
+│   ├── tsconfig.json        # TypeScript configuration
 │   ├── package.json
 │   └── README.md
 ├── todo-app-backend/         # FastAPI backend application
 │   ├── src/
+│   │   ├── agents/          # AI agent implementation
+│   │   │   ├── chat_agent.py
+│   │   │   ├── todo_tools.py
+│   │   │   └── tools_base.py
+│   │   ├── api/             # API routers
+│   │   │   ├── auth_router.py
+│   │   │   ├── chat_router.py
+│   │   │   ├── health_router.py
+│   │   │   ├── response_format.py
+│   │   │   ├── todo_log_router.py
+│   │   │   ├── todo_router.py
+│   │   │   └── todo_router_new.py
+│   │   ├── config/          # Configuration settings
+│   │   │   ├── litellm_config.py
+│   │   │   └── settings.py
+│   │   ├── database/        # Database configuration
+│   │   │   └── database.py
+│   │   ├── middleware/      # Application middleware
+│   │   │   ├── agent_auth_middleware.py
+│   │   │   ├── auth_middleware.py
+│   │   │   └── rate_limit.py
 │   │   ├── models/          # Database models
-│   │   ├── api/            # API routers
-│   │   ├── database/       # Database configuration
-│   │   ├── services/       # Business logic and agent tools
-│   │   └── config/         # Configuration settings
-│   ├── tests/
-│   ├── requirements.txt
+│   │   │   ├── chat_history_model.py
+│   │   │   ├── todo_log_model.py
+│   │   │   ├── todo_model.py
+│   │   │   └── user_model.py
+│   │   ├── routing/         # Routing utilities
+│   │   │   └── no_slash_redirect_route.py
+│   │   ├── services/        # Business logic and services
+│   │   │   ├── auth_service.py
+│   │   │   ├── chat_history_service.py
+│   │   │   ├── chat_service.py
+│   │   │   ├── todo_log_service.py
+│   │   │   ├── todo_service.py
+│   │   │   └── todo_service_functions.py
+│   │   ├── utils/           # Utility functions
+│   │   │   ├── jwt_utils.py
+│   │   │   └── validation_utils.py
+│   │   ├── api_client.py    # API client utilities
+│   │   ├── exception_handlers.py # Global exception handlers
+│   │   ├── main.py          # Application entry point
+│   │   └── monitoring.py    # Application monitoring
+│   ├── tests/               # Backend tests
+│   ├── docs/                # API documentation
+│   ├── scripts/             # Utility scripts
+│   ├── alembic/             # Database migrations
+│   ├── .env                 # Environment variables
+│   ├── .env.example         # Environment variables example
+│   ├── app.py               # Alternative application entry point
+│   ├── Dockerfile           # Docker configuration
+│   ├── main.py              # Main application entry point
+│   ├── pyproject.toml       # Project metadata and dependencies
+│   ├── requirements.txt     # Production dependencies
+│   ├── requirements-dev.txt # Development dependencies
+│   ├── alembic.ini          # Alembic configuration
 │   └── README.md
 ├── specs/                   # Feature specifications
 ├── how-to/                  # How-to guides
+├── .env.example            # Environment variables example
+├── .gitignore              # Git ignore rules
+├── chatkit_docs.md         # ChatKit documentation
+├── IMPLEMENTATION_SUMMARY.md # Implementation summary
+├── openai_agents_google_models_docs.md # OpenAI agents documentation
+├── QWEN.md                 # Qwen code documentation
 └── README.md               # This file
 ```
 
