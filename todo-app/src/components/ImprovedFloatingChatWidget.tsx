@@ -215,23 +215,29 @@ export default function ImprovedFloatingChatWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setIsOpen(false)}
+          />
+        )}
         {isOpen ? (
           <motion.div
-            className="w-80 sm:w-96 h-[500px] max-h-[calc(100vh-3rem)] max-w-[90vw] flex flex-col shadow-2xl border-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-800 dark:via-gray-800 dark:to-slate-900 rounded-2xl overflow-hidden backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30"
-            initial={{ scale: 0.8, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.8, opacity: 0, y: 20 }}
-            transition={{
-              type: "spring",
-              damping: 25,
-              stiffness: 350,
-              duration: 0.3,
-            }}
+            className="w-full max-w-2xl h-[80vh] max-h-[800px] flex flex-col bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-800 dark:via-gray-800 dark:to-slate-900 rounded-2xl overflow-hidden backdrop-blur-xl border border-gray-200/30 dark:border-gray-700/30 shadow-2xl z-50"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ type: "spring", damping: 25, stiffness: 350, duration: 0.3 }}
+            onClick={(e) => e.stopPropagation()}
           >
             <Card className="w-full h-full flex flex-col border-0 shadow-none rounded-2xl overflow-hidden bg-transparent">
-              <div className="flex justify-between items-center p-5 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-100/30 to-purple-100/30 dark:from-indigo-900/20 dark:to-purple-900/20 backdrop-blur-sm">
+              <div className="flex justify-between items-center p-4 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-100/30 to-purple-100/30 dark:from-indigo-900/20 dark:to-purple-900/20 backdrop-blur-sm">
                 <h3 className="font-semibold flex items-center gap-2">
                   <div className="relative">
                     <Brain className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
@@ -268,7 +274,7 @@ export default function ImprovedFloatingChatWidget() {
                 </div>
               </div>
               <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
-                <ScrollArea className="flex-1 min-h-[100px] p-5" style={{ maxHeight: 'calc(500px - 100px)' }}>
+                <ScrollArea className="flex-1 min-h-[100px] p-4" style={{ maxHeight: 'calc(80vh - 150px)' }}>
                   <div className="space-y-5">
                     {messages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center h-full text-center py-6">
@@ -502,7 +508,7 @@ export default function ImprovedFloatingChatWidget() {
                 </ScrollArea>
                 <form
                   onSubmit={handleSubmit}
-                  className="p-3 border-t border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-50/30 to-purple-50/30 dark:from-slate-800/50 dark:to-gray-800/50 backdrop-blur-sm"
+                  className="p-4 border-t border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-indigo-50/30 to-purple-50/30 dark:from-slate-800/50 dark:to-gray-800/50 backdrop-blur-sm"
                 >
                   <div className="flex items-center gap-1">
                     <div className="relative" ref={attachmentMenuRef}>
@@ -617,7 +623,7 @@ export default function ImprovedFloatingChatWidget() {
                           : "Ask me anything..."
                       }
                       disabled={isLoading}
-                      className="flex-grow text-sm h-10 pl-3 pr-3 rounded-full border border-gray-300/50 dark:border-gray-600/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50 transition-all"
+                      className="flex-grow text-sm h-10 pl-3 pr-3 rounded-full border border-gray-300/50 dark:border-gray-600/50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm focus-visible:ring-2 focus-visible:ring-indigo-500/40 focus-visible:border-indigo-500/50 transition-all max-h-20 overflow-y-auto"
                       size={1}
                     />
                     <Button
@@ -654,7 +660,7 @@ export default function ImprovedFloatingChatWidget() {
             whileHover={{ scale: 1.15, rotate: 5 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="rounded-full w-16 h-16 p-0 shadow-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white border-4 border-white dark:border-gray-800 hover:shadow-2xl transition-all duration-300"
+            className="fixed bottom-4 right-4 rounded-full w-16 h-16 p-0 shadow-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white border-4 border-white dark:border-gray-800 hover:shadow-2xl transition-all duration-300 z-50"
             aria-label="Open chat"
           >
             <motion.div
