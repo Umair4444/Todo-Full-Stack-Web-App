@@ -597,17 +597,17 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="bg-gradient-to-br from-primary/10 to-secondary/10 p-6 rounded-2xl mb-6"
+                  className="bg-gradient-to-br from-primary/10 to-secondary/10 p-2 md:p-6 rounded-2xl mb-3 md:mb-6"
                 >
-                  <div className="bg-primary/10 p-3 rounded-full inline-block">
-                    <Bot className="h-12 w-12 text-primary" />
+                  <div className="bg-primary/10 p-1 md:p-3 rounded-full inline-block">
+                    <Bot className="h-6 md:h-12 w-6 md:w-12 text-primary" />
                   </div>
                 </motion.div>
                 <motion.h3
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-2xl font-bold mb-3"
+                  className="text-xl md:text-2xl font-bold mb-3"
                 >
                   How can I help you today?
                 </motion.h3>
@@ -615,7 +615,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-muted-foreground max-w-sm mb-6 text-sm"
+                  className="text-muted-foreground max-w-sm mb-3 md:mb-6 text-xs md:text-sm"
                 >
                   Ask me anything or request help with your todos. I can help
                   you create, update, or manage your tasks.
