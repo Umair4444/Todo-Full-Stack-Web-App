@@ -465,11 +465,11 @@ const DashboardPageContent: React.FC = () => {
                       <p className="text-sm">Free Plan</p>
                     </div>
                     <div className="space-y-2">
-                      <p className="text-sm font-medium text-muted-foreground">Last Login</p>
+                      <p className="text-sm font-medium text-muted-foreground">Account Created</p>
                       <p className="text-sm">
-                        {user?.last_login 
-                          ? new Date(user.last_login).toLocaleDateString() 
-                          : "First login"}
+                        {user?.created_at
+                          ? new Date(user.created_at).toLocaleDateString()
+                          : "Unknown"}
                       </p>
                     </div>
                   </div>
