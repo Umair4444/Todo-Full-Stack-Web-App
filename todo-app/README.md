@@ -38,6 +38,36 @@ A modern and vibrant todo application built with Next.js, TypeScript, and Tailwi
 - **Modern UI**: Built with shadcn/ui components and Framer Motion animations
 - **Persistent Storage**: Todos and preferences are saved in localStorage
 
+## 📁 Project Structure
+
+```
+todo-app/
+├── public/
+│   ├── locales/            # Translation files for i18n
+│   │   ├── en/            # English translations
+│   │   └── ur/            # Urdu translations
+│   └── images/             # Static images
+├── src/
+│   ├── app/                # Next.js App Router pages
+│   ├── components/         # Reusable UI components
+│   ├── contexts/           # React context providers
+│   ├── hooks/              # Custom React hooks
+│   ├── lib/                # Shared utilities and configurations
+│   ├── services/           # API services and utilities
+│   └── styles/             # Global styles
+├── __tests__/              # Unit and integration tests
+├── tests/                  # E2E tests
+├── .env.example           # Environment variables example
+├── components.json        # Component library configuration
+├── next.config.ts         # Next.js configuration
+├── tailwind.config.js     # Tailwind CSS configuration
+├── tsconfig.json          # TypeScript configuration
+├── package.json
+├── eslint.config.mjs      # ESLint configuration
+├── postcss.config.mjs     # PostCSS configuration
+└── README.md
+```
+
 ## Tech Stack
 
 - **Framework**: Next.js 16.0.1
