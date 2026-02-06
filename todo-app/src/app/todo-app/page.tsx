@@ -8,17 +8,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { 
-  User, 
-  Mail, 
-  Calendar, 
-  CheckCircle, 
-  Circle, 
-  Clock, 
-  Plus, 
+import {
+  User,
+  Mail,
+  Calendar,
+  CheckCircle,
+  Circle,
+  Clock,
+  Plus,
   History,
   FileText,
-  Activity
+  Activity,
+  Settings,
+  ExternalLink,
+  Phone,
+  Building2,
+  MapPin,
+  Globe,
+  Bell,
+  Shield,
+  Lock
 } from 'lucide-react';
 import { TodoForm } from '@/components/todo/TodoForm';
 import { TodoList } from '@/components/todo/TodoList';
@@ -279,61 +288,240 @@ const DashboardPageContent: React.FC = () => {
 
         {/* Profile Tab */}
         <TabsContent value="profile" className="space-y-6">
-          <Card>
-            <CardHeader className="flex items-center flex-col space-y-4 pb-4">
-              <Avatar className="h-24 w-24">
-                <AvatarImage src={`https://api.dicebear.com/6.x/initials/svg?seed=${user?.email}`} alt={user?.email} />
-                <AvatarFallback>
-                  {user?.first_name?.charAt(0)}
-                  {user?.last_name?.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-center space-y-1">
-                <h2 className="text-2xl font-bold">
-                  {user?.first_name && user?.last_name 
-                    ? `${user.first_name} ${user.last_name}` 
-                    : user?.email}
-                </h2>
-                <p className="text-sm text-muted-foreground">{user?.email}</p>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Email</p>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Left Column - Profile Picture and Info */}
+            <div className="lg:col-span-1 space-y-6">
+              <Card className="overflow-hidden border-0 bg-gradient-to-br from-primary/5 to-secondary/5 shadow-sm">
+                <div className="bg-gradient-to-r from-primary to-blue-500 h-24 relative" />
+                <CardHeader className="flex flex-col items-center pt-12 pb-6 relative">
+                  <Avatar className="h-24 w-24 border-4 border-background ring-4 ring-white dark:ring-gray-800 transition-transform duration-300 group-hover:scale-105 shadow-lg -mt-16">
+                    <AvatarImage 
+                      src={`https://api.dicebear.com/6.x/initials/svg?seed=${user?.first_name || user?.email}&backgroundColor=b6e6a1&fontSize=36`} 
+                      alt={`${user?.first_name || user?.email}'s avatar`} 
+                    />
+                    <AvatarFallback className="text-xl bg-primary/10">
+                      {user?.first_name?.charAt(0)?.toUpperCase()}
+                      {user?.last_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-center space-y-1">
+                    <h2 className="text-xl font-bold">
+                      {user?.first_name && user?.last_name
+                        ? `${user.first_name} ${user.last_name}`
+                        : user?.email}
+                    </h2>
                     <p className="text-sm text-muted-foreground">{user?.email}</p>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Calendar className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="text-sm font-medium">Member Since</p>
-                    <p className="text-sm text-muted-foreground">
-                      {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
-                    </p>
+                </CardHeader>
+                <CardContent className="text-center pb-6">
+                  <p className="text-sm text-muted-foreground italic max-w-xs mx-auto">
+                    {user?.bio || "No bio specified. Add a short description about yourself."}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 bg-gradient-to-br from-muted/30 to-background shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <User className="h-5 w-5 text-primary" />
+                    About
+                  </CardTitle>
+                  <CardDescription className="text-xs">
+                    Personal information and details
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                    <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
+                      <Mail className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-muted-foreground font-medium">
+                        Email
+                      </p>
+                      <p className="font-semibold text-base truncate">
+                        {user?.email}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </div>
-              
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-3">Account Information</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Account Status:</span>
-                    <span className={user?.is_active ? "text-green-600" : "text-red-600"}>
-                      {user?.is_active ? "Active" : "Inactive"}
-                    </span>
+                  {user?.phone && (
+                    <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                      <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
+                        <Phone className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-muted-foreground font-medium">
+                          Phone
+                        </p>
+                        <p className="font-semibold text-base truncate">
+                          {user.phone}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {user?.company && (
+                    <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                      <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
+                        <Building2 className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-muted-foreground font-medium">
+                          Company
+                        </p>
+                        <p className="font-semibold text-base truncate">
+                          {user.company}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {user?.location && (
+                    <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                      <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
+                        <MapPin className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-muted-foreground font-medium">
+                          Location
+                        </p>
+                        <p className="font-semibold text-base truncate">
+                          {user.location}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  {user?.website && (
+                    <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                      <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
+                        <Globe className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-muted-foreground font-medium">
+                          Website
+                        </p>
+                        <a
+                          href={
+                            user.website.startsWith("http")
+                              ? user.website
+                              : `https://${user.website}`
+                          }
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-base text-primary hover:underline inline-flex items-center gap-1 truncate"
+                        >
+                          {user.website}
+                          <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
+                    <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
+                      <Calendar className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-muted-foreground font-medium">
+                        Member Since
+                      </p>
+                      <p className="font-semibold text-base">
+                        {user?.created_at
+                          ? new Date(user.created_at).toLocaleDateString()
+                          : "Unknown"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">User ID:</span>
-                    <span className="font-mono text-xs">{user?.id}</span>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Account Information */}
+            <div className="lg:col-span-3 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                    <Shield className="h-5 w-5" />
+                    Account Information
+                  </CardTitle>
+                  <CardDescription>
+                    Details about your account status and information
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">Account Status</p>
+                      <div className="flex items-center gap-2">
+                        <div className={`h-3 w-3 rounded-full ${user?.is_active ? "bg-green-500" : "bg-red-500"}`}></div>
+                        <span className={`font-semibold ${user?.is_active ? "text-green-600" : "text-red-600"}`}>
+                          {user?.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">User ID</p>
+                      <p className="font-mono text-sm">{user?.id}</p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">Account Type</p>
+                      <p className="text-sm">Free Plan</p>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-muted-foreground">Last Login</p>
+                      <p className="text-sm">
+                        {user?.last_login 
+                          ? new Date(user.last_login).toLocaleDateString() 
+                          : "First login"}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-xl font-bold">
+                    <Settings className="h-5 w-5" />
+                    Quick Actions
+                  </CardTitle>
+                  <CardDescription>
+                    Manage your account settings and preferences
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center gap-2"
+                      onClick={() => window.location.href = '/todo-app/profile'}
+                    >
+                      <User className="h-5 w-5" />
+                      <span>Edit Profile</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center gap-2"
+                    >
+                      <Lock className="h-5 w-5" />
+                      <span>Change Password</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center gap-2"
+                    >
+                      <Bell className="h-5 w-5" />
+                      <span>Notifications</span>
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="h-20 flex flex-col items-center justify-center gap-2"
+                    >
+                      <Shield className="h-5 w-5" />
+                      <span>Privacy Settings</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
