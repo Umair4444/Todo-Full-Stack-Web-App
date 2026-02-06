@@ -135,7 +135,7 @@ describe('ChatPage Component', () => {
     );
 
     // Check that the protected content is not rendered
-    expect(screen.queryByText(/ai chat assistant/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/ai todo assistant/i)).not.toBeInTheDocument();
   });
 });
 
