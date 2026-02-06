@@ -87,7 +87,23 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
   const [filterByTask, setFilterByTask] = useState<"all" | "todo_operations" | "general">("all");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      // Scroll to the bottom of the container instantly
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    } else {
+      // Fallback to the previous method if container ref is not available
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); // Instant scroll
+    }
+  };
 
   // Load chat histories on component mount
   useEffect(() => {
@@ -213,6 +229,9 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
 
       // Close mobile sidebar after selection
       setIsMobileSidebarOpen(false);
+      
+      // Scroll to bottom after loading chat history
+      setTimeout(() => scrollToBottom(), 100);
     } catch (error) {
       console.error("Error loading chat history:", error);
       toast.error("Failed to load chat history.");
@@ -579,7 +598,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/30 min-h-0">
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/30 min-h-0">
           <div className="max-w-3xl mx-auto w-full py-6 px-4">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center text-center flex-grow">
