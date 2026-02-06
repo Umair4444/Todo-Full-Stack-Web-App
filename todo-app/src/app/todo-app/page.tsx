@@ -343,9 +343,7 @@ const DashboardPageContent: React.FC = () => {
 const DashboardPage: React.FC = () => {
   return (
     <ProtectedRoute>
-      <MainLayout>
-        <DashboardPageContent />
-      </MainLayout>
+      <DashboardPageContent />
     </ProtectedRoute>
   );
 };

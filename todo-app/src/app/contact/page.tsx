@@ -4,14 +4,12 @@
 import React from 'react';
 import { ContactForm } from '@/components/contact/ContactForm';
 import { useTranslation } from '@/lib/i18n';
-import { MainLayout } from '@/components/layout/MainLayout';
 
 const ContactPage: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <MainLayout>
-      <div className="container mx-auto px-4 lg:px-10 py-8 max-w-3xl lg:max-w-6xl">
+    <div className="container mx-auto px-4 lg:px-10 py-8 max-w-3xl lg:max-w-6xl">
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold mb-4">{t('contactUs')}</h1>
         <p className="text-lg text-muted-foreground">
@@ -92,8 +90,7 @@ const ContactPage: React.FC = () => {
           </a>
         </div>
       </div>
-      </div>
-    </MainLayout>
+    </div>
   );
 };
 

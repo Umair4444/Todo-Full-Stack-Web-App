@@ -345,17 +345,18 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
   };
 
   return (
-    <div className={cn("flex h-screen bg-background text-foreground", className)}>
+    <div className={cn("flex flex-1 bg-background text-foreground h-[85vh] max-h-[85vh]", className)}>
       {/* Sidebar - Chat History */}
-      <AnimatePresence>
-        {(isSidebarOpen || isMobileSidebarOpen) && (
-          <motion.div
-            initial={{ x: "-100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "-100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="w-64 flex flex-col border-r bg-gradient-to-b from-background to-muted fixed md:relative h-full z-10 md:z-0"
-          >
+      <div className="relative flex flex-1 min-h-0">
+        <AnimatePresence>
+          {(isSidebarOpen || isMobileSidebarOpen) && (
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="w-64 flex flex-col border-r bg-gradient-to-b from-background to-muted h-full z-10 md:z-0 absolute md:relative inset-y-0"
+            >
             <div className="p-3 border-b flex items-center justify-between">
               <h2 className="text-lg font-semibold flex items-center">
                 <Sparkles className="w-5 h-5 mr-2 text-primary" />
@@ -570,7 +571,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
       )}
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col h-screen">
+      <div className="flex-1 flex flex-col min-h-0 md:ml-0 transition-all duration-300">
         {/* Top Bar */}
         <div className="p-3 border-b flex items-center bg-background sticky top-0 z-10">
           <Button
@@ -588,25 +589,25 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/30">
+        <div className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/30 min-h-0">
           <div className="max-w-3xl mx-auto w-full py-6 px-4">
             {messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center">
+              <div className="flex flex-col items-center justify-center text-center flex-grow">
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="bg-gradient-to-br from-primary/10 to-secondary/10 p-8 rounded-2xl mb-8"
+                  className="bg-gradient-to-br from-primary/10 to-secondary/10 p-6 rounded-2xl mb-6"
                 >
-                  <div className="bg-primary/10 p-4 rounded-full inline-block">
-                    <Bot className="h-14 w-14 text-primary" />
+                  <div className="bg-primary/10 p-3 rounded-full inline-block">
+                    <Bot className="h-12 w-12 text-primary" />
                   </div>
                 </motion.div>
                 <motion.h3
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-3xl font-bold mb-4"
+                  className="text-2xl font-bold mb-3"
                 >
                   How can I help you today?
                 </motion.h3>
@@ -614,7 +615,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.4 }}
-                  className="text-muted-foreground max-w-md mb-8"
+                  className="text-muted-foreground max-w-sm mb-6 text-sm"
                 >
                   Ask me anything or request help with your todos. I can help
                   you create, update, or manage your tasks.
@@ -624,14 +625,14 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg"
+                  className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-md"
                 >
                   <Button
                     variant="outline"
                     onClick={() =>
                       setInputValue("What can you help me with?")
                     }
-                    className="justify-start gap-2 h-auto py-5"
+                    className="justify-start gap-2 h-auto py-3 text-sm"
                   >
                     <Bot className="w-4 h-4" />
                     <span>What can you help me with?</span>
@@ -639,7 +640,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => setInputValue("Create a new todo for me")}
-                    className="justify-start gap-2 h-auto py-5"
+                    className="justify-start gap-2 h-auto py-3 text-sm"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Create a new todo</span>
@@ -647,7 +648,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => setInputValue("How do I update a todo?")}
-                    className="justify-start gap-2 h-auto py-5"
+                    className="justify-start gap-2 h-auto py-3 text-sm"
                   >
                     <Edit className="w-4 h-4" />
                     <span>Update a todo</span>
@@ -655,7 +656,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => setInputValue("Show me my recent todos")}
-                    className="justify-start gap-2 h-auto py-5"
+                    className="justify-start gap-2 h-auto py-3 text-sm"
                   >
                     <List className="w-4 h-4" />
                     <span>Show recent todos</span>
@@ -828,7 +829,9 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
         </div>
       </div>
     </div>
+    {/* Closing div for the wrapper */}
+    </div>
   );
 };
 
-export default ChatGPTStyleChatInterface;
+export { ChatGPTStyleChatInterface };

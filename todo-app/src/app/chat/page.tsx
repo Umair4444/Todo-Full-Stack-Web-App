@@ -1,15 +1,16 @@
 "use client";
 
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import ChatGPTStyleChatInterface from '@/components/ChatGPTStyleChatInterface';
-import { MainLayout } from '@/components/layout/MainLayout';
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { ChatGPTStyleChatInterface } from "@/components/ChatGPTStyleChatInterface";
 
 export default function ChatPage() {
   return (
     <ProtectedRoute>
-      <MainLayout>
-        <ChatGPTStyleChatInterface />
-      </MainLayout>
+      <div className="mx-auto px-4 py-8">
+        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+          <ChatGPTStyleChatInterface />
+        </div>
+      </div>
     </ProtectedRoute>
   );
 }

@@ -10,31 +10,29 @@ import { MainLayout } from '@/components/layout/MainLayout';
 const RegisterPage = () => {
   return (
     <RedirectIfAuthenticated redirectTo="/">
-      <MainLayout>
-        <div className="min-h-screen flex items-center justify-center py-10 px-4">
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <CardTitle>Create an Account</CardTitle>
-              <CardDescription>
-                Enter your details to get started
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <RegistrationForm />
-              <div className="mt-4 text-center text-sm text-muted-foreground">
-                By creating an account, you agree to our{' '}
-                <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
-                  Terms of Service
-                </Link>{' '}
-                and{' '}
-                <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
-                  Privacy Policy
-                </Link>.
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </MainLayout>
+      <div className="min-h-screen flex items-center justify-center py-10 px-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle>Create an Account</CardTitle>
+            <CardDescription>
+              Enter your details to get started
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <RegistrationForm />
+            <div className="mt-4 text-center text-sm text-muted-foreground">
+              By creating an account, you agree to our{' '}
+              <Link href="/terms" className="underline underline-offset-4 hover:text-primary">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link href="/privacy" className="underline underline-offset-4 hover:text-primary">
+                Privacy Policy
+              </Link>.
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </RedirectIfAuthenticated>
   );
 };

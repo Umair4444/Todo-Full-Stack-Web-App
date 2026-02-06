@@ -15,12 +15,10 @@ import {
   Star,
   ArrowRight
 } from 'lucide-react';
-import { MainLayout } from '@/components/layout/MainLayout';
 
 const AboutPage: React.FC = () => {
   return (
-    <MainLayout>
-      <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
+    <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       {/* Hero Section */}
       <section className="py-16 md:py-24 bg-gradient-to-r from-primary/5 to-secondary/5">
         <div className="container mx-auto px-4 max-w-5xl text-center">
@@ -336,8 +334,7 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
       </section>
-      </div>
-    </MainLayout>
+    </div>
   );
 };
 

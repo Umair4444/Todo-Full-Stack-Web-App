@@ -1,7 +1,7 @@
 // src/components/ChatWidget.tsx
-// Updated to use the floating chat widget
-import FloatingChatWidget from './FloatingChatWidget';
+// Updated to use the improved floating chat widget
+import ImprovedFloatingChatWidget from './ImprovedFloatingChatWidget';
 
 export default function ChatWidget() {
-  return <FloatingChatWidget />;
+  return <ImprovedFloatingChatWidget />;
 }
