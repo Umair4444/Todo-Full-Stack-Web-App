@@ -360,7 +360,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
   };
 
   return (
-    <div className={cn("flex flex-1 bg-background text-foreground h-[85vh] max-h-[85vh]", className)}>
+    <div className={cn("flex flex-1 bg-gradient-to-br from-background to-muted/50 text-foreground h-[85vh] max-h-[85vh] rounded-2xl shadow-xl overflow-hidden", className)}>
       {/* Sidebar - Chat History */}
       <div className="relative flex flex-1 min-h-0">
         <AnimatePresence>
@@ -370,9 +370,9 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="w-64 flex flex-col border-r bg-gradient-to-b from-background to-muted h-full z-10 md:z-0 absolute md:relative inset-y-0"
+              className="w-64 flex flex-col bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950 h-full z-10 md:z-0 absolute md:relative inset-y-0 shadow-sm"
             >
-            <div className="p-3 border-b flex items-center justify-between">
+            <div className="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-800">
               <h2 className="text-lg font-semibold flex items-center">
                 <Sparkles className="w-5 h-5 mr-2 text-primary" />
                 Chat History
@@ -392,7 +392,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                 variant="outline"
                 size="sm"
                 onClick={handleNewChat}
-                className="flex items-center gap-1 w-full justify-start mb-3"
+                className="flex items-center gap-1 w-full justify-start mb-3 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800/70 shadow-sm"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 New chat
@@ -404,7 +404,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   placeholder="Search chats..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
+                  className="pl-9 bg-white dark:bg-gray-800 shadow-sm"
                 />
               </div>
 
@@ -416,7 +416,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 flex items-center justify-center gap-1"
+                        className="flex-1 flex items-center justify-center gap-1 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800/70 shadow-sm"
                       >
                         <Calendar className="w-4 h-4" />
                         <span className="truncate max-w-[60px]">
@@ -425,7 +425,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
                       <DropdownMenuItem onClick={() => setFilterByDate("all")}>
                         All Time
                       </DropdownMenuItem>
@@ -450,7 +450,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="flex-1 flex items-center justify-center gap-1"
+                        className="flex-1 flex items-center justify-center gap-1 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800/70 shadow-sm"
                       >
                         <Filter className="w-4 h-4" />
                         <span className="truncate max-w-[60px]">
@@ -459,7 +459,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
+                    <DropdownMenuContent className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
                       <DropdownMenuItem onClick={() => setFilterByTask("all")}>
                         All Types
                       </DropdownMenuItem>
@@ -497,8 +497,8 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                         transition={{ duration: 0.2 }}
                         className={`p-3 rounded-xl cursor-pointer transition-all duration-200 mb-1 ${
                           selectedHistory === history.id
-                            ? "bg-primary text-primary-foreground shadow-md"
-                            : "hover:bg-accent"
+                            ? "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-md"
+                            : "bg-white dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800/70"
                         }`}
                         onClick={() => handleSelectHistory(history.id)}
                       >
@@ -520,7 +520,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                                         ? "secondary"
                                         : "outline"
                                     }
-                                    className="text-xs"
+                                    className="text-xs bg-white/20"
                                   >
                                     {history.task_performed.replace("_", " ")}
                                   </Badge>
@@ -542,7 +542,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                                 <MoreVertical className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
+                            <DropdownMenuContent align="end" className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
                               <DropdownMenuItem
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -588,7 +588,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-h-0 md:ml-0 transition-all duration-300">
         {/* Top Bar */}
-        <div className="p-3 border-b flex items-center bg-background sticky top-0 z-10">
+        <div className="p-4 flex items-center bg-gradient-to-r from-background to-muted shadow-sm">
           <Button
             variant="ghost"
             size="sm"
@@ -605,16 +605,16 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
 
         {/* Messages Area */}
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto bg-gradient-to-b from-background to-muted/30 min-h-0">
-          <div className="max-w-3xl mx-auto w-full py-6 px-4">
+          <div className="max-w-3xl mx-auto w-full py-3 md:py-6 px-4">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center text-center flex-grow">
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="bg-gradient-to-br from-primary/10 to-secondary/10 p-2 md:p-6 rounded-2xl mb-3 md:mb-6"
+                  className="bg-gradient-to-br from-primary/10 to-secondary/10 p-4 md:p-6 rounded-2xl mb-3 md:mb-6"
                 >
-                  <div className="bg-primary/10 p-1 md:p-3 rounded-full inline-block">
+                  <div className="bg-gradient-to-r from-primary/20 to-secondary/20 p-2 md:p-4 rounded-full inline-block">
                     <Bot className="h-6 md:h-12 w-6 md:w-12 text-primary" />
                   </div>
                 </motion.div>
@@ -647,7 +647,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                     onClick={() =>
                       setInputValue("What can you help me with?")
                     }
-                    className="justify-start gap-2 h-auto py-3 text-sm"
+                    className="justify-start gap-2 h-auto py-3 text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/70 shadow-sm"
                   >
                     <Bot className="w-4 h-4" />
                     <span>What can you help me with?</span>
@@ -655,7 +655,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => setInputValue("Create a new todo for me")}
-                    className="justify-start gap-2 h-auto py-3 text-sm"
+                    className="justify-start gap-2 h-auto py-3 text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/70 shadow-sm"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Create a new todo</span>
@@ -663,7 +663,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => setInputValue("How do I update a todo?")}
-                    className="justify-start gap-2 h-auto py-3 text-sm"
+                    className="justify-start gap-2 h-auto py-3 text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/70 shadow-sm"
                   >
                     <Edit className="w-4 h-4" />
                     <span>Update a todo</span>
@@ -671,7 +671,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                   <Button
                     variant="outline"
                     onClick={() => setInputValue("Show me my recent todos")}
-                    className="justify-start gap-2 h-auto py-3 text-sm"
+                    className="justify-start gap-2 h-auto py-3 text-sm bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/70 shadow-sm"
                   >
                     <List className="w-4 h-4" />
                     <span>Show recent todos</span>
@@ -691,8 +691,8 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                       className={`flex gap-3 ${message.role === "user" ? "justify-end" : ""}`}
                     >
                       {message.role === "assistant" && (
-                        <Avatar className="w-9 h-9 flex-shrink-0 bg-primary mt-0.5">
-                          <AvatarFallback className="bg-primary text-primary-foreground">
+                        <Avatar className="w-9 h-9 flex-shrink-0 bg-gradient-to-r from-primary to-primary/90 mt-0.5">
+                          <AvatarFallback className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground">
                             <Bot className="w-4 h-4" />
                           </AvatarFallback>
                         </Avatar>
@@ -700,8 +700,8 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                       <div
                         className={`max-w-[80%] rounded-2xl p-4 relative group ${
                           message.role === "user"
-                            ? "bg-primary text-primary-foreground rounded-br-none"
-                            : "bg-card border rounded-bl-none shadow-sm"
+                            ? "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-br-none shadow-lg"
+                            : "bg-white dark:bg-gray-800/70 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-none shadow-sm"
                         }`}
                       >
                         <div className="whitespace-pre-wrap break-words">
@@ -722,7 +722,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                                     ? "secondary"
                                     : "outline"
                                 }
-                                className="text-xs ml-2"
+                                className="text-xs ml-2 bg-white/20"
                               >
                                 {message.taskId.replace("_", " ")}
                               </Badge>
@@ -768,8 +768,8 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                         )}
                       </div>
                       {message.role === "user" && (
-                        <Avatar className="w-9 h-9 flex-shrink-0 mt-0.5">
-                          <AvatarFallback className="bg-secondary">
+                        <Avatar className="w-9 h-9 flex-shrink-0 mt-0.5 bg-gradient-to-r from-gray-600 to-gray-700">
+                          <AvatarFallback className="bg-gradient-to-r from-gray-600 to-gray-700 text-primary-foreground">
                             <User className="w-4 h-4" />
                           </AvatarFallback>
                         </Avatar>
@@ -784,12 +784,12 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                     animate={{ opacity: 1 }}
                     className="flex gap-3"
                   >
-                    <Avatar className="w-9 h-9 flex-shrink-0 bg-primary mt-0.5">
-                      <AvatarFallback className="bg-primary text-primary-foreground">
+                    <Avatar className="w-9 h-9 flex-shrink-0 bg-gradient-to-r from-primary to-primary/90 mt-0.5">
+                      <AvatarFallback className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground">
                         <Bot className="w-4 h-4" />
                       </AvatarFallback>
                     </Avatar>
-                    <div className="max-w-[80%] rounded-2xl p-4 bg-card border rounded-bl-none shadow-sm">
+                    <div className="max-w-[80%] rounded-2xl p-4 bg-white dark:bg-gray-800/70 border border-gray-200/50 dark:border-gray-700/50 rounded-bl-none shadow-sm">
                       <div className="flex space-x-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce"></div>
                         <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground animate-bounce delay-75"></div>
@@ -805,7 +805,7 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
         </div>
 
         {/* Input Area */}
-        <div className="p-4 border-t bg-background sticky bottom-0">
+        <div className="p-4 bg-gradient-to-r from-background to-muted shadow-sm">
           <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
             <div className="relative flex items-center">
               <Button
@@ -823,12 +823,12 @@ const ChatGPTStyleChatInterface: React.FC<ChatGPTStyleChatInterfaceProps> = ({
                 onKeyDown={handleKeyDown}
                 placeholder="Message AI Assistant..."
                 disabled={isLoading}
-                className="py-6 pl-12 pr-16 rounded-full"
+                className="py-6 pl-12 pr-16 rounded-full shadow-sm bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-700"
               />
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-primary hover:bg-primary/90 h-9 w-9 rounded-full p-0"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary h-9 w-9 rounded-full p-0 shadow-md"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
