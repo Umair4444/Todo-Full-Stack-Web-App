@@ -58,7 +58,7 @@ export const FloatingNavbar: React.FC = () => {
 
               {/* Mobile menu button - shown on small screens */}
               <button
-                className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors"
+                className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               >

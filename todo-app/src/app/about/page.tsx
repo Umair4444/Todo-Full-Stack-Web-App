@@ -126,7 +126,7 @@ const AboutPage: React.FC = () => {
               { icon: Lightbulb, title: 'Smart Suggestions', desc: 'AI-powered insights to boost productivity' },
               { icon: Target, title: 'Goal Tracking', desc: 'Set and track progress toward your goals' }
             ].map((feature, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardContent className="p-6 flex flex-col items-center text-center">
                   <div className="p-3 rounded-full bg-primary/10 text-primary mb-4">
                     <feature.icon className="h-6 w-6" />
@@ -230,7 +230,7 @@ const AboutPage: React.FC = () => {
                   { name: 'Radix UI', desc: 'Unstyled components' },
                   { name: 'Shadcn/UI', desc: 'Customizable components' }
                 ].map((tech, index) => (
-                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm">
+                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm cursor-pointer">
                     <CardContent className="p-6 flex flex-col items-center text-center">
                       <div className="bg-primary/10 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                         <span className="font-bold text-lg">{tech.name.charAt(0)}</span>
@@ -254,7 +254,7 @@ const AboutPage: React.FC = () => {
                   { name: 'Axios', desc: 'HTTP Client' },
                   { name: 'i18next', desc: 'Internationalization' }
                 ].map((tech, index) => (
-                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm">
+                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm cursor-pointer">
                     <CardContent className="p-6 flex flex-col items-center text-center">
                       <div className="bg-primary/10 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                         <span className="font-bold text-lg">{tech.name.charAt(0)}</span>
@@ -278,7 +278,7 @@ const AboutPage: React.FC = () => {
                   { name: 'JWT', desc: 'Authentication' },
                   { name: 'Uvicorn', desc: 'ASGI server' }
                 ].map((tech, index) => (
-                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm">
+                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm cursor-pointer">
                     <CardContent className="p-6 flex flex-col items-center text-center">
                       <div className="bg-primary/10 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                         <span className="font-bold text-lg">{tech.name.charAt(0)}</span>
@@ -300,7 +300,7 @@ const AboutPage: React.FC = () => {
                   { name: 'Jest', desc: 'Testing Framework' },
                   { name: 'Pytest', desc: 'Python Testing' }
                 ].map((tech, index) => (
-                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm">
+                  <Card key={index} className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-background/50 backdrop-blur-sm cursor-pointer">
                     <CardContent className="p-6 flex flex-col items-center text-center">
                       <div className="bg-primary/10 text-primary rounded-full w-16 h-16 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                         <span className="font-bold text-lg">{tech.name.charAt(0)}</span>

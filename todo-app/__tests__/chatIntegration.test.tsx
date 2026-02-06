@@ -7,7 +7,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ChatPage from '@/src/app/chat/page';
-import ChatWidget from '@/src/components/ChatWidget';
+import ImprovedFloatingChatWidget from '@/src/components/ImprovedFloatingChatWidget';
 import { useAuth } from '@/contexts/AuthContext';
 import { chatService } from '@/services/chatService';
 
@@ -135,11 +135,11 @@ describe('ChatPage Component', () => {
     );
 
     // Check that the protected content is not rendered
-    expect(screen.queryByText(/ai chat assistant/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/ai todo assistant/i)).not.toBeInTheDocument();
   });
 });
 
-describe('ChatWidget Component', () => {
+describe('ImprovedFloatingChatWidget Component', () => {
   beforeEach(() => {
     // Reset mocks before each test
     vi.clearAllMocks();
@@ -163,7 +163,7 @@ describe('ChatWidget Component', () => {
 
     render(
       <QueryClientProvider client={queryClient}>
-        <ChatWidget />
+        <ImprovedFloatingChatWidget />
       </QueryClientProvider>
     );
 
@@ -203,7 +203,7 @@ describe('ChatWidget Component', () => {
 
     const { container } = render(
       <QueryClientProvider client={queryClient}>
-        <ChatWidget />
+        <ImprovedFloatingChatWidget />
       </QueryClientProvider>
     );
 

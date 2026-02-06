@@ -45,14 +45,27 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+interface AuthProviderProps {
+  children: ReactNode;
+  initialValue?: AuthContextType; // Allow providing initial values for testing
+}
+
+export const AuthProvider = ({ children, initialValue }: AuthProviderProps) => {
+  // If initial value is provided (for testing), use that instead of default state
+  const [user, setUser] = useState<User | null>(initialValue?.user || null);
+  const [token, setToken] = useState<string | null>(initialValue?.token || null);
+  const [isLoading, setIsLoading] = useState(initialValue?.isLoading ?? true);
   const router = useRouter();
 
-  // Check authentication status on mount
+  // Check authentication status on mount only if no initial value provided
   useEffect(() => {
+    if (initialValue) {
+      // If initial value is provided, we're in a test environment
+      // Respect the initial loading state
+      setIsLoading(initialValue.isLoading ?? false);
+      return;
+    }
+
     const initAuth = async () => {
       try {
         const storedToken = localStorage.getItem('access_token');
@@ -101,7 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     initAuth();
-  }, []);
+  }, [initialValue]);
 
   const checkAuthStatus = () => {
     try {

@@ -162,7 +162,7 @@ const ProfilePage: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors">
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                 <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
                   <Mail className="h-4 w-4 text-primary" />
                 </div>
@@ -176,7 +176,7 @@ const ProfilePage: React.FC = () => {
                 </div>
               </div>
               {user?.phone && (
-                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors">
+                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                   <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
                     <Phone className="h-4 w-4 text-primary" />
                   </div>
@@ -191,7 +191,7 @@ const ProfilePage: React.FC = () => {
                 </div>
               )}
               {user?.company && (
-                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors">
+                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                   <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
                     <Building2 className="h-4 w-4 text-primary" />
                   </div>
@@ -206,7 +206,7 @@ const ProfilePage: React.FC = () => {
                 </div>
               )}
               {user?.location && (
-                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors">
+                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                   <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
                     <MapPin className="h-4 w-4 text-primary" />
                   </div>
@@ -221,7 +221,7 @@ const ProfilePage: React.FC = () => {
                 </div>
               )}
               {user?.website && (
-                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors">
+                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                   <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
                     <Globe className="h-4 w-4 text-primary" />
                   </div>
@@ -245,7 +245,7 @@ const ProfilePage: React.FC = () => {
                   </div>
                 </div>
               )}
-              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors">
+              <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer">
                 <div className="p-2 rounded-full bg-primary/10 mt-0.5 flex-shrink-0">
                   <Calendar className="h-4 w-4 text-primary" />
                 </div>

@@ -66,8 +66,10 @@ export default function RootLayout({
           <LanguageProvider>
             <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem disableTransitionOnChange>
               <MainLayout>
-                {children}
-                <Notification />
+                <div className="relative min-h-screen">
+                  {children}
+                  <Notification />
+                </div>
               </MainLayout>
             </ThemeProvider>
           </LanguageProvider>

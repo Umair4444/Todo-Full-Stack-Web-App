@@ -1,6 +1,6 @@
 # Todo Full-Stack Web Application
 
-A modern, full-stack todo application built with Next.js (TypeScript) for the frontend and FastAPI (Python) for the backend. This application provides a complete solution for managing tasks with user authentication, responsive design, and advanced features like bulk operations and activity logging.
+A modern, full-stack todo application built with Next.js (TypeScript) for the frontend and FastAPI (Python) for the backend. This application provides a complete solution for managing tasks with user authentication, responsive design, and advanced features like bulk operations, activity logging, and AI-powered chat assistance.
 
 ## 🚀 Features
 
@@ -11,7 +11,7 @@ A modern, full-stack todo application built with Next.js (TypeScript) for the fr
 - **Dark/Light Mode**: Toggle between light and dark themes
 - **Multilingual Support**: Available in English and Urdu
 - **Floating Navbar**: Glass effect navbar that hides on scroll down and appears on scroll up
-- **Simulated Chatbot**: Get help and support through the chatbot available on all pages
+- **AI-Powered Assistant**: Get help and support through the integrated AI agent available on all pages
 - **Enhanced Task Management**:
   - Create, read, update, and delete todo items
   - Intuitive and responsive completion toggles with visual feedback
@@ -31,6 +31,9 @@ A modern, full-stack todo application built with Next.js (TypeScript) for the fr
 - **Error Handling**: Structured error responses with appropriate HTTP status codes
 - **Bulk Operations**: Support for bulk deletion of todo items
 - **Activity Logging**: Track create, update, and delete actions per user
+- **AI Agent Integration**: OpenAI Agents SDK with LiteLLM extension for multi-provider LLM support including Google Gemini Pro
+- **Chat History**: Persistent storage of user queries, agent responses, and performed tasks
+- **Agent Tools**: Specialized tools for performing todo operations through the agent
 
 ## 🛠 Tech Stack
 
@@ -56,7 +59,7 @@ A modern, full-stack todo application built with Next.js (TypeScript) for the fr
 - **Validation**: Pydantic (2.9.2)
 - **Migration Tool**: Alembic (1.13.2)
 - **Testing**: pytest with FastAPI test client
-- **AI Agents**: openai-agents for OpenAI Agents SDK with LiteLLM extension for Google Gemini support
+- **AI Agents**: openai-agents for OpenAI Agents SDK with LiteLLM extension for multi-provider LLM support
 
 ## 📁 Project Structure
 
@@ -76,6 +79,7 @@ Todo-Full-Stack-Web-App/
 │   │   ├── models/          # Database models
 │   │   ├── api/            # API routers
 │   │   ├── database/       # Database configuration
+│   │   ├── services/       # Business logic and agent tools
 │   │   └── config/         # Configuration settings
 │   ├── tests/
 │   ├── requirements.txt
@@ -200,6 +204,11 @@ The frontend connects to these backend endpoints:
 #### Activity Logs
 - `GET /api/todos/logs` - Get activity logs for authenticated user
 
+#### AI Agent & Chat
+- `POST /api/chat/session` - Initiate new chat session with AI agent
+- `POST /api/chat/session/{session_id}/message` - Send message to chat session
+- `GET /api/chat/history` - Retrieve chat history for authenticated user
+
 #### Health Check
 - `GET /health` - Check backend health status
 
@@ -234,6 +243,12 @@ The FastAPI backend can be deployed to:
 - Any platform supporting Docker deployments
 - Hugging Face Spaces (for the backend API)
 
+### AI Agent Configuration
+When deploying the backend, ensure you configure the AI agent properly:
+- Set up your LLM provider credentials (OpenAI, Google Gemini, etc.)
+- Configure the LiteLLM proxy if using multiple providers
+- Ensure the agent tools are properly connected to your database
+
 For detailed deployment instructions, refer to the individual README files in each project directory.
 
 ## 🤝 Contributing
@@ -260,4 +275,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Better Auth](https://better-auth.com/) for the authentication solution
 - [SQLModel](https://sqlmodel.tiangolo.com/) for the SQL databases with Python
 - [Neon](https://neon.tech/) for the Serverless PostgreSQL solution
+- [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) for the multi-agent framework
+- [LiteLLM](https://litellm.ai/) for multi-provider LLM support
 - [Umair4444](https://github.com/Umair4444) - My GitHub profile

@@ -1,14 +1,15 @@
 "use client";
 
-import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import RedesignedChatInterface from '@/components/RedesignedChatInterface';
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { AiTodoChatInterface } from "@/components/ai-todo/AiTodoChatInterface";
 
 export default function ChatPage() {
   return (
     <ProtectedRoute>
-      <div className="container mx-auto py-10 px-4 max-w-6xl">
-     
-        <RedesignedChatInterface height="calc(100vh - 200px)" />
+      <div className="mx-auto px-4 py-8">
+        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+          <AiTodoChatInterface />
+        </div>
       </div>
     </ProtectedRoute>
   );
