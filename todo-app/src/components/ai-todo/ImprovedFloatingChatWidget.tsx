@@ -303,7 +303,7 @@ export default function ImprovedFloatingChatWidget() {
                           initial={{ y: 20, opacity: 0 }}
                           animate={{ y: 0, opacity: 1 }}
                           transition={{ delay: 0.3 }}
-                          className="text-sm text-gray-600 dark:text-gray-400 mb-4"
+                          className="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-4 px-2 text-center"
                         >
                           How can I help you today?
                         </motion.p>
@@ -313,51 +313,51 @@ export default function ImprovedFloatingChatWidget() {
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.4 }}
-                            className="grid grid-cols-2 gap-2 w-full max-w-xs"
+                            className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-md px-2"
                           >
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs py-3"
+                              className="text-xs sm:text-sm py-3 px-2"
                               onClick={() =>
                                 handleQuickReply("What can you help me with?")
                               }
                             >
                               <MessageSquare className="w-3 h-3 mr-1" />
-                              What can you help with?
+                              <span className="text-nowrap overflow-hidden text-ellipsis">What can you help with?</span>
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs py-3"
+                              className="text-xs sm:text-sm py-3 px-2"
                               onClick={() =>
                                 handleQuickReply("Create a new todo for me")
                               }
                             >
                               <Plus className="w-3 h-3 mr-1" />
-                              Create a todo
+                              <span className="text-nowrap overflow-hidden text-ellipsis">Create a todo</span>
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs py-3"
+                              className="text-xs sm:text-sm py-3 px-2"
                               onClick={() =>
                                 handleQuickReply("How do I update a todo?")
                               }
                             >
                               <Edit className="w-3 h-3 mr-1" />
-                              Update a todo
+                              <span className="text-nowrap overflow-hidden text-ellipsis">Update a todo</span>
                             </Button>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="text-xs py-3"
+                              className="text-xs sm:text-sm py-3 px-2"
                               onClick={() =>
                                 handleQuickReply("Show me my recent todos")
                               }
                             >
                               <List className="w-3 h-3 mr-1" />
-                              View todos
+                              <span className="text-nowrap overflow-hidden text-ellipsis">View todos</span>
                             </Button>
                           </motion.div>
                         )}
